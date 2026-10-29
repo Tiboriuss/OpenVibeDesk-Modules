@@ -27,15 +27,18 @@ New or changed module code requires explicit approval, including when **Ohne Abf
 | Module | ID / version | Functions |
 | --- | --- | --- |
 | [Notes / Notizen](modules/sample-notes/README.md) | `sample-notes` / `0.1.0` | Add, list and search local notes through its window or the Assistant. |
+| [Skill Library / Skill-Bibliothek](modules/skill-library/README.md) | `skill-library` / `0.1.0` | Save, find and edit reusable instructions; attach a selected skill to a chat request alongside mail or files. Requires a host with process reference support. |
 
 Notes is a small working example with no extra dependencies. It currently supports adding and reading/searching notes; editing and deletion are not implemented. For example, ask the Assistant: “Save a note: Prepare the presentation for Friday”, then “Find my notes about the presentation”.
+
+Skill Library lets the Assistant save procedures on user request, using the same functions as its library window. Drag a saved skill into chat or choose **Im Chat verwenden**, then add the task and any mail/file references. The skill applies only to that submitted request. Its `snapshotTool` and `usage` manifest fields require a host build containing the new process reference contract; older API-1 hosts do not accept those fields. See its [compatibility and usage guide](modules/skill-library/README.md).
 
 ## Repository layout
 
 ```text
 ovd-modules.json                 # Current catalog, including per-file SHA-256 hashes
-modules/sample-notes/           # Editable module source
-packages/sample-notes/0.1.0/    # Published, immutable installable package
+modules/<module-id>/            # Editable module source
+packages/<module-id>/<version>/ # Published, immutable installable package
 ```
 
 OVD reads `ovd-modules.json` from the default branch. It downloads the package files listed there, validates their hashes and manifest, and installs the selected version. Packages already contain runnable code; OVD does not install dependencies or run build hooks.

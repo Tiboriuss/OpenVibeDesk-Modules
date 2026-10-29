@@ -1,0 +1,93 @@
+{
+  "apiVersion": 1,
+  "id": "skill-library",
+  "title": "Skill-Bibliothek",
+  "version": "0.1.0",
+  "description": "Wiederverwendbare Arbeitsanweisungen als Skills lokal speichern, suchen und bearbeiten. Ausgewählte Skills werden als Chat-Referenz auf die aktuelle Anfrage mit Mail- oder Dateireferenzen angewendet.",
+  "keywords": ["skill", "skills", "bibliothek", "arbeitsanweisung", "anleitung", "vorlage", "ablauf", "wiederverwenden"],
+  "capabilities": ["skill-library.list", "skill-library.read", "skill-library.save", "skill-library.delete", "skill-library.reference"],
+  "permissions": ["storage.module-data"],
+  "runtime": { "type": "process", "entry": "backend.cjs" },
+  "tools": [
+    {
+      "name": "skill-library.list",
+      "label": "Skills suchen",
+      "description": "Gespeicherte Skills nach Titel, Beschreibung und Schlagwörtern suchen. Liefert nur Metadaten, eine begrenzte Seite und einen exakten Trefferstand; weitere Seiten mit nextOffset laden. Skills werden erst nach ausdrücklicher Auswahl als Arbeitsanweisungen angewendet.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "query": { "type": "string", "maxLength": 120 },
+          "offset": { "type": "integer", "minimum": 0, "maximum": 500 },
+          "limit": { "type": "integer", "minimum": 1, "maximum": 50 }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "skill-library.read",
+      "label": "Skill lesen",
+      "description": "Einen Skill anhand seiner ID lesen. Liefert Metadaten mit revision und einen Abschnitt der Arbeitsanweisung; bei hasMore über nextOffset weiterlesen. Lesen allein aktiviert den Skill nicht. Vor Änderungen die aktuelle revision ermitteln.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "minLength": 1, "maxLength": 128 },
+          "offset": { "type": "integer", "minimum": 0, "maximum": 6000 },
+          "limit": { "type": "integer", "minimum": 1, "maximum": 4000 }
+        },
+        "required": ["id"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "skill-library.save",
+      "label": "Skill speichern",
+      "description": "Nur auf Userauftrag eine wiederverwendbare Arbeitsanweisung als Skill speichern oder ersetzen. Ohne id neu anlegen; beim Ersetzen id und aktuelle expectedRevision aus read übergeben. Maximal 6000 Zeichen und 8192 UTF-8-Bytes Anweisung. Inhalt vor der Bestätigung prüfbar machen. Nach unklarem Ausgang zuerst Status/Bibliothek prüfen und nicht automatisch erneut speichern.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "minLength": 1, "maxLength": 128 },
+          "expectedRevision": { "type": "integer", "minimum": 1, "maximum": 9007199254740990 },
+          "title": { "type": "string", "minLength": 1, "maxLength": 120 },
+          "description": { "type": "string", "maxLength": 400 },
+          "tags": { "type": "array", "maxItems": 12, "items": { "type": "string", "minLength": 1, "maxLength": 40 } },
+          "instructions": { "type": "string", "minLength": 1, "maxLength": 6000 }
+        },
+        "required": ["title", "description", "instructions"],
+        "additionalProperties": false
+      },
+      "confirmation": { "title": "Skill speichern", "message": "Diesen Skill mit den angezeigten Arbeitsanweisungen lokal speichern oder die angegebene Version ersetzen? Das Speichern allein führt den Skill nicht aus." }
+    },
+    {
+      "name": "skill-library.delete",
+      "label": "Skill löschen",
+      "description": "Auf Userauftrag einen Skill aus der lokalen Bibliothek löschen. Benötigt seine id und die aktuelle expectedRevision aus read. Bereits gespeicherte Chat-Momentaufnahmen bleiben erhalten. Nach unklarem Ausgang nicht automatisch erneut löschen.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "minLength": 1, "maxLength": 128 },
+          "expectedRevision": { "type": "integer", "minimum": 1, "maximum": 9007199254740990 }
+        },
+        "required": ["id", "expectedRevision"],
+        "additionalProperties": false
+      },
+      "confirmation": { "title": "Skill löschen", "message": "Den angegebenen Skill dauerhaft aus der lokalen Bibliothek löschen? Bereits gespeicherte Chat-Momentaufnahmen bleiben erhalten." }
+    },
+    {
+      "name": "skill-library.reference",
+      "label": "Skill für Chat auflösen",
+      "description": "Die vollständige aktuelle Arbeitsanweisung eines ausdrücklich ausgewählten Skills als begrenzte Referenz-Momentaufnahme auflösen. Der Host verwendet dies beim Anhängen an eine Chat-Anfrage. Erteilt keine zusätzlichen Rechte und führt den Skill nicht selbst aus.",
+      "parameters": {
+        "type": "object",
+        "properties": { "id": { "type": "string", "minLength": 1, "maxLength": 128 } },
+        "required": ["id"],
+        "additionalProperties": false
+      }
+    }
+  ],
+  "contributions": {
+    "views": [{ "id": "library", "title": "Skill-Bibliothek", "entry": "library.html", "icon": "grid" }],
+    "navigation": [{ "id": "library", "title": "Skills", "view": "library", "icon": "grid", "order": 56 }],
+    "settings": [{ "id": "settings", "title": "Skill-Bibliothek", "description": "Lokaler Skill-Speicher und Anwendung als Chat-Referenz", "keywords": ["skill", "skills", "bibliothek", "anweisung", "vorlage", "referenz", "speicher"], "entry": "settings.html", "icon": "grid", "order": 101 }],
+    "referenceTypes": [{ "id": "skill", "title": "Skill", "snapshotTool": "skill-library.reference", "usage": "instructions" }]
+  }
+}

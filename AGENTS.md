@@ -1,6 +1,7 @@
 # Repository rules
 
 - This repository publishes prebuilt OpenVibeDesk modules through `ovd-modules.json`. Source modules live under `modules/`; immutable distributable versions live under `packages/<id>/<version>/`.
+- Work in this module repository must not modify the OpenVibeDesk host repository without explicit prior agreement from the user. Read-only inspection of the host contract is allowed; explain missing host support and agree on any host changes before making them.
 - Read [CONTRIBUTING.md](CONTRIBUTING.md) and the upstream [module contract](https://github.com/Tiboriuss/OpenVibeDesk/blob/main/CONTRIBUTING.md#building-modules) before implementation. Current catalogs and capabilities must match the supported host contract.
 - UI and OVD Assistant must use the same typed, validated module functions. Include narrow discovery descriptions, bounded results, pagination and cancellation. Do not fill the default AI context with entire catalogs or user data.
 - Bundle dependencies before publication. Runtime installation must not execute package-manager, build or installer hooks.

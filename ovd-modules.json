@@ -37,6 +37,42 @@
           }
         ]
       }
+    },
+    {
+      "id": "skill-library",
+      "title": "Skill-Bibliothek",
+      "description": "Wiederverwendbare Arbeitsanweisungen als Skills lokal speichern, suchen und bearbeiten. Ausgewählte Skills werden als Chat-Referenz auf die aktuelle Anfrage mit Mail- oder Dateireferenzen angewendet.",
+      "version": "0.1.0",
+      "apiVersion": 1,
+      "package": {
+        "path": "packages/skill-library/0.1.0",
+        "files": [
+          {
+            "path": "LICENSE",
+            "sha256": "cd913951bd8915c2777448283e2992b93fa90877adad7378ab6804295ecd6f08"
+          },
+          {
+            "path": "README.md",
+            "sha256": "0a93ab89784979bf8982cbe1aad8bf3fada24f30b09883986fdf29d7f431fc4b"
+          },
+          {
+            "path": "backend.cjs",
+            "sha256": "437028bda253f87a35e52ae77f9f27a5efc4cd006f285e27fec53d0288c3f68b"
+          },
+          {
+            "path": "library.html",
+            "sha256": "4cdddc4d235ca97d2f47e3bf7e2215b0b3e1009201459552b4e6729081713339"
+          },
+          {
+            "path": "module.json",
+            "sha256": "ade83e9841a5aafa60d23e3c9203affa4a02619857615736ee86265840daf941"
+          },
+          {
+            "path": "settings.html",
+            "sha256": "49d95b23cef994f9993a785d90889205316c08d95f506ce1a92ce874344f363b"
+          }
+        ]
+      }
     }
   ]
 }
