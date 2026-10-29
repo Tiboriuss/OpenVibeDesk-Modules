@@ -1,0 +1,42 @@
+{
+  "version": 1,
+  "title": "OpenVibeDesk modules",
+  "modules": [
+    {
+      "id": "sample-notes",
+      "title": "Notizen",
+      "description": "Lokale Notizen anzeigen und hinzufügen. Die Notizoberfläche und der OVD-Assistent verwenden dieselben Funktionen.",
+      "version": "0.1.0",
+      "apiVersion": 1,
+      "package": {
+        "path": "packages/sample-notes/0.1.0",
+        "files": [
+          {
+            "path": "LICENSE",
+            "sha256": "cd913951bd8915c2777448283e2992b93fa90877adad7378ab6804295ecd6f08"
+          },
+          {
+            "path": "README.md",
+            "sha256": "8146b944e657c064270c369c432553b42ddf96c82bef819fbc69c959e50347d9"
+          },
+          {
+            "path": "backend.cjs",
+            "sha256": "d84f7a650717791c3d23e0cbeac1852bbe08b23f2a174d645cb6d4a3a9177691"
+          },
+          {
+            "path": "module.json",
+            "sha256": "d13316fa82f7002e4af09c230483d073d957992da097d8e3dbb9e4b3fd9d92f6"
+          },
+          {
+            "path": "notes.html",
+            "sha256": "007eb78a78101041afa03d18dd0fbc36c6a4c284d941a6fd6a84663a0b0b9c6b"
+          },
+          {
+            "path": "settings.html",
+            "sha256": "87d4732104197c87b845c965fe0f6c12a58ed9e6e67b87615a7bb3f6af0ca35d"
+          }
+        ]
+      }
+    }
+  ]
+}
