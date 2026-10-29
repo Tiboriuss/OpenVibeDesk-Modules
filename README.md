@@ -2,6 +2,10 @@
 
 A module catalog for [OpenVibeDesk](https://github.com/Tiboriuss/OpenVibeDesk). It contains installable packages and their editable source, so teams can build and distribute their own modules through a public or private repository.
 
+OpenVibeDesk is being built for everyday work in small businesses: for example, helping a small auto repair shop deal with customer and supplier email. Familiar windows and controls are central to the app, with an assistant available alongside them. The aim is useful help that people can understand and operate without becoming AI specialists.
+
+Modules let an IT person at a small company or an IT service provider adapt the app to that business. A custom module could connect an existing ERP and make relevant tasks available through both a module window and the assistant. Companies can keep these integrations in private repositories.
+
 Modules contribute tools, views, settings and navigation through OVD's module contract. The interface and Assistant use the same functions. OVD discovers module tools on demand, keeping unused schemas and catalog contents out of the default chat context.
 
 ## Add this repository to OVD
@@ -10,7 +14,7 @@ Use an OVD build with module repository support, then open **Settings → Module
 
 1. Select **Repository hinzufügen** and enter a name.
 2. Enter `https://github.com/Tiboriuss/OpenVibeDesk-Modules` as the repository URL.
-3. For this private repository, enter a fine-grained GitHub personal access token restricted to this repository with **Contents: Read-only**. Your account must have repository access; organization approval or SSO may also be required.
+3. If a repository is private, enter a fine-grained GitHub personal access token restricted to that repository with **Contents: Read-only**. Your account must have repository access; organization approval or SSO may also be required.
 4. Save the source and select **Katalog laden**.
 5. Choose **Installieren**, then review and approve the module's code before activating it.
 
