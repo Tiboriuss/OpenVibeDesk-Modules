@@ -1,0 +1,366 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Skill-Bibliothek</title>
+<style>
+:root{font:13px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#12182d;background:#f9f9fe;color-scheme:light}
+*{box-sizing:border-box}[hidden]{display:none!important}html,body{height:100%;margin:0}body{overflow:hidden}button,input,textarea{font:inherit}
+button{min-height:32px;border:1px solid #d9dce7;background:#fff;color:#222844;cursor:pointer;border-radius:6px;padding:5px 10px;font-size:12px;font-weight:600;line-height:1.4}
+button:hover:not(:disabled){background:#f2f0ff;border-color:#b9aaff}button:disabled{cursor:default;opacity:.5}
+button:focus-visible,input:focus-visible,textarea:focus-visible,[draggable]:focus-visible{outline:2px solid #9987ef;outline-offset:2px}
+input,textarea{width:100%;min-width:0;border:1px solid #d9dce7;background:#fff;color:#12182d;border-radius:6px;padding:6px 8px;line-height:1.5}input{min-height:32px}textarea{resize:vertical}
+h1,h2,p{margin:0}h1{font-size:14px;font-weight:650}h2{font-size:13px;font-weight:650}p{line-height:1.5}.muted{color:#606579}
+.app{height:100%;max-width:1500px;margin:auto;padding:12px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:8px;flex:none;min-height:32px}.toolbar-heading,.top-actions,.actions{display:flex;gap:6px;align-items:center}.top-actions{flex:none}.actions{flex-wrap:wrap}
+.icon-button{display:inline-flex;align-items:center;justify-content:center;width:32px;padding:5px;background:transparent}.icon-button svg{width:16px;height:16px}.back{display:none}
+.primary{background:#6850f5;color:#fff;border-color:#6850f5}.primary:hover:not(:disabled){background:#5941df;border-color:#5941df}
+.layout{display:grid;grid-template-columns:minmax(190px,230px) minmax(0,1fr);gap:12px;flex:1;min-height:0;min-width:0}
+.sidebar,.detail{min-height:0;min-width:0;border:1px solid #e1e3ec;border-radius:8px;background:#fff;overflow:hidden}.sidebar{display:flex;flex-direction:column}.sidebar:has(.skill-list:empty){align-self:start;max-height:100%}
+.searchbox{padding:10px;flex:none;border-bottom:1px solid #ececf4}.search-label{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.list-summary{display:flex;justify-content:space-between;flex-wrap:wrap;gap:4px 8px;margin-top:6px;color:#606579;font-size:11px}
+.skill-list{list-style:none;margin:0;padding:4px;overflow-y:auto;overflow-x:hidden;min-height:0;flex:1}.skill-list:empty{display:none}
+.skill-card{display:flex;gap:2px;margin:2px 0;border:1px solid transparent;border-radius:6px;position:relative}.skill-card.selected{background:#f1efff;border-color:#c5baff}.skill-card:hover{background:#f6f5fd}.skill-card[draggable=true]{cursor:grab}
+.skill-select{background:none!important;border:0!important;border-radius:5px;display:block;flex:1;min-width:0;text-align:left;padding:8px 6px}.skill-title{display:block;font-weight:650;overflow-wrap:anywhere;font-size:12px}
+.skill-description{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;font-weight:400;color:#606579;font-size:11px;margin-top:3px;line-height:1.45;overflow-wrap:anywhere}.skill-description:empty,.skill-tags:empty{display:none}
+.skill-tags{display:block;color:#606579;font-size:10px;margin-top:4px;font-weight:400;overflow-wrap:anywhere}.drag-handle{align-self:flex-start;color:#606579;padding:9px 2px 8px 6px;cursor:grab;font-size:16px;line-height:1}.draft-mark{font-size:10px;color:#5941df;display:block;margin-top:4px}
+.empty-list{padding:16px 10px;color:#606579;font-size:12px;line-height:1.5}#more{flex:none;display:block;width:calc(100% - 20px);margin:6px 10px 10px}
+.feedback{font-size:11px;line-height:1.45;overflow-wrap:anywhere;color:#606579}.feedback:empty{display:none}.feedback.error{color:#a12841}.feedback.success{color:#266348}.list-feedback:not(:empty){flex:none;padding:8px 10px;border-top:1px solid #ececf4}
+.detail{display:flex;flex-direction:column}.detail:has(#editor-wrap[hidden]){align-self:start;border-color:transparent;background:transparent}.placeholder{padding:10px;color:#606579;font-size:12px}
+#editor-wrap{display:flex;flex-direction:column;height:100%;min-height:0}.detail-top{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;flex:none;gap:8px;padding:10px;border-bottom:1px solid #ececf4}.detail-top .muted{font-size:10px;margin-top:3px;line-height:1.4}.detail-top .actions{margin-left:auto;justify-content:flex-end}
+.drag-detail{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;flex:none;cursor:grab;background:#f2f0ff;border:1px solid #d9d1ff;color:#222844;border-radius:6px;font-size:18px}.drag-detail[aria-disabled=true]{opacity:.5;cursor:default}
+.editor{padding:12px;overflow-y:auto;overflow-x:hidden;min-height:0;flex:1;scroll-padding:12px}.field{margin-bottom:10px}.field:last-child{margin-bottom:0}.field label{display:flex;justify-content:space-between;flex-wrap:wrap;gap:3px 8px;font-size:12px;font-weight:600;margin-bottom:5px}.field label span{font-weight:400;color:#606579;font-size:10px}.counter{margin-left:auto}
+.instruction-field{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;min-height:160px;tab-size:2}
+.editor-actions{flex:none;padding:8px 10px;border-top:1px solid #ececf4;background:#fff}.editor-actions .feedback:not(:empty){margin-bottom:6px}.bottom-actions{display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap}.bottom-actions .actions{gap:6px}.danger{color:#a12841}
+.notice{padding:9px 10px;margin:0 0 12px;border-radius:6px;background:#fff5df;border:1px solid #edce8b;font-size:11px;line-height:1.5;color:#62430c}.notice .actions{margin-top:7px}.counter.error{color:#a12841}
+@media(max-width:719px){.app{padding:8px;gap:8px}.layout{display:flex;flex-direction:column;gap:0}.sidebar{height:100%;flex:1}.sidebar:has(.skill-list:empty){height:auto;flex:none;width:100%}.detail{display:none}.editor-open .sidebar{display:none}.editor-open .detail{display:flex;flex:1}.editor-open .back{display:inline-flex;align-items:center;gap:5px}.editor-open .toolbar-title{display:none}.detail-top{padding:8px}.editor{padding:10px}.editor-actions{padding:8px}.top-actions{gap:5px}}
+@media(max-width:360px){button{padding:5px 8px}.top-actions .primary{padding:5px 8px}.icon-button{width:30px}.detail-top .actions{margin-left:0}.bottom-actions{gap:5px}.bottom-actions .actions{gap:5px}}
+@media(max-height:420px){.app{padding-top:8px;padding-bottom:8px;gap:7px}.detail-top{padding-top:7px;padding-bottom:7px}.editor{padding-top:8px;padding-bottom:8px}.editor-actions{padding-top:6px;padding-bottom:6px}}
+@media(prefers-reduced-motion:no-preference){button{transition:background .12s,border-color .12s}}
+</style>
+</head>
+<body>
+<main class="app">
+  <header class="topbar"><div class="toolbar-heading"><button id="back" class="back" type="button"><span aria-hidden="true">←</span>Alle Skills</button><h1 class="toolbar-title">Skills</h1></div><div class="top-actions"><button id="refresh" class="icon-button" type="button" aria-label="Skills aktualisieren" title="Skills aktualisieren; Entwürfe bleiben erhalten"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M6.1 8a7 7 0 0 1 11.6-2L20 9M4 15l2.3 3A7 7 0 0 0 17.9 16"/></svg></button><button id="new" class="primary" type="button">＋ Neuer Skill</button></div></header>
+  <div class="layout">
+    <aside class="sidebar" aria-label="Gespeicherte Skills">
+      <div class="searchbox"><label class="search-label" for="search">Skills durchsuchen</label><input id="search" type="search" maxlength="120" placeholder="Skills durchsuchen …" autocomplete="off"><div class="list-summary"><span id="count">Wird geladen …</span><span id="draft-count"></span></div></div>
+      <ul id="skills" class="skill-list" aria-label="Skills"></ul>
+      <div id="empty-list" class="empty-list" hidden>Noch keine Skills.</div>
+      <button id="more" type="button" hidden>Weitere Skills laden</button>
+      <p id="list-status" class="feedback list-feedback" role="status" aria-live="polite"></p>
+    </aside>
+    <section class="detail" aria-label="Skill bearbeiten">
+      <div id="placeholder" class="placeholder">Wähle einen Skill aus.</div>
+      <div id="editor-wrap" hidden>
+        <header class="detail-top"><div><h2 id="editor-heading">Neuer Skill</h2><p id="revision" class="muted">Noch nicht gespeichert</p></div><div class="actions"><span id="drag-detail" class="drag-detail" draggable="false" aria-disabled="true" aria-label="Skill in den Chat ziehen" title="Skill in den Chat ziehen">⠿</span><button id="use" type="button" disabled>Im Chat verwenden</button></div></header>
+        <div class="editor">
+          <div id="uncertain" class="notice" hidden><strong>Der Ausgang der letzten Änderung ist unklar.</strong><p id="uncertain-text">Prüfe den gespeicherten Stand, bevor du erneut speicherst.</p><div class="actions"><button id="check-current" type="button">Gespeicherten Stand prüfen</button></div></div>
+          <div class="field"><label for="title">Titel</label><input id="title" maxlength="120" placeholder="Name des Skills" autocomplete="off"></div>
+          <div class="field"><label for="description">Kurzbeschreibung <span>Optional</span></label><input id="description" maxlength="400" placeholder="Wann ist der Skill hilfreich?" autocomplete="off"></div>
+          <div class="field"><label for="tags">Tags <span>Optional</span></label><input id="tags" maxlength="500" placeholder="Mail, Kundenservice, Tonalität" title="Mit Kommas trennen, bis zu 12 Tags." autocomplete="off"></div>
+          <div class="field"><label for="instructions">Anweisungen <span id="length" class="counter">0 / 6000</span></label><textarea id="instructions" class="instruction-field" maxlength="6000" rows="8" spellcheck="false" placeholder="Ziel, Vorgehen und gewünschtes Ergebnis …"></textarea></div>
+        </div>
+        <div class="editor-actions"><p id="editor-status" class="feedback" role="status" aria-live="polite"></p><div class="bottom-actions"><div class="actions"><button id="save" class="primary" type="button">Speichern</button><button id="discard" type="button" disabled>Verwerfen</button></div><button id="delete" class="danger" type="button" hidden>Löschen</button></div></div>
+      </div>
+    </section>
+  </div>
+</main>
+<script>
+'use strict';
+const $ = id => document.getElementById(id);
+const fields = { title: $('title'), description: $('description'), tags: $('tags'), instructions: $('instructions') };
+const pending = new Map(), drafts = new Map(), metadata = new Map();
+const encoder = new TextEncoder();
+const NEW = 'new';
+let selected, nextOffset, listVersion = 0, detailVersion = 0, searchTimer, busy = false, loadingDetail = false;
+
+function request(message, mutation = false) {
+  return new Promise((resolve, reject) => {
+    const requestId = crypto.randomUUID();
+    const timer = setTimeout(() => {
+      pending.delete(requestId);
+      const error = new Error(mutation ? 'Die Antwort ist ausgeblieben. Der gespeicherte Stand muss zuerst geprüft werden.' : 'Keine Antwort erhalten. Bitte erneut laden.');
+      error.uncertain = mutation; reject(error);
+    }, 70000);
+    pending.set(requestId, { resolve, reject, timer, mutation });
+    parent.postMessage({ ...message, requestId }, '*');
+  });
+}
+function invoke(action, args, mutation = false) { return request({ type: 'ovd:invoke', tool: 'skill-library.' + action, args }, mutation); }
+addEventListener('message', event => {
+  if (event.source !== parent || !event.data || event.data.type !== 'ovd:result') return;
+  const call = pending.get(event.data.requestId);
+  if (!call) return;
+  clearTimeout(call.timer); pending.delete(event.data.requestId);
+  const result = event.data.result;
+  if (event.data.ok && (result?.outcome === 'cancelled' || result?.cancelled === true)) {
+    const error = new Error(call.mutation ? 'Änderung abgebrochen. Dein Entwurf bleibt erhalten.' : 'Anfrage abgebrochen.');
+    error.code = 'CANCELLED'; error.uncertain = false; call.reject(error); return;
+  }
+  if (event.data.ok && !['failed', 'uncertain'].includes(result?.outcome)) call.resolve(result);
+  else {
+    const error = new Error(event.data.ok ? result.error?.message || 'Die Skill-Anfrage ist fehlgeschlagen.' : typeof event.data.error === 'string' ? event.data.error : 'Die Skill-Anfrage ist fehlgeschlagen.');
+    error.code = result?.error?.code;
+    error.uncertain = call.mutation && (!event.data.ok || result?.outcome === 'uncertain');
+    call.reject(error);
+  }
+});
+function status(id, text, kind = '') { $(id).textContent = text; $(id).className = 'feedback' + (id === 'list-status' ? ' list-feedback' : '') + (kind ? ' ' + kind : ''); }
+function formData() { return { title: fields.title.value, description: fields.description.value, tags: fields.tags.value, instructions: fields.instructions.value }; }
+function changed(draft) { return JSON.stringify(draft.values) !== JSON.stringify(draft.baseline); }
+function remember() { const draft = drafts.get(selected); if (draft && !loadingDetail) draft.values = formData(); }
+function draftIsChanged(id) { const draft = drafts.get(id); return !!draft && changed(draft); }
+function updateDraftCount() {
+  const count = [...drafts.values()].filter(changed).length;
+  $('draft-count').textContent = count ? count + (count === 1 ? ' Entwurf' : ' Entwürfe') : '';
+}
+function updateControls() {
+  const draft = drafts.get(selected), dirty = !!draft && changed(draft), saved = !!draft?.skill;
+  const blocked = busy || loadingDetail;
+  Object.values(fields).forEach(field => { field.disabled = blocked; });
+  $('new').disabled = blocked; $('back').disabled = blocked; $('refresh').disabled = busy;
+  $('save').disabled = blocked || !draft || !dirty || !!draft.uncertain;
+  $('discard').disabled = blocked || !dirty || !!draft?.uncertain;
+  $('delete').hidden = !saved; $('delete').disabled = blocked || !!draft?.uncertain;
+  $('use').disabled = blocked || !saved || dirty || !!draft?.uncertain;
+  $('use').title = dirty ? 'Zum Anwenden zuerst speichern' : 'Skill an die folgende Chat-Anfrage anhängen';
+  const draggable = saved && !dirty && !blocked && !draft?.uncertain;
+  $('drag-detail').draggable = !!draggable;
+  $('drag-detail').setAttribute('aria-disabled', String(!draggable));
+  $('uncertain').hidden = !draft?.uncertain;
+  $('check-current').disabled = blocked;
+  const characters = fields.instructions.value.length, bytes = encoder.encode(fields.instructions.value).length;
+  $('length').textContent = characters + ' / 6000';
+  $('length').title = bytes + ' / 8192 UTF-8-Bytes';
+  $('length').className = 'counter' + (characters > 6000 || bytes > 8192 ? ' error' : '');
+  updateDraftCount();
+  for (const item of $('skills').children) {
+    const dirtyItem = draftIsChanged(item.dataset.id), itemDraft = drafts.get(item.dataset.id);
+    item.draggable = !busy && !dirtyItem && !itemDraft?.uncertain;
+    item.classList.toggle('selected', item.dataset.id === selected);
+    item.querySelector('button').setAttribute('aria-pressed', String(item.dataset.id === selected));
+    item.querySelector('button').disabled = blocked;
+    item.querySelector('.draft-mark').hidden = !dirtyItem;
+  }
+}
+function showDraft(key, focusEditor = false) {
+  const draft = drafts.get(key);
+  selected = key;
+  document.body.classList.add('editor-open');
+  $('placeholder').hidden = true; $('editor-wrap').hidden = false;
+  Object.keys(fields).forEach(name => { fields[name].value = draft.values[name]; });
+  $('editor-heading').textContent = draft.skill ? 'Skill bearbeiten' : 'Neuer Skill';
+  $('revision').textContent = draft.skill ? 'Version ' + draft.skill.revision + ' · ' + new Date(draft.skill.updatedAt).toLocaleString('de-DE', { dateStyle: 'medium', timeStyle: 'short' }) : 'Noch nicht gespeichert';
+  status('editor-status', draftIsChanged(key) ? 'Nicht gespeicherte Änderungen' : '');
+  updateControls();
+  if (focusEditor && matchMedia('(max-width:719px)').matches) fields.title.focus();
+}
+function newSkill() {
+  if (busy || loadingDetail) return;
+  remember(); detailVersion++;
+  if (!drafts.has(NEW)) {
+    const values = { title: '', description: '', tags: '', instructions: '' };
+    drafts.set(NEW, { id: crypto.randomUUID(), values: { ...values }, baseline: values });
+  }
+  showDraft(NEW); fields.title.focus();
+}
+function drag(event, id) {
+  const draft = drafts.get(id);
+  if (busy || !id || id === NEW || draftIsChanged(id) || draft?.uncertain) { event.preventDefault(); return; }
+  const payload = JSON.stringify({ moduleId: 'skill-library', type: 'skill', id });
+  event.dataTransfer.setData('application/x-openvibedesk-reference', payload);
+  event.dataTransfer.setData('text/plain', 'openvibedesk-reference:' + payload);
+  event.dataTransfer.effectAllowed = 'copy';
+}
+function appendSkill(skill) {
+  metadata.set(skill.id, skill);
+  const item = document.createElement('li'); item.className = 'skill-card'; item.dataset.id = skill.id; item.draggable = true;
+  const grip = document.createElement('span'); grip.className = 'drag-handle'; grip.textContent = '⠿'; grip.setAttribute('aria-hidden', 'true'); grip.title = 'Skill in den Chat ziehen';
+  const button = document.createElement('button'); button.type = 'button'; button.className = 'skill-select'; button.setAttribute('aria-pressed', String(skill.id === selected));
+  const title = document.createElement('span'); title.className = 'skill-title'; title.textContent = skill.title;
+  const description = document.createElement('span'); description.className = 'skill-description'; description.textContent = skill.description;
+  const tags = document.createElement('span'); tags.className = 'skill-tags'; tags.textContent = skill.tags.join(' · ');
+  const draft = document.createElement('span'); draft.className = 'draft-mark'; draft.textContent = 'Nicht gespeichert'; draft.hidden = !draftIsChanged(skill.id);
+  button.append(title, description, tags, draft); item.append(grip, button);
+  button.addEventListener('click', () => { void selectSkill(skill.id); });
+  item.addEventListener('dragstart', event => drag(event, skill.id));
+  item.title = 'Auswählen zum Bearbeiten · In den Chat ziehen zum Anwenden';
+  $('skills').append(item);
+}
+async function loadList(append = false) {
+  const version = ++listVersion;
+  $('more').disabled = true; status('list-status', 'Bibliothek wird geladen …');
+  try {
+    const result = await invoke('list', { query: $('search').value.trim(), offset: append ? nextOffset || 0 : 0, limit: 20 });
+    if (version !== listVersion) return;
+    if (!append) $('skills').replaceChildren();
+    result.skills.forEach(appendSkill); nextOffset = result.nextOffset;
+    $('count').textContent = result.total + (result.total === 1 ? ' Skill' : ' Skills');
+    $('empty-list').hidden = $('skills').children.length > 0;
+    $('empty-list').textContent = $('search').value.trim() ? 'Keine passenden Skills.' : 'Noch keine Skills.';
+    $('more').hidden = !result.hasMore;
+    status('list-status', ''); updateControls();
+  } catch (error) { if (version === listVersion) status('list-status', error.message, 'error'); }
+  finally { if (version === listVersion) $('more').disabled = false; }
+}
+async function readSkill(id) {
+  let offset = 0, instructions = '', skill;
+  for (let page = 0; page < 4; page++) {
+    const result = await invoke('read', { id, offset, limit: 4000 });
+    if (skill && skill.revision !== result.skill.revision) throw new Error('Der Skill wurde beim Laden geändert. Bitte erneut auswählen.');
+    skill = result.skill; instructions += result.instructions;
+    if (instructions.length > 6000 || encoder.encode(instructions).length > 8192) throw new Error('Die Skill-Anweisungen überschreiten die erlaubte Größe.');
+    if (!result.hasMore) {
+      if (!result.complete || result.totalCharacters !== instructions.length) throw new Error('Der Skill konnte nicht vollständig geladen werden.');
+      return { skill, values: { title: skill.title, description: skill.description, tags: skill.tags.join(', '), instructions } };
+    }
+    if (!Number.isInteger(result.nextOffset) || result.nextOffset <= offset) throw new Error('Die Fortsetzung des Skills ist ungültig.');
+    offset = result.nextOffset;
+  }
+  throw new Error('Der Skill konnte nicht vollständig geladen werden.');
+}
+async function selectSkill(id) {
+  if (busy || loadingDetail) return;
+  const focusEditor = $('skills').contains(document.activeElement);
+  remember();
+  if (drafts.has(id) && (draftIsChanged(id) || drafts.get(id).uncertain)) { showDraft(id, focusEditor); return; }
+  const version = ++detailVersion;
+  loadingDetail = true; updateControls(); status('list-status', 'Skill wird geladen …');
+  try {
+    const loaded = await readSkill(id);
+    if (version !== detailVersion) return;
+    drafts.set(id, { id, ...loaded, baseline: { ...loaded.values } });
+    loadingDetail = false; showDraft(id, focusEditor); status('list-status', '');
+  } catch (error) { if (version === detailVersion) status('list-status', error.message, 'error'); }
+  finally { if (version === detailVersion) { loadingDetail = false; updateControls(); } }
+}
+function saveArgs(draft) {
+  const values = draft.values;
+  const tags = values.tags.split(',').map(tag => tag.trim()).filter(Boolean);
+  if (!values.title.trim() || !values.instructions.trim()) throw new Error('Bitte Titel und Anweisungen ausfüllen.');
+  if (values.title.length > 120 || values.description.length > 400) throw new Error('Titel oder Kurzbeschreibung ist zu lang.');
+  if (tags.length > 12 || tags.some(tag => tag.length > 40)) throw new Error('Bitte höchstens 12 Tags mit jeweils bis zu 40 Zeichen verwenden.');
+  if (values.instructions.length > 6000 || encoder.encode(values.instructions).length > 8192) throw new Error('Die Anweisungen dürfen höchstens 6000 Zeichen und 8192 Bytes enthalten.');
+  const uniqueTags = [...new Map(tags.map(tag => [tag.toLocaleLowerCase('de-DE'), tag])).values()];
+  const args = { id: draft.skill?.id || draft.id, ...(draft.skill ? { expectedRevision: draft.skill.revision } : {}), title: values.title.trim(), description: values.description.trim(), tags: uniqueTags, instructions: values.instructions.trim() };
+  if (encoder.encode(JSON.stringify(args)).length > 16000) throw new Error('Der Skill ist zu groß zum Speichern. Bitte kürze die Anweisungen.');
+  return args;
+}
+async function saveSkill() {
+  if (busy || loadingDetail) return;
+  remember(); const key = selected, draft = drafts.get(key);
+  if (!draft || draft.uncertain) return;
+  let args;
+  try { args = saveArgs(draft); } catch (error) { status('editor-status', error.message, 'error'); return; }
+  busy = true; updateControls(); status('editor-status', 'Skill wird gespeichert …');
+  try {
+    const result = await invoke('save', args, true);
+    if (result.outcome !== 'completed' || !result.skill?.id) throw Object.assign(new Error('Der Ausgang des Speicherns ist unklar. Bitte den gespeicherten Stand prüfen.'), { uncertain: true });
+    const values = { title: result.skill.title, description: result.skill.description, tags: result.skill.tags.join(', '), instructions: args.instructions };
+    drafts.delete(key); drafts.set(result.skill.id, { id: result.skill.id, skill: result.skill, values: { ...values }, baseline: values });
+    selected = result.skill.id; showDraft(selected); await loadList(); status('editor-status', 'Skill gespeichert. Du kannst ihn jetzt im Chat verwenden.', 'success');
+  } catch (error) {
+    if (error.uncertain) draft.uncertain = { action: 'save', args };
+    status('editor-status', error.message, error.code === 'CANCELLED' ? '' : 'error');
+  } finally { busy = false; updateControls(); }
+}
+async function deleteSkill() {
+  if (busy || loadingDetail) return;
+  remember(); const key = selected, draft = drafts.get(key);
+  if (!draft?.skill || draft.uncertain) return;
+  busy = true; updateControls(); status('editor-status', 'Löschen wird angefragt …');
+  try {
+    const result = await invoke('delete', { id: draft.skill.id, expectedRevision: draft.skill.revision }, true);
+    if (result.outcome !== 'completed' || result.deleted !== true) throw Object.assign(new Error('Der Ausgang des Löschens ist unklar. Bitte den gespeicherten Stand prüfen.'), { uncertain: true });
+    drafts.delete(key); metadata.delete(key); selected = undefined;
+    $('editor-wrap').hidden = true; $('placeholder').hidden = false;
+    document.body.classList.remove('editor-open');
+    await loadList(); status('list-status', 'Skill gelöscht.', 'success');
+  } catch (error) {
+    if (error.uncertain) draft.uncertain = { action: 'delete' };
+    status('editor-status', error.message, error.code === 'CANCELLED' ? '' : 'error');
+  } finally { busy = false; updateControls(); }
+}
+async function checkCurrent() {
+  if (busy || loadingDetail) return;
+  remember(); const key = selected, draft = drafts.get(key);
+  if (!draft?.uncertain) return;
+  loadingDetail = true; updateControls(); status('editor-status', 'Gespeicherter Stand wird geprüft …');
+  try {
+    const loaded = await readSkill(draft.skill?.id || draft.id);
+    const localValues = { ...draft.values };
+    drafts.delete(key);
+    drafts.set(loaded.skill.id, { id: loaded.skill.id, skill: loaded.skill, values: localValues, baseline: { ...loaded.values } });
+    loadingDetail = false; showDraft(loaded.skill.id); await loadList();
+    status('editor-status', changed(drafts.get(loaded.skill.id)) ? 'Gespeicherten Stand geprüft. Dein Entwurf bleibt erhalten; du kannst ihn jetzt prüfen und bewusst speichern oder verwerfen.' : 'Gespeicherten Stand geprüft. Der Skill ist gespeichert.', 'success');
+  } catch (error) {
+    if (error.code === 'NOT_FOUND') {
+      if (draft.uncertain.action === 'delete') {
+        drafts.delete(key); metadata.delete(key); selected = undefined;
+        $('editor-wrap').hidden = true; $('placeholder').hidden = false;
+        document.body.classList.remove('editor-open');
+        await loadList(); status('list-status', 'Geprüft: Der Skill ist gelöscht.', 'success');
+      } else {
+        draft.skill = undefined; draft.uncertain = undefined;
+        draft.baseline = { title: '', description: '', tags: '', instructions: '' };
+        loadingDetail = false; showDraft(key); await loadList();
+        status('editor-status', 'Geprüft: Dieser Skill ist nicht gespeichert. Dein Entwurf bleibt erhalten; du kannst ihn jetzt bewusst neu speichern.', 'success');
+      }
+    } else status('editor-status', 'Prüfung fehlgeschlagen: ' + error.message + ' Der Entwurf bleibt erhalten.', 'error');
+  } finally { loadingDetail = false; updateControls(); }
+}
+async function discard() {
+  if (busy || loadingDetail) return;
+  const draft = drafts.get(selected);
+  if (!draft || draft.uncertain) return;
+  if (!draft.skill) {
+    draft.values = { ...draft.baseline }; showDraft(selected); status('editor-status', 'Entwurf verworfen.'); return;
+  }
+  const key = selected;
+  loadingDetail = true; updateControls(); status('editor-status', 'Aktueller gespeicherter Stand wird geladen …');
+  try {
+    const loaded = await readSkill(draft.skill.id);
+    drafts.set(key, { id: loaded.skill.id, ...loaded, baseline: { ...loaded.values } });
+    loadingDetail = false; showDraft(key); status('editor-status', 'Entwurf verworfen. Aktueller gespeicherter Stand geladen.');
+  } catch (error) { status('editor-status', 'Der gespeicherte Stand konnte nicht geladen werden: ' + error.message + ' Dein Entwurf bleibt erhalten.', 'error'); }
+  finally { loadingDetail = false; updateControls(); }
+}
+async function useSkill() {
+  const draft = drafts.get(selected);
+  if (busy || loadingDetail || !draft?.skill || changed(draft) || draft.uncertain) return;
+  busy = true; updateControls(); status('editor-status', 'Skill wird an den Chat angehängt …');
+  try {
+    await request({ type: 'ovd:reference', reference: { moduleId: 'skill-library', type: 'skill', id: draft.skill.id } });
+    status('editor-status', 'Skill im Chat ausgewählt. Ergänze dort deine Aufgabe und bei Bedarf eine Mail oder Datei.', 'success');
+  } catch (error) { status('editor-status', error.message, 'error'); }
+  finally { busy = false; updateControls(); }
+}
+Object.values(fields).forEach(field => field.addEventListener('input', () => { remember(); updateControls(); status('editor-status', 'Nicht gespeicherte Änderungen'); }));
+$('new').addEventListener('click', newSkill);
+$('back').addEventListener('click', () => {
+  if (busy || loadingDetail) return;
+  remember(); document.body.classList.remove('editor-open');
+  const selectedItem = [...$('skills').children].find(item => item.dataset.id === selected);
+  (selectedItem?.querySelector('button') || $('search')).focus();
+});
+$('search').addEventListener('input', () => { clearTimeout(searchTimer); listVersion++; searchTimer = setTimeout(() => { void loadList(); }, 180); });
+$('refresh').addEventListener('click', async () => {
+  const editorOpen = document.body.classList.contains('editor-open');
+  clearTimeout(searchTimer); remember(); await loadList();
+  if (selected && selected !== NEW && !draftIsChanged(selected) && !drafts.get(selected)?.uncertain) await selectSkill(selected);
+  if (!editorOpen) document.body.classList.remove('editor-open');
+});
+$('more').addEventListener('click', () => { void loadList(true); });
+$('save').addEventListener('click', () => { void saveSkill(); });
+$('delete').addEventListener('click', () => { void deleteSkill(); });
+$('discard').addEventListener('click', () => { void discard(); });
+$('check-current').addEventListener('click', () => { void checkCurrent(); });
+$('use').addEventListener('click', () => { void useSkill(); });
+$('drag-detail').addEventListener('dragstart', event => drag(event, selected));
+addEventListener('keydown', event => { if ((event.metaKey || event.ctrlKey) && event.key === 's') { event.preventDefault(); if (!$('save').disabled) void saveSkill(); } });
+void loadList();
+</script>
+</body>
+</html>

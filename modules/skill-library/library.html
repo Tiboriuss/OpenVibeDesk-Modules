@@ -5,39 +5,67 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Skill-Bibliothek</title>
 <style>
-:root{font:13px Manrope,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#12182d;background:#f9f9fe;color-scheme:light}*{box-sizing:border-box}[hidden]{display:none!important}body{margin:0}button,input,textarea{font:inherit}button{border:1px solid #d9dce7;background:#fff;color:#222844;cursor:pointer;border-radius:8px;padding:8px 12px;font-weight:650;line-height:1.4}button:hover:not(:disabled){background:#f2f0ff;border-color:#b9aaff}button:disabled{cursor:default;opacity:.5}button:focus-visible,input:focus-visible,textarea:focus-visible,summary:focus-visible,[draggable]:focus-visible{outline:3px solid #b8aaff;outline-offset:2px}input,textarea{width:100%;min-width:0;border:1px solid #d9dce7;background:#fff;color:#12182d;border-radius:8px;padding:9px 10px;line-height:1.5}textarea{resize:vertical}h1,h2,p{margin:0}h1{font-size:20px;letter-spacing:-.4px}h2{font-size:15px}p{line-height:1.6}.muted,small{color:#606579}.app{max-width:1240px;margin:auto;padding:20px}.topbar{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:16px}.topbar p{margin-top:4px;color:#606579}.primary{background:#6850f5;color:#fff;border-color:#6850f5}.primary:hover:not(:disabled){background:#5941df;border-color:#5941df}.top-actions,.actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.intro{display:flex;gap:12px;align-items:flex-start;background:#e8e5fd;border-radius:10px;padding:12px 14px;margin-bottom:16px;color:#222844;font-size:12px}.intro strong{white-space:nowrap}.intro p{line-height:1.55}.layout{display:grid;grid-template-columns:minmax(220px,290px) minmax(0,1fr);gap:16px;align-items:start}.sidebar,.detail{border:1px solid #e1e3ec;border-radius:12px;background:#fff;min-width:0;overflow:hidden}.searchbox{padding:14px;border-bottom:1px solid #ececf4}.search-label{display:block;font-size:11px;font-weight:700;margin-bottom:7px;color:#606579}.list-summary{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-top:10px;color:#606579;font-size:11px}.small-button{padding:4px 7px;font-size:11px}.skill-list{list-style:none;margin:0;padding:7px;max-height:calc(100vh - 265px);min-height:180px;overflow:auto}.skill-card{display:flex;gap:5px;margin:3px 0;border:1px solid transparent;border-radius:8px;position:relative}.skill-card.selected{background:#f1efff;border-color:#c5baff}.skill-card:hover{background:#f6f5fd}.skill-select{background:none!important;border:0!important;border-radius:7px;display:block;flex:1;min-width:0;text-align:left;padding:11px 9px}.skill-title{display:block;font-weight:700;overflow-wrap:anywhere;font-size:12px}.skill-description{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;font-weight:400;color:#606579;font-size:11px;margin-top:4px;line-height:1.5;overflow-wrap:anywhere}.skill-tags{display:block;color:#606579;font-size:10px;margin-top:6px;font-weight:500;overflow-wrap:anywhere}.drag-handle{align-self:flex-start;color:#606579;padding:12px 3px 10px 9px;cursor:grab;font-size:17px;line-height:1}.skill-card[draggable=true]{cursor:grab}.draft-mark{font-size:10px;color:#5941df;display:block;margin-top:4px}.empty-list{padding:26px 17px;text-align:center;color:#606579;font-size:12px;line-height:1.7}.empty-list strong{display:block;color:#222844;font-size:13px;margin-bottom:5px}#more{display:block;width:calc(100% - 24px);margin:0 12px 12px}.feedback{font-size:12px;line-height:1.55;color:#606579;min-height:20px;overflow-wrap:anywhere}.feedback.error{color:#a12841}.feedback.success{color:#266348}.list-feedback{padding:0 14px 10px}.placeholder{padding:48px 24px;text-align:center;color:#606579}.placeholder .symbol{display:inline-block;background:#e8e5fd;color:#222844;border-radius:12px;padding:11px 15px;font-size:21px;margin-bottom:16px}.placeholder h2{color:#222844;margin-bottom:8px}.placeholder p{max-width:380px;margin:0 auto 20px;font-size:12px}.detail-top{display:flex;gap:12px;align-items:flex-start;justify-content:space-between;border-bottom:1px solid #ececf4;padding:15px 18px}.detail-top .muted{font-size:11px;line-height:1.5;margin-top:4px}.detail-top .actions{justify-content:flex-end}.drag-detail{display:inline-flex;gap:7px;align-items:center;cursor:grab;background:#f2f0ff;border:1px solid #d9d1ff;color:#222844;border-radius:7px;padding:7px 10px;font-size:11px;font-weight:650}.drag-detail[aria-disabled=true]{opacity:.5;cursor:default}.editor{padding:18px}.field{margin-bottom:15px}.field label{display:flex;gap:8px;justify-content:space-between;font-size:12px;font-weight:700;margin-bottom:7px}.field label span{font-weight:400;color:#606579;font-size:10px}.field small{display:block;margin-top:5px;font-size:11px;line-height:1.5}.instruction-field{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;min-height:240px;tab-size:2}.description-field{min-height:68px}.bottom-actions{border-top:1px solid #ececf4;margin-top:18px;padding-top:14px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}.danger{color:#a12841}.notice{padding:11px 13px;margin:0 0 16px;border-radius:8px;background:#fff5df;border:1px solid #edce8b;font-size:12px;line-height:1.6;color:#62430c}.notice .actions{margin-top:9px}.editor-footer{margin-top:13px;font-size:10px;line-height:1.5;color:#606579}.counter.error{color:#a12841}footer{margin:14px 2px 0;font-size:11px;color:#606579;line-height:1.6}@media(max-width:740px){.app{padding:14px}.layout{grid-template-columns:minmax(180px,240px) minmax(0,1fr);gap:10px}.intro{display:block}.intro strong{display:block;margin-bottom:3px}.detail-top{display:block;padding:13px}.detail-top .actions{margin-top:10px;justify-content:flex-start}.editor{padding:13px}.instruction-field{min-height:210px}}@media(max-width:560px){.app{padding:12px}.topbar{align-items:flex-start}.top-actions{justify-content:flex-end}.topbar h1{font-size:17px}.topbar p{font-size:11px}.layout{grid-template-columns:minmax(0,1fr)}.skill-list{max-height:225px;min-height:0}.searchbox{padding:12px}.sidebar{border-radius:10px}.placeholder{padding:30px 18px}.top-actions button{font-size:11px;padding:7px 9px}.detail-top{display:flex}.detail-top .actions{margin-top:0;justify-content:flex-end}.drag-detail{display:none}.instruction-field{min-height:260px}}@media(prefers-reduced-motion:no-preference){button{transition:background .12s,border-color .12s}}
+:root{font:13px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#12182d;background:#f9f9fe;color-scheme:light}
+*{box-sizing:border-box}[hidden]{display:none!important}html,body{height:100%;margin:0}body{overflow:hidden}button,input,textarea{font:inherit}
+button{min-height:32px;border:1px solid #d9dce7;background:#fff;color:#222844;cursor:pointer;border-radius:6px;padding:5px 10px;font-size:12px;font-weight:600;line-height:1.4}
+button:hover:not(:disabled){background:#f2f0ff;border-color:#b9aaff}button:disabled{cursor:default;opacity:.5}
+button:focus-visible,input:focus-visible,textarea:focus-visible,[draggable]:focus-visible{outline:2px solid #9987ef;outline-offset:2px}
+input,textarea{width:100%;min-width:0;border:1px solid #d9dce7;background:#fff;color:#12182d;border-radius:6px;padding:6px 8px;line-height:1.5}input{min-height:32px}textarea{resize:vertical}
+h1,h2,p{margin:0}h1{font-size:14px;font-weight:650}h2{font-size:13px;font-weight:650}p{line-height:1.5}.muted{color:#606579}
+.app{height:100%;max-width:1500px;margin:auto;padding:12px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:8px;flex:none;min-height:32px}.toolbar-heading,.top-actions,.actions{display:flex;gap:6px;align-items:center}.top-actions{flex:none}.actions{flex-wrap:wrap}
+.icon-button{display:inline-flex;align-items:center;justify-content:center;width:32px;padding:5px;background:transparent}.icon-button svg{width:16px;height:16px}.back{display:none}
+.primary{background:#6850f5;color:#fff;border-color:#6850f5}.primary:hover:not(:disabled){background:#5941df;border-color:#5941df}
+.layout{display:grid;grid-template-columns:minmax(190px,230px) minmax(0,1fr);gap:12px;flex:1;min-height:0;min-width:0}
+.sidebar,.detail{min-height:0;min-width:0;border:1px solid #e1e3ec;border-radius:8px;background:#fff;overflow:hidden}.sidebar{display:flex;flex-direction:column}.sidebar:has(.skill-list:empty){align-self:start;max-height:100%}
+.searchbox{padding:10px;flex:none;border-bottom:1px solid #ececf4}.search-label{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.list-summary{display:flex;justify-content:space-between;flex-wrap:wrap;gap:4px 8px;margin-top:6px;color:#606579;font-size:11px}
+.skill-list{list-style:none;margin:0;padding:4px;overflow-y:auto;overflow-x:hidden;min-height:0;flex:1}.skill-list:empty{display:none}
+.skill-card{display:flex;gap:2px;margin:2px 0;border:1px solid transparent;border-radius:6px;position:relative}.skill-card.selected{background:#f1efff;border-color:#c5baff}.skill-card:hover{background:#f6f5fd}.skill-card[draggable=true]{cursor:grab}
+.skill-select{background:none!important;border:0!important;border-radius:5px;display:block;flex:1;min-width:0;text-align:left;padding:8px 6px}.skill-title{display:block;font-weight:650;overflow-wrap:anywhere;font-size:12px}
+.skill-description{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;font-weight:400;color:#606579;font-size:11px;margin-top:3px;line-height:1.45;overflow-wrap:anywhere}.skill-description:empty,.skill-tags:empty{display:none}
+.skill-tags{display:block;color:#606579;font-size:10px;margin-top:4px;font-weight:400;overflow-wrap:anywhere}.drag-handle{align-self:flex-start;color:#606579;padding:9px 2px 8px 6px;cursor:grab;font-size:16px;line-height:1}.draft-mark{font-size:10px;color:#5941df;display:block;margin-top:4px}
+.empty-list{padding:16px 10px;color:#606579;font-size:12px;line-height:1.5}#more{flex:none;display:block;width:calc(100% - 20px);margin:6px 10px 10px}
+.feedback{font-size:11px;line-height:1.45;overflow-wrap:anywhere;color:#606579}.feedback:empty{display:none}.feedback.error{color:#a12841}.feedback.success{color:#266348}.list-feedback:not(:empty){flex:none;padding:8px 10px;border-top:1px solid #ececf4}
+.detail{display:flex;flex-direction:column}.detail:has(#editor-wrap[hidden]){align-self:start;border-color:transparent;background:transparent}.placeholder{padding:10px;color:#606579;font-size:12px}
+#editor-wrap{display:flex;flex-direction:column;height:100%;min-height:0}.detail-top{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;flex:none;gap:8px;padding:10px;border-bottom:1px solid #ececf4}.detail-top .muted{font-size:10px;margin-top:3px;line-height:1.4}.detail-top .actions{margin-left:auto;justify-content:flex-end}
+.drag-detail{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;flex:none;cursor:grab;background:#f2f0ff;border:1px solid #d9d1ff;color:#222844;border-radius:6px;font-size:18px}.drag-detail[aria-disabled=true]{opacity:.5;cursor:default}
+.editor{padding:12px;overflow-y:auto;overflow-x:hidden;min-height:0;flex:1;scroll-padding:12px}.field{margin-bottom:10px}.field:last-child{margin-bottom:0}.field label{display:flex;justify-content:space-between;flex-wrap:wrap;gap:3px 8px;font-size:12px;font-weight:600;margin-bottom:5px}.field label span{font-weight:400;color:#606579;font-size:10px}.counter{margin-left:auto}
+.instruction-field{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;min-height:160px;tab-size:2}
+.editor-actions{flex:none;padding:8px 10px;border-top:1px solid #ececf4;background:#fff}.editor-actions .feedback:not(:empty){margin-bottom:6px}.bottom-actions{display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap}.bottom-actions .actions{gap:6px}.danger{color:#a12841}
+.notice{padding:9px 10px;margin:0 0 12px;border-radius:6px;background:#fff5df;border:1px solid #edce8b;font-size:11px;line-height:1.5;color:#62430c}.notice .actions{margin-top:7px}.counter.error{color:#a12841}
+@media(max-width:719px){.app{padding:8px;gap:8px}.layout{display:flex;flex-direction:column;gap:0}.sidebar{height:100%;flex:1}.sidebar:has(.skill-list:empty){height:auto;flex:none;width:100%}.detail{display:none}.editor-open .sidebar{display:none}.editor-open .detail{display:flex;flex:1}.editor-open .back{display:inline-flex;align-items:center;gap:5px}.editor-open .toolbar-title{display:none}.detail-top{padding:8px}.editor{padding:10px}.editor-actions{padding:8px}.top-actions{gap:5px}}
+@media(max-width:360px){button{padding:5px 8px}.top-actions .primary{padding:5px 8px}.icon-button{width:30px}.detail-top .actions{margin-left:0}.bottom-actions{gap:5px}.bottom-actions .actions{gap:5px}}
+@media(max-height:420px){.app{padding-top:8px;padding-bottom:8px;gap:7px}.detail-top{padding-top:7px;padding-bottom:7px}.editor{padding-top:8px;padding-bottom:8px}.editor-actions{padding-top:6px;padding-bottom:6px}}
+@media(prefers-reduced-motion:no-preference){button{transition:background .12s,border-color .12s}}
 </style>
 </head>
 <body>
 <main class="app">
-  <header class="topbar"><div><h1>Skill-Bibliothek</h1><p>Gute Arbeitsweisen einmal festhalten, immer wieder anwenden.</p></div><div class="top-actions"><button id="refresh" type="button" title="Gespeicherte Skills neu laden; Entwürfe bleiben erhalten">Aktualisieren</button><button id="new" class="primary" type="button">＋ Neuer Skill</button></div></header>
-  <aside class="intro"><strong>Für deine nächste Anfrage</strong><p>Ziehe einen gespeicherten Skill in den Chat oder wähle „Im Chat verwenden“. Ergänze deine Aufgabe und bei Bedarf eine Mail oder Datei. Der Skill gilt für die folgende gesendete Anfrage.</p></aside>
+  <header class="topbar"><div class="toolbar-heading"><button id="back" class="back" type="button"><span aria-hidden="true">←</span>Alle Skills</button><h1 class="toolbar-title">Skills</h1></div><div class="top-actions"><button id="refresh" class="icon-button" type="button" aria-label="Skills aktualisieren" title="Skills aktualisieren; Entwürfe bleiben erhalten"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M6.1 8a7 7 0 0 1 11.6-2L20 9M4 15l2.3 3A7 7 0 0 0 17.9 16"/></svg></button><button id="new" class="primary" type="button">＋ Neuer Skill</button></div></header>
   <div class="layout">
     <aside class="sidebar" aria-label="Gespeicherte Skills">
-      <div class="searchbox"><label class="search-label" for="search">BIBLIOTHEK DURCHSUCHEN</label><input id="search" type="search" maxlength="120" placeholder="Titel, Beschreibung, Tags …" autocomplete="off"><div class="list-summary"><span id="count">Skills werden geladen …</span><span id="draft-count"></span></div></div>
+      <div class="searchbox"><label class="search-label" for="search">Skills durchsuchen</label><input id="search" type="search" maxlength="120" placeholder="Skills durchsuchen …" autocomplete="off"><div class="list-summary"><span id="count">Wird geladen …</span><span id="draft-count"></span></div></div>
       <ul id="skills" class="skill-list" aria-label="Skills"></ul>
-      <div id="empty-list" class="empty-list" hidden><strong>Noch keine Skills gespeichert</strong>Lege deinen ersten Skill an oder bitte den Assistenten darum.</div>
+      <div id="empty-list" class="empty-list" hidden>Noch keine Skills.</div>
       <button id="more" type="button" hidden>Weitere Skills laden</button>
       <p id="list-status" class="feedback list-feedback" role="status" aria-live="polite"></p>
     </aside>
     <section class="detail" aria-label="Skill bearbeiten">
-      <div id="placeholder" class="placeholder"><span class="symbol" aria-hidden="true">✧</span><h2>Deine wiederverwendbaren Anweisungen</h2><p>Wähle einen Skill aus oder halte eine Arbeitsweise fest, die dir im Alltag hilft.</p><button id="empty-new" class="primary" type="button">Ersten Skill anlegen</button></div>
+      <div id="placeholder" class="placeholder">Wähle einen Skill aus.</div>
       <div id="editor-wrap" hidden>
-        <header class="detail-top"><div><h2 id="editor-heading">Neuer Skill</h2><p id="revision" class="muted">Noch nicht gespeichert</p></div><div class="actions"><span id="drag-detail" class="drag-detail" draggable="false" aria-disabled="true" title="Gespeicherten Skill in den Chat ziehen"><span aria-hidden="true">⠿</span>In den Chat ziehen</span><button id="use" type="button" disabled>Im Chat verwenden</button></div></header>
+        <header class="detail-top"><div><h2 id="editor-heading">Neuer Skill</h2><p id="revision" class="muted">Noch nicht gespeichert</p></div><div class="actions"><span id="drag-detail" class="drag-detail" draggable="false" aria-disabled="true" aria-label="Skill in den Chat ziehen" title="Skill in den Chat ziehen">⠿</span><button id="use" type="button" disabled>Im Chat verwenden</button></div></header>
         <div class="editor">
-          <div id="uncertain" class="notice" hidden><strong>Der Ausgang der letzten Änderung ist unklar.</strong><p id="uncertain-text">Bitte den gespeicherten Stand prüfen, bevor du erneut speicherst.</p><div class="actions"><button id="check-current" type="button">Gespeicherten Stand prüfen</button></div></div>
-          <div class="field"><label for="title">Titel <span>Pflichtfeld</span></label><input id="title" maxlength="120" placeholder="Zum Beispiel: Kundenmails beantworten" autocomplete="off"></div>
-          <div class="field"><label for="description">Kurzbeschreibung <span>Optional</span></label><input id="description" maxlength="400" placeholder="Wann ist dieser Skill hilfreich?" autocomplete="off"></div>
-          <div class="field"><label for="tags">Tags <span>Optional</span></label><input id="tags" maxlength="500" placeholder="Zum Beispiel: Mail, Kundenservice, Tonalität" autocomplete="off"><small>Mit Kommas trennen, bis zu 12 Tags.</small></div>
-          <div class="field"><label for="instructions">Anweisungen <span id="length" class="counter">0 / 6000 Zeichen</span></label><textarea id="instructions" class="instruction-field" maxlength="6000" rows="12" spellcheck="false" placeholder="Beschreibe Ziel, Vorgehen und gewünschtes Ergebnis.&#10;&#10;Zum Beispiel: Antworte freundlich und knapp. Greife offene Fragen aus der referenzierten Mail auf. Erfinde keine Termine oder Zusagen."></textarea><small>Schreibe klare Arbeitsanweisungen. Im Chat kannst du passende Mails und Dateien zusätzlich anhängen.</small></div>
-          <p id="editor-status" class="feedback" role="status" aria-live="polite"></p>
-          <div class="bottom-actions"><div class="actions"><button id="save" class="primary" type="button">Skill speichern</button><button id="discard" type="button" disabled>Änderungen verwerfen</button></div><button id="delete" class="danger" type="button" hidden>Skill löschen</button></div>
-          <p class="editor-footer">Entwürfe bleiben beim Suchen und Wechseln zwischen Skills erhalten, bis du dieses Fenster schließt. Zum Anwenden bitte zuerst speichern.</p>
+          <div id="uncertain" class="notice" hidden><strong>Der Ausgang der letzten Änderung ist unklar.</strong><p id="uncertain-text">Prüfe den gespeicherten Stand, bevor du erneut speicherst.</p><div class="actions"><button id="check-current" type="button">Gespeicherten Stand prüfen</button></div></div>
+          <div class="field"><label for="title">Titel</label><input id="title" maxlength="120" placeholder="Name des Skills" autocomplete="off"></div>
+          <div class="field"><label for="description">Kurzbeschreibung <span>Optional</span></label><input id="description" maxlength="400" placeholder="Wann ist der Skill hilfreich?" autocomplete="off"></div>
+          <div class="field"><label for="tags">Tags <span>Optional</span></label><input id="tags" maxlength="500" placeholder="Mail, Kundenservice, Tonalität" title="Mit Kommas trennen, bis zu 12 Tags." autocomplete="off"></div>
+          <div class="field"><label for="instructions">Anweisungen <span id="length" class="counter">0 / 6000</span></label><textarea id="instructions" class="instruction-field" maxlength="6000" rows="8" spellcheck="false" placeholder="Ziel, Vorgehen und gewünschtes Ergebnis …"></textarea></div>
         </div>
+        <div class="editor-actions"><p id="editor-status" class="feedback" role="status" aria-live="polite"></p><div class="bottom-actions"><div class="actions"><button id="save" class="primary" type="button">Speichern</button><button id="discard" type="button" disabled>Verwerfen</button></div><button id="delete" class="danger" type="button" hidden>Löschen</button></div></div>
       </div>
     </section>
   </div>
-  <footer>Du kannst den Assistenten auch bitten: „Speichere diese Arbeitsweise als Skill.“ Deine Bibliothek bleibt lokal; ausgewählte Skills werden beim Senden an den gewählten KI-Anbieter übermittelt.</footer>
 </main>
 <script>
 'use strict';
@@ -92,7 +120,7 @@ function updateControls() {
   const draft = drafts.get(selected), dirty = !!draft && changed(draft), saved = !!draft?.skill;
   const blocked = busy || loadingDetail;
   Object.values(fields).forEach(field => { field.disabled = blocked; });
-  $('new').disabled = blocked; $('empty-new').disabled = blocked; $('refresh').disabled = busy;
+  $('new').disabled = blocked; $('back').disabled = blocked; $('refresh').disabled = busy;
   $('save').disabled = blocked || !draft || !dirty || !!draft.uncertain;
   $('discard').disabled = blocked || !dirty || !!draft?.uncertain;
   $('delete').hidden = !saved; $('delete').disabled = blocked || !!draft?.uncertain;
@@ -104,7 +132,8 @@ function updateControls() {
   $('uncertain').hidden = !draft?.uncertain;
   $('check-current').disabled = blocked;
   const characters = fields.instructions.value.length, bytes = encoder.encode(fields.instructions.value).length;
-  $('length').textContent = characters + ' / 6000 Zeichen · ' + bytes + ' / 8192 Bytes';
+  $('length').textContent = characters + ' / 6000';
+  $('length').title = bytes + ' / 8192 UTF-8-Bytes';
   $('length').className = 'counter' + (characters > 6000 || bytes > 8192 ? ' error' : '');
   updateDraftCount();
   for (const item of $('skills').children) {
@@ -116,15 +145,17 @@ function updateControls() {
     item.querySelector('.draft-mark').hidden = !dirtyItem;
   }
 }
-function showDraft(key) {
+function showDraft(key, focusEditor = false) {
   const draft = drafts.get(key);
   selected = key;
+  document.body.classList.add('editor-open');
   $('placeholder').hidden = true; $('editor-wrap').hidden = false;
   Object.keys(fields).forEach(name => { fields[name].value = draft.values[name]; });
   $('editor-heading').textContent = draft.skill ? 'Skill bearbeiten' : 'Neuer Skill';
   $('revision').textContent = draft.skill ? 'Version ' + draft.skill.revision + ' · ' + new Date(draft.skill.updatedAt).toLocaleString('de-DE', { dateStyle: 'medium', timeStyle: 'short' }) : 'Noch nicht gespeichert';
   status('editor-status', draftIsChanged(key) ? 'Nicht gespeicherte Änderungen' : '');
   updateControls();
+  if (focusEditor && matchMedia('(max-width:719px)').matches) fields.title.focus();
 }
 function newSkill() {
   if (busy || loadingDetail) return;
@@ -168,9 +199,7 @@ async function loadList(append = false) {
     result.skills.forEach(appendSkill); nextOffset = result.nextOffset;
     $('count').textContent = result.total + (result.total === 1 ? ' Skill' : ' Skills');
     $('empty-list').hidden = $('skills').children.length > 0;
-    $('empty-list').replaceChildren();
-    const strong = document.createElement('strong'); strong.textContent = $('search').value.trim() ? 'Keine passenden Skills' : 'Noch keine Skills gespeichert';
-    $('empty-list').append(strong, document.createTextNode($('search').value.trim() ? 'Versuche einen anderen Suchbegriff.' : 'Lege deinen ersten Skill an oder bitte den Assistenten darum.'));
+    $('empty-list').textContent = $('search').value.trim() ? 'Keine passenden Skills.' : 'Noch keine Skills.';
     $('more').hidden = !result.hasMore;
     status('list-status', ''); updateControls();
   } catch (error) { if (version === listVersion) status('list-status', error.message, 'error'); }
@@ -193,16 +222,17 @@ async function readSkill(id) {
   throw new Error('Der Skill konnte nicht vollständig geladen werden.');
 }
 async function selectSkill(id) {
-  if (busy || loadingDetail || (id === selected && draftIsChanged(id))) return;
+  if (busy || loadingDetail) return;
+  const focusEditor = $('skills').contains(document.activeElement);
   remember();
-  if (drafts.has(id) && (draftIsChanged(id) || drafts.get(id).uncertain)) { showDraft(id); return; }
+  if (drafts.has(id) && (draftIsChanged(id) || drafts.get(id).uncertain)) { showDraft(id, focusEditor); return; }
   const version = ++detailVersion;
   loadingDetail = true; updateControls(); status('list-status', 'Skill wird geladen …');
   try {
     const loaded = await readSkill(id);
     if (version !== detailVersion) return;
     drafts.set(id, { id, ...loaded, baseline: { ...loaded.values } });
-    loadingDetail = false; showDraft(id); status('list-status', '');
+    loadingDetail = false; showDraft(id, focusEditor); status('list-status', '');
   } catch (error) { if (version === detailVersion) status('list-status', error.message, 'error'); }
   finally { if (version === detailVersion) { loadingDetail = false; updateControls(); } }
 }
@@ -246,6 +276,7 @@ async function deleteSkill() {
     if (result.outcome !== 'completed' || result.deleted !== true) throw Object.assign(new Error('Der Ausgang des Löschens ist unklar. Bitte den gespeicherten Stand prüfen.'), { uncertain: true });
     drafts.delete(key); metadata.delete(key); selected = undefined;
     $('editor-wrap').hidden = true; $('placeholder').hidden = false;
+    document.body.classList.remove('editor-open');
     await loadList(); status('list-status', 'Skill gelöscht.', 'success');
   } catch (error) {
     if (error.uncertain) draft.uncertain = { action: 'delete' };
@@ -269,6 +300,7 @@ async function checkCurrent() {
       if (draft.uncertain.action === 'delete') {
         drafts.delete(key); metadata.delete(key); selected = undefined;
         $('editor-wrap').hidden = true; $('placeholder').hidden = false;
+        document.body.classList.remove('editor-open');
         await loadList(); status('list-status', 'Geprüft: Der Skill ist gelöscht.', 'success');
       } else {
         draft.skill = undefined; draft.uncertain = undefined;
@@ -306,11 +338,19 @@ async function useSkill() {
   finally { busy = false; updateControls(); }
 }
 Object.values(fields).forEach(field => field.addEventListener('input', () => { remember(); updateControls(); status('editor-status', 'Nicht gespeicherte Änderungen'); }));
-$('new').addEventListener('click', newSkill); $('empty-new').addEventListener('click', newSkill);
+$('new').addEventListener('click', newSkill);
+$('back').addEventListener('click', () => {
+  if (busy || loadingDetail) return;
+  remember(); document.body.classList.remove('editor-open');
+  const selectedItem = [...$('skills').children].find(item => item.dataset.id === selected);
+  (selectedItem?.querySelector('button') || $('search')).focus();
+});
 $('search').addEventListener('input', () => { clearTimeout(searchTimer); listVersion++; searchTimer = setTimeout(() => { void loadList(); }, 180); });
 $('refresh').addEventListener('click', async () => {
+  const editorOpen = document.body.classList.contains('editor-open');
   clearTimeout(searchTimer); remember(); await loadList();
   if (selected && selected !== NEW && !draftIsChanged(selected) && !drafts.get(selected)?.uncertain) await selectSkill(selected);
+  if (!editorOpen) document.body.classList.remove('editor-open');
 });
 $('more').addEventListener('click', () => { void loadList(true); });
 $('save').addEventListener('click', () => { void saveSkill(); });

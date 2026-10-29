@@ -2,7 +2,7 @@
 
 [Module catalog](https://github.com/Tiboriuss/OpenVibeDesk-Modules) · [Contributing](https://github.com/Tiboriuss/OpenVibeDesk-Modules/blob/main/CONTRIBUTING.md) · [OVD module contract](https://github.com/Tiboriuss/OpenVibeDesk/blob/main/CONTRIBUTING.md#resource-references)
 
-Skill Library stores reusable working instructions locally and lets the user attach a selected skill to a chat request. For example, a skill can describe how to summarize supplier mail, extract information from a file, or draft an answer in a company's preferred style. Its German interface is called **Skill-Bibliothek**. Version **0.1.0** is a dependency-free process module using OVD module API 1.
+Skill Library stores reusable working instructions locally and lets the user attach a selected skill to a chat request. For example, a skill can describe how to summarize supplier mail, extract information from a file, or draft an answer in a company's preferred style. Its German interface is called **Skill-Bibliothek**. Version **0.1.1** is a dependency-free process module using OVD module API 1.
 
 ## Host compatibility and installation
 
@@ -18,7 +18,9 @@ Ask the Assistant to store a reusable procedure, for example:
 
 The Assistant discovers the library's functions on demand and saves skills only in response to a user request. It can search, read, create, update and delete through the same functions as the library window. Saving or reading a skill does not apply it to the current conversation.
 
-In the window, choose **Neuer Skill**, enter its title, short description, optional comma-separated tags and working instructions, then choose **Skill speichern**. Search matches titles, descriptions and tags; **Weitere Skills laden** retrieves another page. Select a skill to read or edit it. **Skill löschen** removes it from the library. Save and delete use the host's action confirmation flow; the user's saved **Ohne Abfragen** setting governs individual action prompts while code approval remains separate.
+The window uses a compact toolbar without introductory or footer banners. On narrow windows, the list and editor occupy separate panels; use **Alle Skills** to return to the list.
+
+In the window, choose **Neuer Skill**, enter its title, short description, optional comma-separated tags and working instructions, then choose **Speichern**. Search matches titles, descriptions and tags; **Weitere Skills laden** retrieves another page. Select a skill to read or edit it. **Löschen** removes it from the library. Save and delete use the host's action confirmation flow; the user's saved **Ohne Abfragen** setting governs individual action prompts while code approval remains separate.
 
 Unsaved edits remain available while searching or switching skills in the same open window. They are not persistent drafts and are lost when the window closes. Save before applying a changed skill. Updates and deletion require the current revision, so a concurrent Assistant or window edit cannot silently overwrite a newer version. On a revision conflict, read and review the current saved content before making another change.
 

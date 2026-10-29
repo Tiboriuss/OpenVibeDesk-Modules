@@ -2,7 +2,7 @@
   "apiVersion": 1,
   "id": "skill-library",
   "title": "Skill-Bibliothek",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Wiederverwendbare Arbeitsanweisungen als Skills lokal speichern, suchen und bearbeiten. Ausgewählte Skills werden als Chat-Referenz auf die aktuelle Anfrage mit Mail- oder Dateireferenzen angewendet.",
   "keywords": ["skill", "skills", "bibliothek", "arbeitsanweisung", "anleitung", "vorlage", "ablauf", "wiederverwenden"],
   "capabilities": ["skill-library.list", "skill-library.read", "skill-library.save", "skill-library.delete", "skill-library.reference"],
