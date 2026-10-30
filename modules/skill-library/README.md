@@ -1,69 +1,74 @@
 # Skill Library module
 
-[Module catalog](https://github.com/Tiboriuss/OpenVibeDesk-Modules) · [Contributing](https://github.com/Tiboriuss/OpenVibeDesk-Modules/blob/main/CONTRIBUTING.md) · [OVD module contract](https://github.com/Tiboriuss/OpenVibeDesk/blob/main/CONTRIBUTING.md#resource-references)
+[Module catalog](https://github.com/Tiboriuss/OpenVibeDesk-Modules) · [Contributing](https://github.com/Tiboriuss/OpenVibeDesk-Modules/blob/main/CONTRIBUTING.md) · [OVD module contract](https://github.com/Tiboriuss/OpenVibeDesk/blob/main/CONTRIBUTING.md#building-modules)
 
-Skill Library stores reusable working instructions locally and lets the user attach a selected skill to a chat request. For example, a skill can describe how to summarize supplier mail, extract information from a file, or draft an answer in a company's preferred style. Its German interface is called **Skill-Bibliothek**. Version **0.1.1** is a dependency-free process module using OVD module API 1.
+Skill Library stores reusable working instructions locally. Version **0.2.0** presents skills as tiles, organizes them into categories and favorites, and edits them in a modal dialog. The German interface is called **Skill-Bibliothek**. It is a dependency-free process module using OVD module API 1.
 
 ## Host compatibility and installation
 
-This module requires an OVD host build with process reference support: `referenceTypes.snapshotTool`, `referenceTypes.usage` and the `ovd:reference` HTML bridge. These additions are implemented in the adjacent `OpenVibeDesk` checkout. Build and use that host before installing this package. Older OVD builds that validate the earlier API-1 manifest reject the new reference fields; API version 1 alone does not establish compatibility.
+The module requires process reference support (`referenceTypes.snapshotTool`, `referenceTypes.usage` and the `ovd:reference` bridge). The editor is an HTML dialog inside the module and requires no additional host window interface. Module API 1 alone does not establish compatibility. Host changes require explicit prior agreement with the user.
 
-Add `https://github.com/Tiboriuss/OpenVibeDesk-Modules` under **Einstellungen → Module → Modulquellen**, save the source, load the catalog and install **Skill-Bibliothek**. For a private repository, use the repository token field with **Contents: Read-only** access. Review and explicitly approve the module's local code before activation. Open **Skills** from the OVD dock. Changed code requires renewed approval.
+Add this repository under **Einstellungen → Module → Modulquellen**, load the catalog and install **Skill-Bibliothek**. Review and explicitly approve the module's code before activation. Open **Skills** from the dock. Changed code requires renewed approval. Published packages remain immutable.
 
-## Save and manage skills
+## Tiles, favorites and categories
 
-Ask the Assistant to store a reusable procedure, for example:
+Each tile shows a skill's title, description and tags. Drag the tile to chat, or choose **Im Chat verwenden**. The star button adds or removes the favorite mark. The pencil opens the editor dialog; the tile grid contains no inline editing form.
 
-> Save this way of working as a skill called “Answer customer mail”: briefly summarize the customer's concern, list missing information, and draft a friendly reply without promising dates or prices.
+The category navigation always contains **Alle** and **Favoriten**. **Alle** includes every skill; **Favoriten** includes every starred skill regardless of its category. Custom categories appear as skills are assigned to them. **Ohne Kategorie** appears when applicable. The narrow layout keeps category navigation compact above the responsive tile grid.
 
-The Assistant discovers the library's functions on demand and saves skills only in response to a user request. It can search, read, create, update and delete through the same functions as the library window. Saving or reading a skill does not apply it to the current conversation.
+Search matches title, description, category and tags within the selected view. **Weitere Skills laden** retrieves another bounded page. Counts in the category navigation refer to the whole local library, while the grid count reflects the active search and category filter.
 
-The window uses a compact toolbar without introductory or footer banners. On narrow windows, the list and editor occupy separate panels; use **Alle Skills** to return to the list.
+In the editor, enter a category to assign the skill or create a category name. Leave it empty for no category. Names are limited to 60 characters; **Alle** and **Favoriten** are reserved views. Category matching is case-insensitive. There is no separate category deletion operation: a category disappears when no skill belongs to it.
 
-In the window, choose **Neuer Skill**, enter its title, short description, optional comma-separated tags and working instructions, then choose **Speichern**. Search matches titles, descriptions and tags; **Weitere Skills laden** retrieves another page. Select a skill to read or edit it. **Löschen** removes it from the library. Save and delete use the host's action confirmation flow; the user's saved **Ohne Abfragen** setting governs individual action prompts while code approval remains separate.
+## Edit in a dialog
 
-Unsaved edits remain available while searching or switching skills in the same open window. They are not persistent drafts and are lost when the window closes. Save before applying a changed skill. Updates and deletion require the current revision, so a concurrent Assistant or window edit cannot silently overwrite a newer version. On a revision conflict, read and review the current saved content before making another change.
+Choose **Neuer Skill** or a tile's pencil. The editor contains title, optional description, tags, category, favorite mark and working instructions. Save and delete use the existing host confirmation flow; the saved **Ohne Abfragen** setting governs individual Assistant action prompts while code approval remains separate.
 
-## Apply a skill to a request
+The editor opens above the grid and keeps the category navigation in place behind it. Closing with the close button or Escape requires an explicit choice to save, discard or keep editing a dirty draft. Drafts live in the open module window; save before closing the entire library window. An uncertain mutation must first be checked. Successful saves refresh the grid and category counts and keep the dialog open. Deleting closes it. The dialog returns focus to the control that opened it.
 
-1. Drag a saved skill from the list or its detail view into the chat reference area. Alternatively, open it and choose **Im Chat verwenden**.
-2. Add the question or task to the chat. A mail or file may be attached alongside the skill.
-3. Check the selected references and send the request. For example, attach a customer mail and the saved reply skill, then ask: “Draft an answer to this mail using the attached skill.”
+Updates, favorite changes and deletion use the current revision. A concurrent Assistant or editor change cannot silently overwrite a newer skill. On a revision conflict, keep the draft and review the current saved content before another deliberate mutation.
 
-The skill supplies instructions for that submitted request. It is not permanently enabled for the chat or future requests, and selecting it does not send the request or execute actions. An attached mail or file remains source material. The skill grants no additional permissions and does not bypass confirmations or higher-priority host instructions.
+## Use with the Assistant
 
-The drag payload contains only `{moduleId, type, id}`. The approved owning backend resolves the current complete instruction text; the host assigns its instruction role from the approved manifest. An unavailable, deleted or disabled skill cannot silently be applied from an old chat snapshot. Already sent snapshots remain in local chat history as records. When sending, the selected skill's text is sent to the configured AI provider and stored with the chat, just like other selected reference content.
+Ask, for example:
 
-## Data and limits
+> Save this way of working as a skill called “Answer customer mail”, in category “Customer service”: summarize the customer's concern, list missing information, and draft a friendly reply without inventing dates or prices.
 
-Skills and bounded operation receipts are stored in `skills.json` under the host-provided `dataDirectory`, normally `<userData>/module-data/skill-library/`. Installation files and user data are separate. Module updates, disabling the module and removing its repository source preserve this data. The module does not read mail or files itself, access a network service, install dependencies or execute saved instruction text as code.
+The Assistant can search, read, create, update, categorize, favorite and delete through the same validated functions as the interface. Saving, favoriting or reading a skill does not activate its instructions.
+
+To apply a skill, attach it to the chat, add the task and optionally a mail or file, then send. It applies only to that submitted request. Attached mail and files remain source material; the skill grants no additional permissions or action authorization. Selecting a skill alone does not send the request.
+
+Drag payloads contain only `{moduleId, type, id}`. The approved owning backend resolves the complete current instructions, and the host assigns their role from the approved manifest. Deleted, disabled or unavailable skills cannot silently activate an old snapshot. When sending, the selected instructions are sent to the configured AI provider and saved with the local chat.
+
+## Data, upgrades and limits
+
+Skills and durable operation receipts live in `skills.json` under the host's `dataDirectory`, normally `<userData>/module-data/skill-library/`. Updates, disabling and source removal preserve this directory. The module does not access mail or files itself, use a network service or execute saved instructions as code.
+
+Versions before 0.2 use storage schema 1. These files remain readable without an immediate rewrite; existing skills default to no category and not favorited. The next successful mutation atomically writes schema 2 while preserving existing skill IDs, content and operation receipts. Older module versions cannot read schema 2; downgrading is not a supported recovery path. Corrupt or unknown storage is reported and never replaced with an empty library.
 
 - At most **500 skills**.
-- Instructions: at most **6,000 characters** and **8,192 UTF-8 bytes** per skill.
-- Title: 120 characters; description: 400 characters; up to 12 tags of 40 characters each.
-- Lists return metadata only, with a default page of 20 and a maximum of 50. Long results may use a smaller page to stay within the result budget.
-- Reading instructions is paged, at most 4,000 characters per call; the Assistant follows `nextOffset` until complete. A selected chat reference contains the complete bounded instruction text.
+- Instructions: at most **6,000 characters** and **8,192 UTF-8 bytes**.
+- Title: 120 characters; description: 400; category: 60; up to 12 tags of 40 characters each.
+- List and category results are paginated, with at most 50 items per call and smaller pages when needed for the result budget.
+- Instruction reading is paged at 4,000 characters per call. An attached reference contains the complete bounded instruction text.
+- Save arguments also have a 16,000-byte JSON budget; heavily escaped text may require shorter content.
 
-The serialized save request also has a 16,000-byte budget, so heavily escaped content or long metadata may require shorter text. Storage writes are serialized and use atomic file replacement. Unknown or invalid storage formats produce a visible error and are not replaced with an empty library.
+Writes are serialized and use atomic replacement. After a timeout or uncertain result, inspect the saved state before another deliberate mutation. Journalled mutations store matching receipts atomically with their data. Missing receipts are not proof that an earlier action did not happen. The receipt store refuses further journalled mutations after 1,000 receipts rather than discarding execution evidence.
 
-After a timeout or uncertain write result, inspect the saved library or operation status before another deliberate save or delete. The module never automatically repeats an uncertain mutation. Journalled Assistant writes can reconcile a completed action from a receipt saved atomically with its data; absence of a receipt is not proof that an earlier action did not occur. The receipt store is bounded to 1,000 entries and refuses further journalled mutations when full instead of dropping execution evidence.
+## Shared functions
 
-The declared `storage.module-data` permission describes intended access. Like other approved OVD process modules, the backend runs with the user's OS rights; its separate process provides crash isolation rather than an OS sandbox.
+| Tool | Behavior |
+| --- | --- |
+| `skill-library.list` | Search/page through metadata with optional category and favorites filters. |
+| `skill-library.categories` | Page through category names/counts and read global All/Favorites/uncategorized counts. |
+| `skill-library.read` | Read a skill's metadata, current revision and resumable instruction text. |
+| `skill-library.save` | Create or replace on user request; omitted category/favorite fields preserve existing values on update. |
+| `skill-library.set_favorite` | Set the requested favorite state at its expected revision. |
+| `skill-library.delete` | Delete the specified current revision on user request. |
+| `skill-library.reference` | Resolve a selected skill's complete current snapshot. |
 
-## Implementation
-
-[`module.json`](module.json) declares tools, a library view, settings and the `skill` reference type. [`backend.cjs`](backend.cjs) supplies the shared validated implementation; [`library.html`](library.html) and [`settings.html`](settings.html) use the isolated host bridge.
-
-| Tool | Arguments | Behavior |
-| --- | --- | --- |
-| `skill-library.list` | Optional `query`, `offset`, `limit` | Search metadata; returns an exact match count, scope, observation time and continuation. |
-| `skill-library.read` | `id`; optional `offset`, `limit` | Read metadata, revision and a resumable instruction page. |
-| `skill-library.save` | `title`, `description`, `instructions`; optional `tags`, `id`, `expectedRevision` | Create a skill or replace a skill at its expected revision, on user request. |
-| `skill-library.delete` | `id`, `expectedRevision` | Delete the specified current revision, on user request. |
-| `skill-library.reference` | `id` | Resolve the complete current instruction snapshot for an explicitly selected reference. |
-
-The backend also provides the host's optional `prepareOperation` and `reconcile` hooks. These bind stable targets and inspect durable action receipts; they do not repeat the domain action during status checks. Published package versions remain immutable; create a new version with the upstream packaging helper for every release.
+The backend also implements optional `prepareOperation` and `reconcile` hooks for stable action targets and authoritative receipt checks. The declared `storage.module-data` permission describes intended access. The approved backend runs with the user's normal OS rights; its separate process provides crash isolation rather than an OS sandbox.
 
 ## License
 
-Distributed under the [MIT License](LICENSE), following the process-module pattern from the [OVD Notes example](https://github.com/Tiboriuss/OpenVibeDesk/tree/main/examples/notes-module).
+[MIT](LICENSE), following the process-module pattern from the [OVD Notes example](https://github.com/Tiboriuss/OpenVibeDesk/tree/main/examples/notes-module).

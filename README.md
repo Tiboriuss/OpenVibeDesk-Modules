@@ -27,7 +27,7 @@ New or changed module code requires explicit approval, including when **Ohne Abf
 | Module | ID / version | Functions |
 | --- | --- | --- |
 | [Notes / Notizen](modules/sample-notes/README.md) | `sample-notes` / `0.1.0` | Add, list and search local notes through its window or the Assistant. |
-| [Skill Library / Skill-Bibliothek](modules/skill-library/README.md) | `skill-library` / `0.1.1` | Save, find and edit reusable instructions; attach a selected skill to a chat request alongside mail or files. Requires a host with process reference support. |
+| [Skill Library / Skill-Bibliothek](modules/skill-library/README.md) | `skill-library` / `0.2.0` | Browse reusable instructions as tiles, organize categories and favorites, edit skills in a dialog, and attach them to chat requests. Requires a compatible host. |
 
 Notes is a small working example with no extra dependencies. It currently supports adding and reading/searching notes; editing and deletion are not implemented. For example, ask the Assistant: “Save a note: Prepare the presentation for Friday”, then “Find my notes about the presentation”.
 

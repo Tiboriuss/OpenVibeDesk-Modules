@@ -41,11 +41,11 @@
     {
       "id": "skill-library",
       "title": "Skill-Bibliothek",
-      "description": "Wiederverwendbare Arbeitsanweisungen als Skills lokal speichern, suchen und bearbeiten. Ausgewählte Skills werden als Chat-Referenz auf die aktuelle Anfrage mit Mail- oder Dateireferenzen angewendet.",
-      "version": "0.1.1",
+      "description": "Skills als wiederverwendbare Arbeitsanweisungen lokal speichern, nach Kategorien ordnen und favorisieren. Ausgewählte Skills werden als Chat-Referenz auf die aktuelle Anfrage mit Mail- oder Dateireferenzen angewendet.",
+      "version": "0.2.0",
       "apiVersion": 1,
       "package": {
-        "path": "packages/skill-library/0.1.1",
+        "path": "packages/skill-library/0.2.0",
         "files": [
           {
             "path": "LICENSE",
@@ -53,23 +53,23 @@
           },
           {
             "path": "README.md",
-            "sha256": "e46cb33779d9ab7041a3c013bae2cee80a1969ed25302aa38fdf9d8f2bbefe8c"
+            "sha256": "016ea99061db6233fc2b27bf2a5e434d1cf8ff2bcc17bdc64b5e980d770cbaf4"
           },
           {
             "path": "backend.cjs",
-            "sha256": "437028bda253f87a35e52ae77f9f27a5efc4cd006f285e27fec53d0288c3f68b"
+            "sha256": "f18d09d4ea09b1e36fdbd4d1b92e2ddc677f64dd6d1b1fb155ec467bc5bbfd6c"
           },
           {
             "path": "library.html",
-            "sha256": "034deb9eec2afb3e68369ec3e4f94865a66626c741516d034aa7ad8115edca57"
+            "sha256": "bf5c03ee7fe5d913328671d0cabfb592df9d5cd7577e830a9c9aee3636067823"
           },
           {
             "path": "module.json",
-            "sha256": "8451cf7188eefe390436c3e3c93d4408a54aaee59ce43cca149cfc6040ac5d83"
+            "sha256": "520c10495844c9888400348223394290b9bc1ef2886d5b98f639786455a6f411"
           },
           {
             "path": "settings.html",
-            "sha256": "49d95b23cef994f9993a785d90889205316c08d95f506ce1a92ce874344f363b"
+            "sha256": "f400dc05df5c772e83e450d75e48d78680d319716e22ca0303cb6360f6cf28aa"
           }
         ]
       }

@@ -10,7 +10,9 @@ const MAX_INSTRUCTION_BYTES = 8192;
 const MAX_FILE_BYTES = 12 * 1024 * 1024;
 const MAX_RECEIPTS = 1000;
 const MAX_RESULT_BYTES = 30 * 1024;
-const SAVE_FIELDS = ['id', 'expectedRevision', 'title', 'description', 'tags', 'instructions'];
+const SAVE_FIELDS = ['id', 'expectedRevision', 'title', 'description', 'tags', 'instructions', 'category', 'favorite'];
+const WRITE_TOOLS = ['skill-library.save', 'skill-library.delete', 'skill-library.set_favorite'];
+const fold = value => value.normalize('NFKC').toLocaleLowerCase('de-DE');
 const own = (value, key) => Object.hasOwn(value, key);
 
 class SkillError extends Error {
@@ -43,6 +45,15 @@ function tags(value = []) {
   if (new Set(result.map(item => item.toLocaleLowerCase('de-DE'))).size !== result.length) fail('INVALID_ARGUMENTS', 'Schlagwörter dürfen nicht doppelt vorkommen.');
   return result;
 }
+function category(value) {
+  const result = text(value, 'Die Kategorie', 60, false, true);
+  if (['alle', 'favoriten'].includes(fold(result))) fail('RESERVED_CATEGORY', 'Alle und Favoriten sind feste Ansichten und können nicht als eigene Kategorie verwendet werden.');
+  return result;
+}
+function boolean(value, label) {
+  if (typeof value !== 'boolean') fail('INVALID_ARGUMENTS', `${label} muss wahr oder falsch sein.`);
+  return value;
+}
 function saveArguments(args) {
   argsObject(args, SAVE_FIELDS);
   const result = {
@@ -51,6 +62,8 @@ function saveArguments(args) {
     title: text(args.title, 'Der Titel', 120),
     description: text(args.description, 'Die Beschreibung', 400, false, true),
     tags: tags(args.tags),
+    ...(args.category !== undefined ? { category: category(args.category) } : {}),
+    ...(args.favorite !== undefined ? { favorite: boolean(args.favorite, 'Favorit') } : {}),
     instructions: text(args.instructions, 'Die Arbeitsanweisung', MAX_INSTRUCTIONS, true)
   };
   if (result.expectedRevision !== undefined && !result.id) fail('INVALID_ARGUMENTS', 'Eine Versionsprüfung benötigt die ID des vorhandenen Skills.');
@@ -61,9 +74,13 @@ function deleteArguments(args) {
   argsObject(args, ['id', 'expectedRevision']);
   return { id: resourceId(args.id), expectedRevision: integer(args.expectedRevision, undefined, 1, Number.MAX_SAFE_INTEGER - 1) };
 }
+function favoriteArguments(args) {
+  argsObject(args, ['id', 'favorite', 'expectedRevision']);
+  return { id: resourceId(args.id), favorite: boolean(args.favorite, 'Favorit'), expectedRevision: integer(args.expectedRevision, undefined, 1, Number.MAX_SAFE_INTEGER - 1) };
+}
 function metadata(skill) {
-  const { id, title, description, tags: skillTags, revision, createdAt, updatedAt } = skill;
-  return { id, title, description, tags: [...skillTags], revision, createdAt, updatedAt };
+  const { id, title, description, tags: skillTags, revision, createdAt, updatedAt, category: skillCategory = '', favorite = false } = skill;
+  return { id, title, description, tags: [...skillTags], category: skillCategory, favorite, revision, createdAt, updatedAt };
 }
 function validDate(value) { return typeof value === 'string' && value.length <= 100 && Number.isFinite(Date.parse(value)); }
 function validateOperation(operation) {
@@ -89,24 +106,28 @@ exports.activate = async ({ moduleId, dataDirectory }) => {
   };
 
   function validateStore(raw) {
-    if (!raw || typeof raw !== 'object' || Array.isArray(raw) || Object.keys(raw).some(key => !['schemaVersion', 'skills', 'receipts'].includes(key)) || raw.schemaVersion !== 1 || !Array.isArray(raw.skills) || raw.skills.length > MAX_SKILLS || !Array.isArray(raw.receipts) || raw.receipts.length > MAX_RECEIPTS) fail('INVALID_STORE', 'Der Skill-Speicher ist ungültig oder hat ein unbekanntes Format. Bestehende Daten wurden nicht verändert.');
-    const ids = new Set();
+    if (!raw || typeof raw !== 'object' || Array.isArray(raw) || Object.keys(raw).some(key => !['schemaVersion', 'skills', 'receipts'].includes(key)) || ![1, 2].includes(raw.schemaVersion) || !Array.isArray(raw.skills) || raw.skills.length > MAX_SKILLS || !Array.isArray(raw.receipts) || raw.receipts.length > MAX_RECEIPTS) fail('INVALID_STORE', 'Der Skill-Speicher ist ungültig oder hat ein unbekanntes Format. Bestehende Daten wurden nicht verändert.');
+    const ids = new Set(), skills = [];
     for (const skill of raw.skills) {
-      if (!skill || typeof skill !== 'object' || Array.isArray(skill) || Object.keys(skill).some(key => !['id', 'title', 'description', 'tags', 'instructions', 'revision', 'createdAt', 'updatedAt'].includes(key))) fail('INVALID_STORE', 'Der Skill-Speicher enthält einen ungültigen Eintrag.');
-      const normalized = saveArguments({ id: skill.id, title: skill.title, description: skill.description, tags: skill.tags, instructions: skill.instructions });
+      if (!skill || typeof skill !== 'object' || Array.isArray(skill) || Object.keys(skill).some(key => !['id', 'title', 'description', 'tags', 'instructions', 'revision', 'createdAt', 'updatedAt', 'category', 'favorite'].includes(key))) fail('INVALID_STORE', 'Der Skill-Speicher enthält einen ungültigen Eintrag.');
+      if (raw.schemaVersion === 2 && (!own(skill, 'category') || !own(skill, 'favorite'))) fail('INVALID_STORE', 'Der Skill-Speicher enthält unvollständige Kategorien oder Favoriten.');
+      const normalized = saveArguments({ id: skill.id, title: skill.title, description: skill.description, tags: skill.tags, instructions: skill.instructions, category: skill.category ?? '', favorite: skill.favorite ?? false });
       if (ids.has(normalized.id) || !Number.isSafeInteger(skill.revision) || skill.revision < 1 || !validDate(skill.createdAt) || !validDate(skill.updatedAt)) fail('INVALID_STORE', 'Der Skill-Speicher enthält ungültige IDs, Versionen oder Datumsangaben.');
-      if (normalized.title !== skill.title || normalized.description !== skill.description || normalized.instructions !== skill.instructions) fail('INVALID_STORE', 'Der Skill-Speicher enthält ungültige Texte.');
+      if (normalized.title !== skill.title || normalized.description !== skill.description || normalized.instructions !== skill.instructions || (own(skill, 'category') && normalized.category !== skill.category) || (own(skill, 'favorite') && normalized.favorite !== skill.favorite)) fail('INVALID_STORE', 'Der Skill-Speicher enthält ungültige Texte.');
       ids.add(normalized.id);
+      skills.push({ ...skill, category: normalized.category, favorite: normalized.favorite });
     }
     const actions = new Set();
     for (const receipt of raw.receipts) {
-      if (!receipt || typeof receipt !== 'object' || Array.isArray(receipt) || Object.keys(receipt).some(key => !['runId', 'actionId', 'argsHash', 'toolName', 'result'].includes(key)) || !/^[a-f0-9]{64}$/.test(receipt.argsHash) || !['skill-library.save', 'skill-library.delete'].includes(receipt.toolName) || !['runId', 'actionId'].every(key => typeof receipt[key] === 'string' && /^[a-zA-Z0-9_-]{1,128}$/.test(receipt[key]))) fail('INVALID_STORE', 'Ein gespeicherter Aktionsbeleg ist ungültig.');
+      if (!receipt || typeof receipt !== 'object' || Array.isArray(receipt) || Object.keys(receipt).some(key => !['runId', 'actionId', 'argsHash', 'toolName', 'result'].includes(key)) || !/^[a-f0-9]{64}$/.test(receipt.argsHash) || !WRITE_TOOLS.includes(receipt.toolName) || !['runId', 'actionId'].every(key => typeof receipt[key] === 'string' && /^[a-zA-Z0-9_-]{1,128}$/.test(receipt[key]))) fail('INVALID_STORE', 'Ein gespeicherter Aktionsbeleg ist ungültig.');
       const key = JSON.stringify([receipt.runId, receipt.actionId]);
       if (actions.has(key) || !receipt.result || receipt.result.outcome !== 'completed') fail('INVALID_STORE', 'Ein gespeicherter Aktionsbeleg ist ungültig.');
       safeResult(receipt.result);
       actions.add(key);
     }
-    return raw;
+    // Read legacy data without rewriting it. The next deliberate mutation writes
+    // schema 2 atomically together with all skills and existing action receipts.
+    return { schemaVersion: 2, skills, receipts: raw.receipts };
   }
   async function readStore(signal) {
     checkSignal(signal);
@@ -122,7 +143,7 @@ exports.activate = async ({ moduleId, dataDirectory }) => {
       try { return validateStore(raw); }
       catch (error) { if (error instanceof SkillError) fail('INVALID_STORE', 'Der Skill-Speicher enthält ungültige Daten. Bestehende Daten wurden nicht verändert.'); throw error; }
     } catch (error) {
-      if (error.code === 'ENOENT') return { schemaVersion: 1, skills: [], receipts: [] };
+      if (error.code === 'ENOENT') return { schemaVersion: 2, skills: [], receipts: [] };
       throw error;
     } finally { await handle?.close(); }
   }
@@ -165,7 +186,12 @@ exports.activate = async ({ moduleId, dataDirectory }) => {
     const receipt = store.receipts.find(item => sameAction(item, operation));
     if (!receipt) return;
     if (receipt.argsHash !== operation.argsHash || receipt.toolName !== toolName) fail('OPERATION_CONFLICT', 'Diese Aktion wurde bereits mit anderen Parametern gespeichert.');
-    return structuredClone(receipt.result);
+    const result = structuredClone(receipt.result);
+    if (result.skill) {
+      result.skill.category ??= '';
+      result.skill.favorite ??= false;
+    }
+    return result;
   }
   function recordResult(store, toolName, operation, result) {
     if (!operation) return;
@@ -185,7 +211,9 @@ exports.activate = async ({ moduleId, dataDirectory }) => {
 
   const tools = {
     'skill-library.list': tool(async (args, { signal }) => {
-      argsObject(args, ['query', 'offset', 'limit']);
+      argsObject(args, ['query', 'category', 'favoritesOnly', 'offset', 'limit']);
+      const selectedCategory = args.category === undefined ? undefined : category(args.category);
+      const favoritesOnly = args.favoritesOnly === undefined ? false : boolean(args.favoritesOnly, 'Favoritenfilter');
       const query = args.query === undefined ? '' : text(args.query, 'Der Suchtext', 120, false, true);
       const offset = integer(args.offset, 0, 0, MAX_SKILLS);
       const limit = integer(args.limit, 20, 1, 50);
@@ -193,8 +221,8 @@ exports.activate = async ({ moduleId, dataDirectory }) => {
         const store = await readStore(signal);
         const terms = query.toLocaleLowerCase('de-DE').split(/\s+/).filter(Boolean);
         const matches = store.skills.filter(skill => {
-          const haystack = [skill.title, skill.description, ...skill.tags].join(' ').toLocaleLowerCase('de-DE');
-          return terms.every(term => haystack.includes(term));
+          const haystack = [skill.title, skill.description, skill.category, ...skill.tags].join(' ').toLocaleLowerCase('de-DE');
+          return (!favoritesOnly || skill.favorite) && (selectedCategory === undefined || fold(skill.category) === fold(selectedCategory)) && terms.every(term => haystack.includes(term));
         }).sort((a, b) => b.updatedAt.localeCompare(a.updatedAt) || a.id.localeCompare(b.id));
         const skills = [];
         for (const skill of matches.slice(offset, offset + limit)) {
@@ -204,7 +232,26 @@ exports.activate = async ({ moduleId, dataDirectory }) => {
         }
         checkSignal(signal);
         const hasMore = offset + skills.length < matches.length;
-        return { skills, total: matches.length, countExact: true, complete: true, hasMore, ...(hasMore ? { nextOffset: offset + skills.length } : {}), observedAt: new Date().toISOString(), scope: query ? `Lokale Skill-Bibliothek; Titel, Beschreibung und Schlagwörter gefiltert nach: ${query}` : 'Alle lokal gespeicherten Skills' };
+        return { skills, total: matches.length, countExact: true, complete: true, hasMore, ...(hasMore ? { nextOffset: offset + skills.length } : {}), observedAt: new Date().toISOString(), scope: ['Lokale Skill-Bibliothek', ...(selectedCategory !== undefined ? [selectedCategory ? `Kategorie: ${selectedCategory}` : 'Ohne Kategorie'] : []), ...(favoritesOnly ? ['Nur Favoriten'] : []), ...(query ? [`Titel, Beschreibung, Kategorie und Schlagwörter gefiltert nach: ${query}`] : [])].join('; ') };
+      });
+    }),
+    'skill-library.categories': tool(async (args, { signal }) => {
+      argsObject(args, ['query', 'offset', 'limit']);
+      const query = args.query === undefined ? '' : text(args.query, 'Der Suchtext', 120, false, true);
+      const offset = integer(args.offset, 0, 0, MAX_SKILLS), limit = integer(args.limit, 50, 1, 50);
+      return serialize(async () => {
+        const store = await readStore(signal), groups = new Map();
+        for (const skill of store.skills) {
+          if (!skill.category) continue;
+          const key = fold(skill.category), existing = groups.get(key);
+          if (existing) existing.count++;
+          else groups.set(key, { name: skill.category, count: 1 });
+        }
+        const terms = fold(query).split(/\s+/).filter(Boolean);
+        const matches = [...groups.values()].filter(item => terms.every(term => fold(item.name).includes(term))).sort((a, b) => a.name.localeCompare(b.name, 'de-DE'));
+        const categories = matches.slice(offset, offset + limit), hasMore = offset + categories.length < matches.length;
+        checkSignal(signal);
+        return { categories, total: matches.length, allCount: store.skills.length, favoriteCount: store.skills.filter(skill => skill.favorite).length, uncategorizedCount: store.skills.filter(skill => !skill.category).length, countExact: true, complete: true, hasMore, ...(hasMore ? { nextOffset: offset + categories.length } : {}), observedAt: new Date().toISOString(), scope: query ? `Kategorienamen der lokalen Bibliothek gefiltert nach: ${query}; Systemzähler umfassen den gesamten Bestand` : 'Kategorien und Systemzähler der gesamten lokalen Skill-Bibliothek' };
       });
     }),
     'skill-library.read': tool(async (args, { signal }) => {
@@ -231,12 +278,29 @@ exports.activate = async ({ moduleId, dataDirectory }) => {
         if (!previous && values.expectedRevision !== undefined) fail('NOT_FOUND', 'Der zu ersetzende Skill ist nicht mehr vorhanden.');
         if (!previous && store.skills.length >= MAX_SKILLS) fail('LIBRARY_FULL', 'Die Bibliothek ist auf 500 Skills begrenzt.');
         const timestamp = new Date().toISOString();
-        const skill = { id: values.id || randomUUID(), title: values.title, description: values.description, tags: values.tags, instructions: values.instructions, revision: previous ? previous.revision + 1 : 1, createdAt: previous ? previous.createdAt : timestamp, updatedAt: timestamp };
+        const requestedCategory = values.category ?? previous?.category ?? '';
+        const skillCategory = requestedCategory ? store.skills.find(item => fold(item.category) === fold(requestedCategory))?.category || requestedCategory : '';
+        const skill = { id: values.id || randomUUID(), title: values.title, description: values.description, tags: values.tags, category: skillCategory, favorite: values.favorite ?? previous?.favorite ?? false, instructions: values.instructions, revision: previous ? previous.revision + 1 : 1, createdAt: previous ? previous.createdAt : timestamp, updatedAt: timestamp };
         if (previous) store.skills[store.skills.indexOf(previous)] = skill;
         else store.skills.push(skill);
         const result = { outcome: 'completed', skill: metadata(skill) };
         recordResult(store, 'skill-library.save', operation, result);
         await writeStore(store, signal);
+        return result;
+      });
+    }),
+    'skill-library.set_favorite': tool(async (args, { signal, operation }) => {
+      const { id, favorite, expectedRevision } = favoriteArguments(args);
+      return serialize(async () => {
+        const store = await readStore(signal), recorded = receiptResult(store, 'skill-library.set_favorite', operation);
+        if (recorded) return recorded;
+        const previous = existingSkill(store, id);
+        if (previous.revision !== expectedRevision) fail('REVISION_CONFLICT', 'Dieser Skill wurde zwischenzeitlich geändert. Bitte erneut lesen, bevor du den Favoritenstatus änderst.');
+        const skill = previous.favorite === favorite ? previous : { ...previous, favorite, revision: previous.revision + 1, updatedAt: new Date().toISOString() };
+        store.skills[store.skills.indexOf(previous)] = skill;
+        const result = { outcome: 'completed', skill: metadata(skill) };
+        recordResult(store, 'skill-library.set_favorite', operation, result);
+        if (skill !== previous || operation) await writeStore(store, signal);
         return result;
       });
     }),
@@ -268,8 +332,8 @@ exports.activate = async ({ moduleId, dataDirectory }) => {
     tools,
     prepareOperation: async ({ toolName, args }, { signal } = {}) => {
       checkSignal(signal);
-      if (toolName !== 'skill-library.save' && toolName !== 'skill-library.delete') return { args };
-      const normalized = toolName === 'skill-library.save' ? saveArguments(args) : deleteArguments(args);
+      if (!WRITE_TOOLS.includes(toolName)) return { args };
+      const normalized = toolName === 'skill-library.save' ? saveArguments(args) : toolName === 'skill-library.set_favorite' ? favoriteArguments(args) : deleteArguments(args);
       return serialize(async () => {
         const store = await readStore(signal);
         const id = normalized.id || randomUUID();
@@ -279,7 +343,7 @@ exports.activate = async ({ moduleId, dataDirectory }) => {
     },
     reconcile: async ({ toolName, operation }, { signal } = {}) => {
       validateOperation(operation);
-      if (!operation || !['skill-library.save', 'skill-library.delete'].includes(toolName)) return { state: 'unknown', detail: 'Für diese Aktion ist kein dauerhafter Schreibbeleg verfügbar.' };
+      if (!operation || !WRITE_TOOLS.includes(toolName)) return { state: 'unknown', detail: 'Für diese Aktion ist kein dauerhafter Schreibbeleg verfügbar.' };
       return serialize(async () => {
         try {
           const store = await readStore(signal);

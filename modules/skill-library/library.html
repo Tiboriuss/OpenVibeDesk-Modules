@@ -5,83 +5,46 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Skill-Bibliothek</title>
 <style>
-:root{font:13px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#12182d;background:#f9f9fe;color-scheme:light}
-*{box-sizing:border-box}[hidden]{display:none!important}html,body{height:100%;margin:0}body{overflow:hidden}button,input,textarea{font:inherit}
-button{min-height:32px;border:1px solid #d9dce7;background:#fff;color:#222844;cursor:pointer;border-radius:6px;padding:5px 10px;font-size:12px;font-weight:600;line-height:1.4}
-button:hover:not(:disabled){background:#f2f0ff;border-color:#b9aaff}button:disabled{cursor:default;opacity:.5}
-button:focus-visible,input:focus-visible,textarea:focus-visible,[draggable]:focus-visible{outline:2px solid #9987ef;outline-offset:2px}
-input,textarea{width:100%;min-width:0;border:1px solid #d9dce7;background:#fff;color:#12182d;border-radius:6px;padding:6px 8px;line-height:1.5}input{min-height:32px}textarea{resize:vertical}
-h1,h2,p{margin:0}h1{font-size:14px;font-weight:650}h2{font-size:13px;font-weight:650}p{line-height:1.5}.muted{color:#606579}
-.app{height:100%;max-width:1500px;margin:auto;padding:12px;display:flex;flex-direction:column;gap:10px;min-width:0}
-.topbar{display:flex;align-items:center;justify-content:space-between;gap:8px;flex:none;min-height:32px}.toolbar-heading,.top-actions,.actions{display:flex;gap:6px;align-items:center}.top-actions{flex:none}.actions{flex-wrap:wrap}
-.icon-button{display:inline-flex;align-items:center;justify-content:center;width:32px;padding:5px;background:transparent}.icon-button svg{width:16px;height:16px}.back{display:none}
-.primary{background:#6850f5;color:#fff;border-color:#6850f5}.primary:hover:not(:disabled){background:#5941df;border-color:#5941df}
-.layout{display:grid;grid-template-columns:minmax(190px,230px) minmax(0,1fr);gap:12px;flex:1;min-height:0;min-width:0}
-.sidebar,.detail{min-height:0;min-width:0;border:1px solid #e1e3ec;border-radius:8px;background:#fff;overflow:hidden}.sidebar{display:flex;flex-direction:column}.sidebar:has(.skill-list:empty){align-self:start;max-height:100%}
-.searchbox{padding:10px;flex:none;border-bottom:1px solid #ececf4}.search-label{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
-.list-summary{display:flex;justify-content:space-between;flex-wrap:wrap;gap:4px 8px;margin-top:6px;color:#606579;font-size:11px}
-.skill-list{list-style:none;margin:0;padding:4px;overflow-y:auto;overflow-x:hidden;min-height:0;flex:1}.skill-list:empty{display:none}
-.skill-card{display:flex;gap:2px;margin:2px 0;border:1px solid transparent;border-radius:6px;position:relative}.skill-card.selected{background:#f1efff;border-color:#c5baff}.skill-card:hover{background:#f6f5fd}.skill-card[draggable=true]{cursor:grab}
-.skill-select{background:none!important;border:0!important;border-radius:5px;display:block;flex:1;min-width:0;text-align:left;padding:8px 6px}.skill-title{display:block;font-weight:650;overflow-wrap:anywhere;font-size:12px}
-.skill-description{display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden;font-weight:400;color:#606579;font-size:11px;margin-top:3px;line-height:1.45;overflow-wrap:anywhere}.skill-description:empty,.skill-tags:empty{display:none}
-.skill-tags{display:block;color:#606579;font-size:10px;margin-top:4px;font-weight:400;overflow-wrap:anywhere}.drag-handle{align-self:flex-start;color:#606579;padding:9px 2px 8px 6px;cursor:grab;font-size:16px;line-height:1}.draft-mark{font-size:10px;color:#5941df;display:block;margin-top:4px}
-.empty-list{padding:16px 10px;color:#606579;font-size:12px;line-height:1.5}#more{flex:none;display:block;width:calc(100% - 20px);margin:6px 10px 10px}
-.feedback{font-size:11px;line-height:1.45;overflow-wrap:anywhere;color:#606579}.feedback:empty{display:none}.feedback.error{color:#a12841}.feedback.success{color:#266348}.list-feedback:not(:empty){flex:none;padding:8px 10px;border-top:1px solid #ececf4}
-.detail{display:flex;flex-direction:column}.detail:has(#editor-wrap[hidden]){align-self:start;border-color:transparent;background:transparent}.placeholder{padding:10px;color:#606579;font-size:12px}
-#editor-wrap{display:flex;flex-direction:column;height:100%;min-height:0}.detail-top{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;flex:none;gap:8px;padding:10px;border-bottom:1px solid #ececf4}.detail-top .muted{font-size:10px;margin-top:3px;line-height:1.4}.detail-top .actions{margin-left:auto;justify-content:flex-end}
-.drag-detail{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;flex:none;cursor:grab;background:#f2f0ff;border:1px solid #d9d1ff;color:#222844;border-radius:6px;font-size:18px}.drag-detail[aria-disabled=true]{opacity:.5;cursor:default}
-.editor{padding:12px;overflow-y:auto;overflow-x:hidden;min-height:0;flex:1;scroll-padding:12px}.field{margin-bottom:10px}.field:last-child{margin-bottom:0}.field label{display:flex;justify-content:space-between;flex-wrap:wrap;gap:3px 8px;font-size:12px;font-weight:600;margin-bottom:5px}.field label span{font-weight:400;color:#606579;font-size:10px}.counter{margin-left:auto}
-.instruction-field{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;min-height:160px;tab-size:2}
-.editor-actions{flex:none;padding:8px 10px;border-top:1px solid #ececf4;background:#fff}.editor-actions .feedback:not(:empty){margin-bottom:6px}.bottom-actions{display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap}.bottom-actions .actions{gap:6px}.danger{color:#a12841}
-.notice{padding:9px 10px;margin:0 0 12px;border-radius:6px;background:#fff5df;border:1px solid #edce8b;font-size:11px;line-height:1.5;color:#62430c}.notice .actions{margin-top:7px}.counter.error{color:#a12841}
-@media(max-width:719px){.app{padding:8px;gap:8px}.layout{display:flex;flex-direction:column;gap:0}.sidebar{height:100%;flex:1}.sidebar:has(.skill-list:empty){height:auto;flex:none;width:100%}.detail{display:none}.editor-open .sidebar{display:none}.editor-open .detail{display:flex;flex:1}.editor-open .back{display:inline-flex;align-items:center;gap:5px}.editor-open .toolbar-title{display:none}.detail-top{padding:8px}.editor{padding:10px}.editor-actions{padding:8px}.top-actions{gap:5px}}
-@media(max-width:360px){button{padding:5px 8px}.top-actions .primary{padding:5px 8px}.icon-button{width:30px}.detail-top .actions{margin-left:0}.bottom-actions{gap:5px}.bottom-actions .actions{gap:5px}}
-@media(max-height:420px){.app{padding-top:8px;padding-bottom:8px;gap:7px}.detail-top{padding-top:7px;padding-bottom:7px}.editor{padding-top:8px;padding-bottom:8px}.editor-actions{padding-top:6px;padding-bottom:6px}}
-@media(prefers-reduced-motion:no-preference){button{transition:background .12s,border-color .12s}}
+:root{font:13px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#192039;background:#f8f8fc;color-scheme:light}
+*{box-sizing:border-box}[hidden]{display:none!important}html,body{height:100%;margin:0}body{overflow:hidden}button,input{font:inherit}button{min-height:32px;border:1px solid #dce0eb;border-radius:7px;background:#fff;color:#29314c;padding:5px 10px;font-size:12px;font-weight:600;line-height:1.4;cursor:pointer}button:hover:not(:disabled){background:#f1effe;border-color:#c8bdf8}button:disabled{opacity:.5;cursor:default}button:focus-visible,input:focus-visible,[draggable]:focus-visible{outline:2px solid #9079eb;outline-offset:2px}button svg{width:16px;height:16px;flex:none;pointer-events:none}input{width:100%;min-width:0;min-height:34px;padding:6px 10px;border:1px solid #dce0eb;border-radius:7px;background:#fff;color:#192039;line-height:1.5}h1,h2,h3,p{margin:0}h1{font-size:14px;font-weight:650}h2{font-size:13px;font-weight:650}.sr-only{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.app{height:100%;max-width:1600px;margin:auto;padding:12px;display:flex;flex-direction:column;gap:12px;min-width:0}.topbar{display:grid;grid-template-columns:auto minmax(120px,1fr) auto;align-items:center;gap:14px;flex:none;min-width:0}.search{max-width:420px;min-width:0}.top-actions{display:flex;align-items:center;gap:6px;flex:none}.icon-button{display:inline-flex;align-items:center;justify-content:center;width:32px;min-width:32px;padding:5px;background:transparent}.primary{background:#6850f5;border-color:#6850f5;color:white;white-space:nowrap}.primary:hover:not(:disabled){background:#5941df;border-color:#5941df}
+.layout{display:grid;grid-template-columns:160px minmax(0,1fr);gap:14px;flex:1;min-height:0;min-width:0}.sidebar{min-height:0;overflow:auto;padding:4px 2px 8px 0}.sidebar h2{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#777d90;margin:3px 8px 10px}.category-list{display:flex;flex-direction:column;gap:3px}.category-button{display:flex;align-items:center;gap:8px;width:100%;min-height:34px;padding:7px 8px;border-color:transparent;background:transparent;text-align:left;font-size:12px;font-weight:500;min-width:0}.category-button svg{width:15px;height:15px;color:#73798b;flex:none}.category-label{min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.category-count{color:#777d90;font-size:10px;min-width:15px;text-align:right;font-variant-numeric:tabular-nums}.category-button[aria-current=true]{background:#eae5fc;color:#4d35ab;font-weight:650}.category-button[aria-current=true] svg,.category-button[aria-current=true] .category-count{color:#654cc4}.category-divider{height:1px;background:#e6e7f0;margin:8px}.category-error{font-size:11px;color:#a52f45;line-height:1.5;padding:8px;overflow-wrap:anywhere}
+.content{display:flex;flex-direction:column;gap:10px;min-height:0;min-width:0}.content-head{display:flex;align-items:center;gap:8px;min-height:20px;flex:none;min-width:0}.content-head h2{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.result-count{color:#7b8090;font-size:11px;white-space:nowrap;font-variant-numeric:tabular-nums}.feedback{font-size:11px;line-height:1.5;color:#697084;overflow-wrap:anywhere;flex:none}.feedback:empty{display:none}.feedback.error{color:#a52f45}.feedback.success{color:#28634b}.grid-viewport{min-height:0;overflow-y:auto;overflow-x:hidden;flex:1;padding:2px 2px 8px}.skill-grid{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,215px),1fr));gap:10px;align-content:start}.skill-card{min-width:0;display:flex;flex-direction:column;gap:9px;padding:12px;border:1px solid #e0e2ec;border-radius:9px;background:#fff;min-height:183px;cursor:grab}.skill-card:hover{border-color:#c8c0e7;box-shadow:0 2px 5px #20204606}.skill-card[aria-busy=true]{cursor:default}.card-top{display:flex;align-items:center;gap:6px;min-width:0}.category-badge{font-size:10px;color:#777d90;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0;flex:1}.card-buttons{display:flex;gap:2px;flex:none}.card-buttons .icon-button{width:28px;min-width:28px;min-height:28px;height:28px;padding:5px;border-color:transparent;border-radius:6px;color:#767c8e}.card-buttons .favorite[aria-pressed=true]{color:#a77614;background:#fff8e7}.favorite[aria-pressed=true] svg{fill:currentColor;stroke:currentColor}.skill-title{font-size:13px;font-weight:650;line-height:1.45;overflow-wrap:anywhere;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden}.skill-description{font-size:12px;line-height:1.55;color:#697084;overflow-wrap:anywhere;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden}.skill-description:empty{display:none}.skill-tags{display:flex;flex-wrap:wrap;gap:4px;max-height:43px;overflow:hidden}.skill-tags:empty{display:none}.tag{background:#f3f3f8;color:#7a7f90;border-radius:4px;padding:2px 5px;font-size:10px;line-height:1.4;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}.card-bottom{margin-top:auto;padding-top:3px;display:flex;align-items:center;justify-content:space-between;gap:8px}.drag-handle{color:#b1b5c3;display:inline-flex;align-items:center;padding:4px 0;font-size:17px;line-height:1;user-select:none}.use-button{min-height:28px;padding:4px 8px;font-size:11px;border-color:#e5e2f1;background:#faf9ff;color:#655394}.tile-notice{font-size:10px;line-height:1.5;color:#9a5727;overflow-wrap:anywhere;display:flex;align-items:center;gap:6px;flex-wrap:wrap}.tile-notice button{font-size:10px;min-height:25px;padding:3px 6px}.empty{padding:18px 4px;color:#777d90;font-size:12px;line-height:1.5}.more-row{display:flex;justify-content:center;padding:12px 0 2px}#more{min-width:160px}.skill-card.is-opening .edit-button{opacity:.5}.loading-text{color:#7b8090;font-size:11px}
+@media(max-width:650px){.app{padding:10px;gap:10px}.topbar{grid-template-columns:minmax(100px,1fr) auto;gap:8px}.topbar h1{display:none}.search{max-width:none}.layout{display:flex;flex-direction:column;gap:10px}.sidebar{overflow-x:auto;overflow-y:hidden;flex:none;padding:0 0 3px}.sidebar h2{display:none}.category-list{flex-direction:row;gap:5px;width:max-content;min-width:100%;align-items:center}.category-button{width:auto;flex:none;max-width:200px;min-height:32px;border:1px solid #e3e5ef;background:#fff;padding:6px 9px;gap:6px}.category-button[aria-current=true]{border-color:#d1c5fa}.category-count{min-width:0}.category-divider{height:22px;width:1px;margin:0 3px;flex:none}.category-error{padding:5px 2px}.skill-grid{grid-template-columns:repeat(auto-fill,minmax(min(100%,205px),1fr));gap:9px}.skill-card{padding:11px;min-height:175px}.content{gap:8px}}
+@media(max-width:370px){.app{padding:8px}.top-actions{gap:4px}.top-actions .primary{padding:5px 8px;font-size:11px}.top-actions .icon-button{width:30px;min-width:30px}.skill-card{min-height:165px}.skill-grid{grid-template-columns:minmax(0,1fr)}}
+@media(max-height:420px){.app{padding-top:8px;padding-bottom:8px;gap:8px}.content{gap:7px}.layout{gap:10px}}
+@media(prefers-reduced-motion:no-preference){button,.skill-card{transition:background .12s,border-color .12s}}
+
+#skill-editor-dialog{width:min(760px,calc(100vw - 24px));height:min(760px,calc(100dvh - 24px));max-width:calc(100vw - 24px);max-height:calc(100dvh - 24px);margin:auto;padding:0;border:1px solid #dce0eb;border-radius:10px;background:#fff;color:#192039;overflow:hidden;box-shadow:0 16px 50px #19203930}#skill-editor-dialog::backdrop{background:#19203955}#skill-editor-surface{height:100%;min-height:0}
 </style>
 </head>
 <body>
 <main class="app">
-  <header class="topbar"><div class="toolbar-heading"><button id="back" class="back" type="button"><span aria-hidden="true">←</span>Alle Skills</button><h1 class="toolbar-title">Skills</h1></div><div class="top-actions"><button id="refresh" class="icon-button" type="button" aria-label="Skills aktualisieren" title="Skills aktualisieren; Entwürfe bleiben erhalten"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M6.1 8a7 7 0 0 1 11.6-2L20 9M4 15l2.3 3A7 7 0 0 0 17.9 16"/></svg></button><button id="new" class="primary" type="button">＋ Neuer Skill</button></div></header>
+  <header class="topbar"><h1>Skills</h1><div class="search"><label class="sr-only" for="search">Skills durchsuchen</label><input id="search" type="search" maxlength="120" placeholder="Skills durchsuchen …" autocomplete="off"></div><div class="top-actions"><button id="refresh" class="icon-button" type="button" aria-label="Skills aktualisieren" title="Skills aktualisieren"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M6.1 8a7 7 0 0 1 11.6-2L20 9M4 15l2.3 3A7 7 0 0 0 17.9 16"/></svg></button><button id="new" class="primary" type="button">＋ Neuer Skill</button></div></header>
   <div class="layout">
-    <aside class="sidebar" aria-label="Gespeicherte Skills">
-      <div class="searchbox"><label class="search-label" for="search">Skills durchsuchen</label><input id="search" type="search" maxlength="120" placeholder="Skills durchsuchen …" autocomplete="off"><div class="list-summary"><span id="count">Wird geladen …</span><span id="draft-count"></span></div></div>
-      <ul id="skills" class="skill-list" aria-label="Skills"></ul>
-      <div id="empty-list" class="empty-list" hidden>Noch keine Skills.</div>
-      <button id="more" type="button" hidden>Weitere Skills laden</button>
-      <p id="list-status" class="feedback list-feedback" role="status" aria-live="polite"></p>
-    </aside>
-    <section class="detail" aria-label="Skill bearbeiten">
-      <div id="placeholder" class="placeholder">Wähle einen Skill aus.</div>
-      <div id="editor-wrap" hidden>
-        <header class="detail-top"><div><h2 id="editor-heading">Neuer Skill</h2><p id="revision" class="muted">Noch nicht gespeichert</p></div><div class="actions"><span id="drag-detail" class="drag-detail" draggable="false" aria-disabled="true" aria-label="Skill in den Chat ziehen" title="Skill in den Chat ziehen">⠿</span><button id="use" type="button" disabled>Im Chat verwenden</button></div></header>
-        <div class="editor">
-          <div id="uncertain" class="notice" hidden><strong>Der Ausgang der letzten Änderung ist unklar.</strong><p id="uncertain-text">Prüfe den gespeicherten Stand, bevor du erneut speicherst.</p><div class="actions"><button id="check-current" type="button">Gespeicherten Stand prüfen</button></div></div>
-          <div class="field"><label for="title">Titel</label><input id="title" maxlength="120" placeholder="Name des Skills" autocomplete="off"></div>
-          <div class="field"><label for="description">Kurzbeschreibung <span>Optional</span></label><input id="description" maxlength="400" placeholder="Wann ist der Skill hilfreich?" autocomplete="off"></div>
-          <div class="field"><label for="tags">Tags <span>Optional</span></label><input id="tags" maxlength="500" placeholder="Mail, Kundenservice, Tonalität" title="Mit Kommas trennen, bis zu 12 Tags." autocomplete="off"></div>
-          <div class="field"><label for="instructions">Anweisungen <span id="length" class="counter">0 / 6000</span></label><textarea id="instructions" class="instruction-field" maxlength="6000" rows="8" spellcheck="false" placeholder="Ziel, Vorgehen und gewünschtes Ergebnis …"></textarea></div>
-        </div>
-        <div class="editor-actions"><p id="editor-status" class="feedback" role="status" aria-live="polite"></p><div class="bottom-actions"><div class="actions"><button id="save" class="primary" type="button">Speichern</button><button id="discard" type="button" disabled>Verwerfen</button></div><button id="delete" class="danger" type="button" hidden>Löschen</button></div></div>
-      </div>
-    </section>
+    <aside class="sidebar"><nav aria-label="Kategorien"><h2>Kategorien</h2><div id="categories" class="category-list"></div></nav><p id="category-error" class="category-error" role="status" hidden></p></aside>
+    <section class="content" aria-labelledby="category-title"><header class="content-head"><h2 id="category-title">Alle</h2><span id="count" class="result-count">Wird geladen …</span></header><p id="feedback" class="feedback" role="status" aria-live="polite"></p><div id="grid-viewport" class="grid-viewport" aria-busy="false"><ul id="skills" class="skill-grid" aria-label="Skills"></ul><p id="empty" class="empty" hidden>Noch keine Skills.</p><div id="more-row" class="more-row" hidden><button id="more" type="button">Weitere Skills laden</button></div></div></section>
   </div>
 </main>
+<dialog id="skill-editor-dialog" aria-labelledby="skill-editor-dialog-title"><div id="skill-editor-surface"><h2 id="skill-editor-dialog-title" slot="editor-title">Skill bearbeiten</h2></div></dialog>
 <script>
 'use strict';
 const $ = id => document.getElementById(id);
-const fields = { title: $('title'), description: $('description'), tags: $('tags'), instructions: $('instructions') };
-const pending = new Map(), drafts = new Map(), metadata = new Map();
-const encoder = new TextEncoder();
-const NEW = 'new';
-let selected, nextOffset, listVersion = 0, detailVersion = 0, searchTimer, busy = false, loadingDetail = false;
-
+const pending = new Map(), skills = new Map(), mutations = new Map(), uncertain = new Map(), opening = new Set();
+let selectedCategory = { kind: 'all' }, categories = [], categoryCounts = { allCount: 0, favoriteCount: 0, uncategorizedCount: 0 };
+let nextOffset, listVersion = 0, categoryVersion = 0, loadingList = false, searchTimer, focusTimer, lastRefresh = 0;
+const icons = {
+  all: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.2"/><rect x="14" y="3" width="7" height="7" rx="1.2"/><rect x="3" y="14" width="7" height="7" rx="1.2"/><rect x="14" y="14" width="7" height="7" rx="1.2"/></svg>',
+  star: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><path d="m12 3 2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9L12 3Z"/></svg>',
+  edit: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5 4 4M4 20l4.5-1L20 7.5 16.5 4 5 15.5 4 20Z"/></svg>',
+  folder: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z"/></svg>'
+};
 function request(message, mutation = false) {
   return new Promise((resolve, reject) => {
     const requestId = crypto.randomUUID();
     const timer = setTimeout(() => {
       pending.delete(requestId);
-      const error = new Error(mutation ? 'Die Antwort ist ausgeblieben. Der gespeicherte Stand muss zuerst geprüft werden.' : 'Keine Antwort erhalten. Bitte erneut laden.');
+      const error = new Error(mutation ? 'Die Antwort ist ausgeblieben. Bitte den gespeicherten Stand prüfen.' : 'Keine Antwort erhalten. Bitte erneut laden.');
       error.uncertain = mutation; reject(error);
     }, 70000);
     pending.set(requestId, { resolve, reject, timer, mutation });
@@ -93,274 +56,408 @@ addEventListener('message', event => {
   if (event.source !== parent || !event.data || event.data.type !== 'ovd:result') return;
   const call = pending.get(event.data.requestId);
   if (!call) return;
-  clearTimeout(call.timer); pending.delete(event.data.requestId);
+  pending.delete(event.data.requestId); clearTimeout(call.timer);
   const result = event.data.result;
   if (event.data.ok && (result?.outcome === 'cancelled' || result?.cancelled === true)) {
-    const error = new Error(call.mutation ? 'Änderung abgebrochen. Dein Entwurf bleibt erhalten.' : 'Anfrage abgebrochen.');
-    error.code = 'CANCELLED'; error.uncertain = false; call.reject(error); return;
+    const error = new Error('Änderung abgebrochen.'); error.code = 'CANCELLED'; error.uncertain = false; call.reject(error); return;
   }
-  if (event.data.ok && !['failed', 'uncertain'].includes(result?.outcome)) call.resolve(result);
-  else {
-    const error = new Error(event.data.ok ? result.error?.message || 'Die Skill-Anfrage ist fehlgeschlagen.' : typeof event.data.error === 'string' ? event.data.error : 'Die Skill-Anfrage ist fehlgeschlagen.');
-    error.code = result?.error?.code;
-    error.uncertain = call.mutation && (!event.data.ok || result?.outcome === 'uncertain');
-    call.reject(error);
-  }
+  if (event.data.ok && !['failed', 'uncertain'].includes(result?.outcome)) { call.resolve(result); return; }
+  const error = new Error(event.data.ok ? result?.error?.message || 'Die Skill-Anfrage ist fehlgeschlagen.' : typeof event.data.error === 'string' ? event.data.error : 'Die Skill-Anfrage ist fehlgeschlagen.');
+  error.code = result?.error?.code; error.uncertain = call.mutation && (!event.data.ok || result?.outcome === 'uncertain'); call.reject(error);
 });
-function status(id, text, kind = '') { $(id).textContent = text; $(id).className = 'feedback' + (id === 'list-status' ? ' list-feedback' : '') + (kind ? ' ' + kind : ''); }
-function formData() { return { title: fields.title.value, description: fields.description.value, tags: fields.tags.value, instructions: fields.instructions.value }; }
-function changed(draft) { return JSON.stringify(draft.values) !== JSON.stringify(draft.baseline); }
-function remember() { const draft = drafts.get(selected); if (draft && !loadingDetail) draft.values = formData(); }
-function draftIsChanged(id) { const draft = drafts.get(id); return !!draft && changed(draft); }
-function updateDraftCount() {
-  const count = [...drafts.values()].filter(changed).length;
-  $('draft-count').textContent = count ? count + (count === 1 ? ' Entwurf' : ' Entwürfe') : '';
+function status(text = '', kind = '') { $('feedback').textContent = text; $('feedback').className = 'feedback' + (kind ? ' ' + kind : ''); }
+function categoryKey(value) { return JSON.stringify([value.kind, value.name ?? '']); }
+function categoryTitle() { return selectedCategory.kind === 'all' ? 'Alle' : selectedCategory.kind === 'favorites' ? 'Favoriten' : selectedCategory.kind === 'uncategorized' ? 'Ohne Kategorie' : selectedCategory.name; }
+function filters() {
+  return { query: $('search').value.trim(), ...(selectedCategory.kind === 'favorites' ? { favoritesOnly: true } : {}), ...(selectedCategory.kind === 'category' ? { category: selectedCategory.name } : selectedCategory.kind === 'uncategorized' ? { category: '' } : {}) };
 }
-function updateControls() {
-  const draft = drafts.get(selected), dirty = !!draft && changed(draft), saved = !!draft?.skill;
-  const blocked = busy || loadingDetail;
-  Object.values(fields).forEach(field => { field.disabled = blocked; });
-  $('new').disabled = blocked; $('back').disabled = blocked; $('refresh').disabled = busy;
-  $('save').disabled = blocked || !draft || !dirty || !!draft.uncertain;
-  $('discard').disabled = blocked || !dirty || !!draft?.uncertain;
-  $('delete').hidden = !saved; $('delete').disabled = blocked || !!draft?.uncertain;
-  $('use').disabled = blocked || !saved || dirty || !!draft?.uncertain;
-  $('use').title = dirty ? 'Zum Anwenden zuerst speichern' : 'Skill an die folgende Chat-Anfrage anhängen';
-  const draggable = saved && !dirty && !blocked && !draft?.uncertain;
-  $('drag-detail').draggable = !!draggable;
-  $('drag-detail').setAttribute('aria-disabled', String(!draggable));
-  $('uncertain').hidden = !draft?.uncertain;
-  $('check-current').disabled = blocked;
-  const characters = fields.instructions.value.length, bytes = encoder.encode(fields.instructions.value).length;
-  $('length').textContent = characters + ' / 6000';
-  $('length').title = bytes + ' / 8192 UTF-8-Bytes';
-  $('length').className = 'counter' + (characters > 6000 || bytes > 8192 ? ' error' : '');
-  updateDraftCount();
-  for (const item of $('skills').children) {
-    const dirtyItem = draftIsChanged(item.dataset.id), itemDraft = drafts.get(item.dataset.id);
-    item.draggable = !busy && !dirtyItem && !itemDraft?.uncertain;
-    item.classList.toggle('selected', item.dataset.id === selected);
-    item.querySelector('button').setAttribute('aria-pressed', String(item.dataset.id === selected));
-    item.querySelector('button').disabled = blocked;
-    item.querySelector('.draft-mark').hidden = !dirtyItem;
-  }
+function iconButton(name, label, className = '') {
+  const button = document.createElement('button'); button.type = 'button'; button.className = 'icon-button ' + className; button.title = label; button.setAttribute('aria-label', label); button.draggable = false;
+  // Icons are fixed local markup. User-supplied titles and descriptions use textContent.
+  button.innerHTML = icons[name]; button.addEventListener('dragstart', event => event.preventDefault()); return button;
 }
-function showDraft(key, focusEditor = false) {
-  const draft = drafts.get(key);
-  selected = key;
-  document.body.classList.add('editor-open');
-  $('placeholder').hidden = true; $('editor-wrap').hidden = false;
-  Object.keys(fields).forEach(name => { fields[name].value = draft.values[name]; });
-  $('editor-heading').textContent = draft.skill ? 'Skill bearbeiten' : 'Neuer Skill';
-  $('revision').textContent = draft.skill ? 'Version ' + draft.skill.revision + ' · ' + new Date(draft.skill.updatedAt).toLocaleString('de-DE', { dateStyle: 'medium', timeStyle: 'short' }) : 'Noch nicht gespeichert';
-  status('editor-status', draftIsChanged(key) ? 'Nicht gespeicherte Änderungen' : '');
-  updateControls();
-  if (focusEditor && matchMedia('(max-width:719px)').matches) fields.title.focus();
+function categoryButton(value, label, count, icon) {
+  const button = document.createElement('button'); button.type = 'button'; button.className = 'category-button'; button.title = label; button.dataset.key = categoryKey(value); button.setAttribute('aria-current', String(categoryKey(value) === categoryKey(selectedCategory)));
+  button.innerHTML = icons[icon];
+  const name = document.createElement('span'); name.className = 'category-label'; name.textContent = label;
+  const badge = document.createElement('span'); badge.className = 'category-count'; badge.textContent = String(count); badge.setAttribute('aria-label', count + ' Skills');
+  button.append(name, badge); button.addEventListener('click', () => { if (categoryKey(value) === categoryKey(selectedCategory)) return; selectedCategory = value; renderCategories(); $('category-title').textContent = categoryTitle(); void loadList(false, true); }); return button;
 }
-function newSkill() {
-  if (busy || loadingDetail) return;
-  remember(); detailVersion++;
-  if (!drafts.has(NEW)) {
-    const values = { title: '', description: '', tags: '', instructions: '' };
-    drafts.set(NEW, { id: crypto.randomUUID(), values: { ...values }, baseline: values });
-  }
-  showDraft(NEW); fields.title.focus();
+function renderCategories() {
+  const focused = $('categories').contains(document.activeElement) ? document.activeElement?.dataset.key : undefined;
+  const list = $('categories'); list.replaceChildren();
+  list.append(categoryButton({ kind: 'all' }, 'Alle', categoryCounts.allCount, 'all'), categoryButton({ kind: 'favorites' }, 'Favoriten', categoryCounts.favoriteCount, 'star'));
+  const showUncategorized = categoryCounts.uncategorizedCount > 0 || selectedCategory.kind === 'uncategorized';
+  if (categories.length || showUncategorized) { const divider = document.createElement('div'); divider.className = 'category-divider'; divider.setAttribute('aria-hidden', 'true'); list.append(divider); }
+  for (const category of categories) list.append(categoryButton({ kind: 'category', name: category.name }, category.name, category.count, 'folder'));
+  if (selectedCategory.kind === 'category' && !categories.some(category => category.name === selectedCategory.name)) list.append(categoryButton(selectedCategory, selectedCategory.name, 0, 'folder'));
+  if (showUncategorized) list.append(categoryButton({ kind: 'uncategorized' }, 'Ohne Kategorie', categoryCounts.uncategorizedCount, 'folder'));
+  if (focused) [...list.querySelectorAll('button')].find(button => button.dataset.key === focused)?.focus({ preventScroll: true });
 }
-function drag(event, id) {
-  const draft = drafts.get(id);
-  if (busy || !id || id === NEW || draftIsChanged(id) || draft?.uncertain) { event.preventDefault(); return; }
-  const payload = JSON.stringify({ moduleId: 'skill-library', type: 'skill', id });
-  event.dataTransfer.setData('application/x-openvibedesk-reference', payload);
-  event.dataTransfer.setData('text/plain', 'openvibedesk-reference:' + payload);
-  event.dataTransfer.effectAllowed = 'copy';
-}
-function appendSkill(skill) {
-  metadata.set(skill.id, skill);
-  const item = document.createElement('li'); item.className = 'skill-card'; item.dataset.id = skill.id; item.draggable = true;
-  const grip = document.createElement('span'); grip.className = 'drag-handle'; grip.textContent = '⠿'; grip.setAttribute('aria-hidden', 'true'); grip.title = 'Skill in den Chat ziehen';
-  const button = document.createElement('button'); button.type = 'button'; button.className = 'skill-select'; button.setAttribute('aria-pressed', String(skill.id === selected));
-  const title = document.createElement('span'); title.className = 'skill-title'; title.textContent = skill.title;
-  const description = document.createElement('span'); description.className = 'skill-description'; description.textContent = skill.description;
-  const tags = document.createElement('span'); tags.className = 'skill-tags'; tags.textContent = skill.tags.join(' · ');
-  const draft = document.createElement('span'); draft.className = 'draft-mark'; draft.textContent = 'Nicht gespeichert'; draft.hidden = !draftIsChanged(skill.id);
-  button.append(title, description, tags, draft); item.append(grip, button);
-  button.addEventListener('click', () => { void selectSkill(skill.id); });
-  item.addEventListener('dragstart', event => drag(event, skill.id));
-  item.title = 'Auswählen zum Bearbeiten · In den Chat ziehen zum Anwenden';
-  $('skills').append(item);
-}
-async function loadList(append = false) {
-  const version = ++listVersion;
-  $('more').disabled = true; status('list-status', 'Bibliothek wird geladen …');
+async function loadCategories() {
+  const version = ++categoryVersion;
   try {
-    const result = await invoke('list', { query: $('search').value.trim(), offset: append ? nextOffset || 0 : 0, limit: 20 });
-    if (version !== listVersion) return;
-    if (!append) $('skills').replaceChildren();
-    result.skills.forEach(appendSkill); nextOffset = result.nextOffset;
-    $('count').textContent = result.total + (result.total === 1 ? ' Skill' : ' Skills');
-    $('empty-list').hidden = $('skills').children.length > 0;
-    $('empty-list').textContent = $('search').value.trim() ? 'Keine passenden Skills.' : 'Noch keine Skills.';
-    $('more').hidden = !result.hasMore;
-    status('list-status', ''); updateControls();
-  } catch (error) { if (version === listVersion) status('list-status', error.message, 'error'); }
-  finally { if (version === listVersion) $('more').disabled = false; }
+    const rows = []; let offset = 0, totals;
+    for (let page = 0; page < 11; page++) {
+      const result = await invoke('categories', { offset, limit: 50 });
+      if (version !== categoryVersion) return true;
+      if (!Array.isArray(result.categories)) throw new Error('Die Kategorien konnten nicht gelesen werden.');
+      rows.push(...result.categories); totals = result;
+      if (rows.length > 500) throw new Error('Die Kategorienliste ist zu groß.');
+      if (!result.hasMore) break;
+      if (!Number.isInteger(result.nextOffset) || result.nextOffset <= offset || page === 10) throw new Error('Die Kategorienliste ist unvollständig.');
+      offset = result.nextOffset;
+    }
+    categories = [...new Map(rows.map(category => [category.name, category])).values()];
+    categoryCounts = { allCount: totals.allCount, favoriteCount: totals.favoriteCount, uncategorizedCount: totals.uncategorizedCount };
+    renderCategories(); $('category-error').hidden = true; return true;
+  } catch (error) {
+    if (version === categoryVersion) { $('category-error').hidden = false; $('category-error').textContent = error.message; }
+    return false;
+  }
+}
+function drag(event, skill) {
+  if (event.target.closest?.('button') || mutations.has(skill.id)) { event.preventDefault(); return; }
+  const reference = JSON.stringify({ moduleId: 'skill-library', type: 'skill', id: skill.id });
+  event.dataTransfer.setData('application/x-openvibedesk-reference', reference); event.dataTransfer.setData('text/plain', 'openvibedesk-reference:' + reference); event.dataTransfer.effectAllowed = 'copy';
+}
+function tile(skill) {
+  const item = document.createElement('li'); item.className = 'skill-card'; item.dataset.id = skill.id; item.draggable = !mutations.has(skill.id); item.tabIndex = 0; item.title = 'Skill in den Chat ziehen · Mit dem Stift bearbeiten'; item.setAttribute('aria-busy', String(mutations.has(skill.id)));
+  const top = document.createElement('div'); top.className = 'card-top';
+  const category = document.createElement('span'); category.className = 'category-badge'; category.textContent = skill.category || 'Ohne Kategorie'; category.title = skill.category || 'Ohne Kategorie';
+  const buttons = document.createElement('div'); buttons.className = 'card-buttons';
+  const favorite = iconButton('star', skill.favorite ? 'Favorit entfernen: ' + skill.title : 'Als Favorit markieren: ' + skill.title, 'favorite'); favorite.setAttribute('aria-pressed', String(!!skill.favorite)); favorite.disabled = mutations.has(skill.id) || uncertain.has(skill.id); favorite.addEventListener('click', () => { void toggleFavorite(skill.id); });
+  const edit = iconButton('edit', 'Skill bearbeiten: ' + skill.title, 'edit-button'); edit.disabled = opening.has(skill.id); edit.addEventListener('click', () => { void editSkill(skill.id); });
+  buttons.append(favorite, edit); top.append(category, buttons);
+  const title = document.createElement('h3'); title.className = 'skill-title'; title.textContent = skill.title; title.title = skill.title;
+  const description = document.createElement('p'); description.className = 'skill-description'; description.textContent = skill.description;
+  const tags = document.createElement('div'); tags.className = 'skill-tags'; for (const text of skill.tags || []) { const tag = document.createElement('span'); tag.className = 'tag'; tag.textContent = text; tag.title = text; tags.append(tag); }
+  const bottom = document.createElement('div'); bottom.className = 'card-bottom'; const grip = document.createElement('span'); grip.className = 'drag-handle'; grip.textContent = '⠿'; grip.title = 'In den Chat ziehen'; grip.setAttribute('aria-hidden', 'true');
+  const use = document.createElement('button'); use.type = 'button'; use.className = 'use-button'; use.textContent = 'Im Chat verwenden'; use.draggable = false; use.addEventListener('dragstart', event => event.preventDefault()); use.addEventListener('click', () => { void useSkill(skill.id, use); }); bottom.append(grip, use);
+  item.append(top, title, description, tags, bottom);
+  if (uncertain.has(skill.id)) { const notice = document.createElement('div'); notice.className = 'tile-notice'; const label = document.createElement('span'); label.textContent = 'Änderung unklar.'; const check = document.createElement('button'); check.type = 'button'; check.textContent = 'Stand prüfen'; check.disabled = mutations.has(skill.id); check.addEventListener('click', () => { void checkFavorite(skill.id); }); notice.append(label, check); item.append(notice); }
+  item.addEventListener('dragstart', event => drag(event, skill));
+  item.addEventListener('dblclick', event => { if (!event.target.closest('button')) void editSkill(skill.id); });
+  item.addEventListener('keydown', event => { if (event.target === item && event.key === 'Enter') { event.preventDefault(); void editSkill(skill.id); } });
+  return item;
+}
+function renderTiles() {
+  const active = document.activeElement, activeCard = active?.closest?.('.skill-card'), cardId = activeCard?.dataset.id;
+  const control = ['favorite', 'edit-button', 'use-button'].find(name => active?.classList.contains(name));
+  const list = $('skills'); list.replaceChildren(); for (const skill of skills.values()) list.append(tile(skill));
+  if (cardId) { const card = [...list.children].find(item => item.dataset.id === cardId); (control ? card?.querySelector('.' + control) : card)?.focus({ preventScroll: true }); }
+  $('empty').hidden = list.children.length > 0 || loadingList;
+  $('empty').textContent = $('search').value.trim() ? 'Keine passenden Skills.' : selectedCategory.kind === 'favorites' ? 'Noch keine Favoriten.' : selectedCategory.kind === 'all' ? 'Noch keine Skills.' : 'Keine Skills in dieser Kategorie.';
+}
+async function loadList(append = false, clear = false) {
+  const version = ++listVersion, requestedOffset = append ? nextOffset || 0 : 0;
+  loadingList = true; $('more').disabled = true; $('grid-viewport').setAttribute('aria-busy', 'true');
+  if (clear) { skills.clear(); nextOffset = undefined; $('more-row').hidden = true; renderTiles(); $('grid-viewport').scrollTop = 0; }
+  if (!append) $('count').textContent = 'Wird geladen …';
+  try {
+    const result = await invoke('list', { ...filters(), offset: requestedOffset, limit: 24 });
+    if (version !== listVersion) return true;
+    if (!Array.isArray(result.skills)) throw new Error('Die Bibliothek konnte nicht gelesen werden.');
+    if (!append) skills.clear();
+    for (const skill of result.skills) skills.set(skill.id, skill);
+    nextOffset = result.nextOffset;
+    if (result.hasMore && (!Number.isInteger(nextOffset) || nextOffset <= requestedOffset)) throw new Error('Die nächste Ergebnisseite konnte nicht bestimmt werden.');
+    $('count').textContent = result.total + (result.total === 1 ? ' Skill' : ' Skills'); $('more-row').hidden = !result.hasMore;
+    loadingList = false; renderTiles(); return true;
+  } catch (error) {
+    if (version === listVersion) { status(error.message, 'error'); $('count').textContent = skills.size ? skills.size + ' geladen' : ''; }
+    return false;
+  } finally { if (version === listVersion) { loadingList = false; $('grid-viewport').setAttribute('aria-busy', 'false'); $('more').disabled = false; renderTiles(); } }
+}
+async function refreshAll(clear = false) {
+  lastRefresh = Date.now(); $('refresh').disabled = true;
+  const results = await Promise.all([loadCategories(), loadList(false, clear)]);
+  $('refresh').disabled = false; return results.every(Boolean);
+}
+async function toggleFavorite(id) {
+  const skill = skills.get(id); if (!skill || mutations.has(id) || uncertain.has(id)) return;
+  const returnFocus = document.activeElement?.closest?.('.skill-card')?.dataset.id === id && document.activeElement.classList.contains('favorite');
+  mutations.set(id, true); renderTiles();
+  try {
+    const result = await invoke('set_favorite', { id, favorite: !skill.favorite, expectedRevision: skill.revision }, true);
+    if (result.outcome !== 'completed' || !result.skill) throw Object.assign(new Error('Der Ausgang ist unklar. Bitte den gespeicherten Stand prüfen.'), { uncertain: true });
+    skills.set(id, result.skill); mutations.delete(id);
+    const refreshed = await refreshAll();
+    status(refreshed ? result.skill.favorite ? 'Als Favorit gespeichert.' : 'Favorit entfernt.' : 'Favorit gespeichert. Die Ansicht konnte noch nicht vollständig aktualisiert werden.', refreshed ? 'success' : 'error');
+  } catch (error) {
+    if (error.uncertain) uncertain.set(id, true);
+    status(error.message, error.code === 'CANCELLED' ? '' : 'error');
+    if (error.code === 'REVISION_CONFLICT' || error.code === 'NOT_FOUND') await refreshAll();
+  } finally {
+    mutations.delete(id); renderTiles();
+    if (returnFocus && document.hasFocus() && document.activeElement === document.body) {
+      const card = [...$('skills').children].find(item => item.dataset.id === id);
+      (card?.querySelector('.favorite') || $('skills').querySelector('.favorite') || $('categories').querySelector('[aria-current=true]'))?.focus({ preventScroll: true });
+    }
+  }
+}
+async function checkFavorite(id) {
+  if (mutations.has(id)) return;
+  mutations.set(id, true); renderTiles();
+  try {
+    const result = await invoke('read', { id, limit: 2 });
+    if (!result.skill) throw new Error('Der gespeicherte Stand konnte nicht gelesen werden.');
+    uncertain.delete(id); skills.set(id, result.skill); mutations.delete(id);
+    const refreshed = await refreshAll(); status(refreshed ? 'Gespeicherten Stand geprüft.' : 'Gespeicherten Stand geprüft. Bitte die Ansicht erneut aktualisieren.', refreshed ? 'success' : 'error');
+  } catch (error) {
+    if (error.code === 'NOT_FOUND') { uncertain.delete(id); skills.delete(id); mutations.delete(id); await refreshAll(); status('Dieser Skill ist nicht mehr vorhanden.'); }
+    else status('Prüfung fehlgeschlagen: ' + error.message, 'error');
+  } finally { mutations.delete(id); renderTiles(); }
+}
+async function openEditor(id) { await skillEditor.open(id); }
+async function editSkill(id) {
+  const key = id || '__new__'; if (opening.has(key)) return;
+  opening.add(key); $('new').disabled = opening.has('__new__'); renderTiles();
+  try { await openEditor(id); status(''); }
+  catch (error) { status(error.message, 'error'); }
+  finally { opening.delete(key); $('new').disabled = opening.has('__new__'); renderTiles(); }
+}
+async function useSkill(id, button) {
+  if (button.disabled) return; button.disabled = true;
+  try { await request({ type: 'ovd:reference', reference: { moduleId: 'skill-library', type: 'skill', id } }); status('Skill im Chat ausgewählt.', 'success'); }
+  catch (error) { status(error.message, 'error'); }
+  finally { if (button.isConnected) button.disabled = false; }
+}
+function scheduleRefresh() {
+  if (document.hidden) return;
+  clearTimeout(focusTimer); focusTimer = setTimeout(() => { if (Date.now() - lastRefresh >= 500) void refreshAll(); }, 120);
+}
+
+const skillEditor = (() => {
+
+const dialog = document.getElementById('skill-editor-dialog');
+const shadow = document.getElementById('skill-editor-surface').attachShadow({ mode: 'open' });
+shadow.innerHTML = "<style>\n:host{display:block;height:100%;font:13px -apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif;color:#12182d;background:#f9f9fe;color-scheme:light}*{box-sizing:border-box}[hidden]{display:none!important}button,input,textarea{font:inherit}button{min-height:32px;padding:5px 10px;border:1px solid #d9dce7;border-radius:6px;background:#fff;color:#222844;font-size:12px;font-weight:600;cursor:pointer}button:hover:not(:disabled){background:#f2f0ff;border-color:#b9aaff}button:disabled{opacity:.5;cursor:default}button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid #9987ef;outline-offset:2px}input,textarea{width:100%;min-width:0;border:1px solid #d9dce7;border-radius:6px;background:#fff;color:#12182d;padding:6px 8px;line-height:1.5}input{min-height:32px}textarea{resize:vertical}h1,p{margin:0}h1{font-size:14px;font-weight:650}.app{height:100%;min-width:0;margin:0;display:flex;flex-direction:column;overflow:hidden}.topbar{padding:12px;border-bottom:1px solid #ececf4}.editor{border:0;border-radius:0}.notice{margin:10px 12px 0}.notice.recovery{margin:0 0 12px}::slotted([slot=editor-title]){margin:0;font:650 14px -apple-system,BlinkMacSystemFont,\"Segoe UI\",sans-serif}.topbar-actions{display:flex;gap:4px;flex:none}.close-prompt{margin:10px 12px}.close-prompt strong{font-size:12px}.empty{padding:12px}.notice-actions button{white-space:normal}.topbar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex:none}.heading{min-width:0}#revision{font-size:11px;color:#606579;line-height:1.45;margin-top:3px;overflow-wrap:anywhere}.primary{background:#6850f5;color:#fff;border-color:#6850f5}.primary:hover:not(:disabled){background:#5941df;border-color:#5941df}.danger{color:#a12841}.editor{min-height:0;min-width:0;flex:1;display:flex;flex-direction:column;border:1px solid #e1e3ec;border-radius:8px;background:#fff;overflow:hidden}.editor-content{overflow:auto;min-height:0;flex:1;padding:12px}.field{margin-bottom:12px;min-width:0}.field:last-child{margin-bottom:0}.field label{display:flex;justify-content:space-between;gap:4px 10px;flex-wrap:wrap;font-size:12px;font-weight:600;margin-bottom:5px}.field label span{font-size:10px;font-weight:400;color:#606579}.field-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px}.checkbox{display:flex;align-items:center;gap:8px;font-size:12px;min-height:28px;margin:0 0 10px;cursor:pointer}.checkbox input{flex:none;width:16px;height:16px;min-height:0;margin:0;accent-color:#6850f5}.instruction-field{min-height:180px;font:12px/1.6 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;tab-size:2}.counter{margin-left:auto}.counter.error{color:#a12841}.actions-bar{flex:none;padding:8px 10px;border-top:1px solid #ececf4;background:#fff}.actions{display:flex;justify-content:space-between;align-items:center;gap:6px;flex-wrap:wrap}.actions>div{display:flex;gap:6px;flex-wrap:wrap}.feedback{font-size:11px;line-height:1.5;color:#606579;overflow-wrap:anywhere}.feedback:empty{display:none}.feedback:not(:empty){margin-bottom:7px}.feedback.error{color:#a12841}.feedback.success{color:#266348}.notice{flex:none;padding:9px 10px;border:1px solid #edce8b;border-radius:6px;background:#fff5df;color:#62430c;font-size:12px;line-height:1.5}.notice p{margin:3px 0 7px}.notice-actions{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.recovery{margin-bottom:12px}.empty{font-size:12px;color:#606579;padding:10px 0;line-height:1.5}.icon-button{width:32px;padding:5px;display:inline-flex;align-items:center;justify-content:center;flex:none}.icon-button svg{width:16px;height:16px}@media(max-width:540px){.topbar{padding:10px}.editor-content{padding:10px}.field-row{grid-template-columns:minmax(0,1fr);gap:0}.actions-bar{padding:8px}.notice{font-size:11px}.instruction-field{min-height:160px}}@media(max-height:420px){.topbar{padding-top:8px;padding-bottom:8px}.editor-content{padding-top:8px;padding-bottom:8px}.actions-bar{padding-top:6px;padding-bottom:6px}.field{margin-bottom:9px}}@media(max-width:360px){button{padding:5px 8px}.actions,.actions>div{gap:5px}}\n</style><main class=\"app\">\n  <header class=\"topbar\"><div class=\"heading\"><slot name=\"editor-title\"></slot><p id=\"revision\"></p></div><div class=\"topbar-actions\"><button id=\"reload\" class=\"icon-button\" type=\"button\" aria-label=\"Gespeicherten Skill neu laden\" title=\"Gespeicherten Skill neu laden\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" aria-hidden=\"true\"><path d=\"M20 7v5h-5M4 17v-5h5\"/><path d=\"M6.1 8a7 7 0 0 1 11.6-2L20 9M4 15l2.3 3A7 7 0 0 0 17.9 16\"/></svg></button><button id=\"close\" class=\"icon-button\" type=\"button\" aria-label=\"Skill-Editor schließen\" title=\"Schließen\"><svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.8\" aria-hidden=\"true\"><path d=\"m6 6 12 12M6 18 18 6\"/></svg></button></div></header>\n  <aside id=\"close-prompt\" class=\"notice close-prompt\" hidden><strong id=\"close-heading\">Ungespeicherte Änderungen</strong><p id=\"close-message\"></p><div class=\"notice-actions\"><button id=\"close-save\" class=\"primary\" type=\"button\">Speichern und schließen</button><button id=\"close-discard\" type=\"button\">Verwerfen und schließen</button><button id=\"close-check\" type=\"button\" hidden>Gespeicherten Stand prüfen</button><button id=\"close-stay\" type=\"button\">Weiter bearbeiten</button></div></aside>\n  <div id=\"empty\" class=\"empty\"><p id=\"empty-message\">Editor wird geladen …</p><p id=\"empty-error\" class=\"feedback error\" role=\"status\" aria-live=\"polite\"></p></div>\n  <form id=\"editor\" class=\"editor\" hidden novalidate>\n    <div class=\"editor-content\">\n      <div id=\"uncertain\" class=\"notice recovery\" hidden><strong>Der Ausgang der letzten Änderung ist unklar.</strong><p>Prüfe den gespeicherten Stand, bevor du erneut speicherst oder löschst.</p><button id=\"check-current\" type=\"button\">Gespeicherten Stand prüfen</button></div>\n      <div class=\"field\"><label for=\"title\">Titel</label><input id=\"title\" maxlength=\"120\" autocomplete=\"off\" placeholder=\"Name des Skills\" required></div>\n      <div class=\"field\"><label for=\"description\">Kurzbeschreibung <span>Optional</span></label><input id=\"description\" maxlength=\"400\" autocomplete=\"off\" placeholder=\"Wann ist der Skill hilfreich?\"></div>\n      <div class=\"field-row\"><div class=\"field\"><label for=\"category\">Kategorie <span>Optional</span></label><input id=\"category\" list=\"category-options\" maxlength=\"60\" autocomplete=\"off\" placeholder=\"Ohne Kategorie\"><datalist id=\"category-options\"></datalist></div><div class=\"field\"><label for=\"tags\">Tags <span>Optional</span></label><input id=\"tags\" maxlength=\"600\" autocomplete=\"off\" placeholder=\"Mail, Kundenservice\" title=\"Mit Kommas trennen, bis zu 12 Tags.\"></div></div>\n      <label class=\"checkbox\" for=\"favorite\"><input id=\"favorite\" type=\"checkbox\">Als Favorit markieren</label>\n      <div class=\"field\"><label for=\"instructions\">Anweisungen <span id=\"length\" class=\"counter\">0 / 6000</span></label><textarea id=\"instructions\" class=\"instruction-field\" maxlength=\"6000\" rows=\"10\" spellcheck=\"false\" placeholder=\"Ziel, Vorgehen und gewünschtes Ergebnis …\" required></textarea></div>\n    </div>\n    <div class=\"actions-bar\"><p id=\"editor-status\" class=\"feedback\" role=\"status\" aria-live=\"polite\"></p><div class=\"actions\"><div><button id=\"save\" class=\"primary\" type=\"button\">Speichern</button><button id=\"discard\" type=\"button\">Verwerfen</button></div><button id=\"delete\" class=\"danger\" type=\"button\" hidden>Löschen</button></div></div>\n  </form>\n</main>";
+const titleElement = document.getElementById('skill-editor-dialog-title');
+const $ = id => id === 'editor-heading' ? titleElement : shadow.getElementById(id);
+const refreshGrid = refreshAll, reportGrid = status;
+const request = (tool, args = {}, mutation = false) => invoke(tool, args, mutation);
+const fields = { title: $('title'), description: $('description'), category: $('category'), tags: $('tags'), favorite: $('favorite'), instructions: $('instructions') };
+const encoder = new TextEncoder();
+let draft, currentId, busy = false, loading = false, loadVersion = 0, categoriesLoading = false;
+let promptMode, pendingId, opener, openerId;
+
+function editorStatus(text, kind = '') { $('editor-status').textContent = text; $('editor-status').className = 'feedback' + (kind ? ' ' + kind : ''); }
+function blankValues() { return { title: '', description: '', category: '', tags: '', favorite: false, instructions: '' }; }
+function valuesFrom(skill, instructions) { return { title: skill.title, description: skill.description, category: skill.category || '', tags: skill.tags.join(', '), favorite: skill.favorite === true, instructions }; }
+function formData() { return { title: fields.title.value, description: fields.description.value, category: fields.category.value, tags: fields.tags.value, favorite: fields.favorite.checked, instructions: fields.instructions.value }; }
+function changed() { return !!draft && JSON.stringify(draft.values) !== JSON.stringify(draft.baseline); }
+function remember() { if (draft && !loading) draft.values = formData(); }
+function updateControls() {
+  const blocked = busy || loading || !draft;
+  Object.values(fields).forEach(field => { field.disabled = blocked; });
+  $('save').disabled = blocked || !changed() || !!draft?.uncertain;
+  $('discard').disabled = blocked || !changed() || !!draft?.uncertain;
+  $('delete').hidden = !draft?.skill; $('delete').disabled = blocked || !!draft?.uncertain;
+  $('reload').disabled = busy || loading || !currentId || changed() || !!draft?.uncertain;
+  $('reload').title = changed() ? 'Zum Laden des gespeicherten Stands zuerst den Entwurf verwerfen' : 'Gespeicherten Skill neu laden';
+  $('close').disabled = busy;
+  $('uncertain').hidden = !draft?.uncertain; $('check-current').disabled = busy || loading;
+  $('close-prompt').hidden = !promptMode;
+  $('editor').inert = !!promptMode;
+  $('close-save').hidden = !!draft?.uncertain || !changed(); $('close-save').disabled = busy || loading;
+  $('close-discard').hidden = !!draft?.uncertain; $('close-discard').disabled = busy || loading;
+  $('close-check').hidden = !draft?.uncertain; $('close-check').disabled = busy || loading;
+  $('close-stay').disabled = busy || loading;
+  $('close-heading').textContent = draft?.uncertain ? 'Änderung noch ungeklärt' : promptMode === 'switch' ? 'Anderen Skill öffnen?' : 'Ungespeicherte Änderungen';
+  $('close-message').textContent = draft?.uncertain ? 'Prüfe zuerst den gespeicherten Stand. Der aktuelle Entwurf bleibt erhalten.' : 'Dein Entwurf ist noch nicht gespeichert.';
+  $('close-save').textContent = promptMode === 'switch' ? 'Speichern und öffnen' : 'Speichern und schließen';
+  $('close-discard').textContent = changed() ? promptMode === 'switch' ? 'Verwerfen und öffnen' : 'Verwerfen und schließen' : promptMode === 'switch' ? 'Öffnen' : 'Schließen';
+  const characters = fields.instructions.value.length, bytes = encoder.encode(fields.instructions.value).length;
+  $('length').textContent = characters + ' / 6000'; $('length').title = bytes + ' / 8192 UTF-8-Bytes';
+  $('length').className = 'counter' + (characters > 6000 || bytes > 8192 ? ' error' : '');
+}
+function showDraft(focus = false) {
+  $('empty').hidden = !!draft; $('editor').hidden = !draft;
+  if (draft) {
+    for (const [name, field] of Object.entries(fields)) { if (name === 'favorite') field.checked = draft.values.favorite; else field.value = draft.values[name]; }
+    $('editor-heading').textContent = draft.skill ? 'Skill bearbeiten' : 'Neuer Skill';
+    $('revision').textContent = draft.skill ? 'Version ' + draft.skill.revision + ' · ' + new Date(draft.skill.updatedAt).toLocaleString('de-DE', { dateStyle: 'medium', timeStyle: 'short' }) : 'Noch nicht gespeichert';
+  }
+  updateControls();
+  if (focus && draft) fields.title.focus();
 }
 async function readSkill(id) {
   let offset = 0, instructions = '', skill;
   for (let page = 0; page < 4; page++) {
-    const result = await invoke('read', { id, offset, limit: 4000 });
-    if (skill && skill.revision !== result.skill.revision) throw new Error('Der Skill wurde beim Laden geändert. Bitte erneut auswählen.');
+    const result = await request('read', { id, offset, limit: 4000 });
+    if (!result?.skill || typeof result.instructions !== 'string') throw new Error('Der Skill konnte nicht gelesen werden.');
+    if (skill && skill.revision !== result.skill.revision) throw new Error('Der Skill wurde während des Lesens geändert. Bitte erneut laden.');
     skill = result.skill; instructions += result.instructions;
-    if (instructions.length > 6000 || encoder.encode(instructions).length > 8192) throw new Error('Die Skill-Anweisungen überschreiten die erlaubte Größe.');
+    if (instructions.length > 6000 || encoder.encode(instructions).length > 8192) throw new Error('Der Skill überschreitet die erlaubte Textgröße.');
     if (!result.hasMore) {
-      if (!result.complete || result.totalCharacters !== instructions.length) throw new Error('Der Skill konnte nicht vollständig geladen werden.');
-      return { skill, values: { title: skill.title, description: skill.description, tags: skill.tags.join(', '), instructions } };
+      if (!result.complete || result.totalCharacters !== instructions.length) throw new Error('Die Anweisungen konnten nicht vollständig geladen werden.');
+      return { skill, values: valuesFrom(skill, instructions) };
     }
     if (!Number.isInteger(result.nextOffset) || result.nextOffset <= offset) throw new Error('Die Fortsetzung des Skills ist ungültig.');
     offset = result.nextOffset;
   }
-  throw new Error('Der Skill konnte nicht vollständig geladen werden.');
+  throw new Error('Die Anweisungen konnten nicht vollständig geladen werden.');
 }
-async function selectSkill(id) {
-  if (busy || loadingDetail) return;
-  const focusEditor = $('skills').contains(document.activeElement);
-  remember();
-  if (drafts.has(id) && (draftIsChanged(id) || drafts.get(id).uncertain)) { showDraft(id, focusEditor); return; }
-  const version = ++detailVersion;
-  loadingDetail = true; updateControls(); status('list-status', 'Skill wird geladen …');
+async function loadTarget(id) {
+  const version = ++loadVersion;
+  currentId = id || undefined; promptMode = undefined; pendingId = undefined;
+  draft = undefined; loading = true;
+  $('editor-heading').textContent = id ? 'Skill bearbeiten' : 'Neuer Skill'; $('revision').textContent = '';
+  $('empty-message').textContent = 'Skill wird geladen …'; $('empty-error').textContent = ''; showDraft(); editorStatus('');
+  if (!dialog.open) dialog.showModal();
   try {
-    const loaded = await readSkill(id);
-    if (version !== detailVersion) return;
-    drafts.set(id, { id, ...loaded, baseline: { ...loaded.values } });
-    loadingDetail = false; showDraft(id, focusEditor); status('list-status', '');
-  } catch (error) { if (version === detailVersion) status('list-status', error.message, 'error'); }
-  finally { if (version === detailVersion) { loadingDetail = false; updateControls(); } }
+    const loaded = id ? await readSkill(id) : { values: blankValues() };
+    if (!dialog.open || version !== loadVersion) return;
+    draft = { id: id || crypto.randomUUID(), ...loaded, baseline: { ...loaded.values } };
+    loading = false; showDraft(true); void loadCategories();
+  } catch (error) {
+    if (!dialog.open || version !== loadVersion) return;
+    $('empty-message').textContent = 'Der Skill konnte nicht geöffnet werden.'; $('empty-error').textContent = error.message;
+  } finally { if (version === loadVersion) { loading = false; updateControls(); } }
 }
-function saveArgs(draft) {
-  const values = draft.values;
-  const tags = values.tags.split(',').map(tag => tag.trim()).filter(Boolean);
+async function open(id) {
+  if (id !== undefined && (typeof id !== 'string' || !id || id.length > 128)) throw new Error('Die Skill-ID ist ungültig.');
+  if (busy || loading) return;
+  if (dialog.open) {
+    remember();
+    if (draft?.skill && draft.skill.id === id) { fields.title.focus(); return; }
+    if (changed() || draft?.uncertain) { pendingId = id; promptMode = 'switch'; updateControls(); $('close-stay').focus(); return; }
+  } else { opener = document.activeElement; openerId = id; }
+  await loadTarget(id);
+}
+function restoreFocus() {
+  if (opener?.isConnected && !opener.disabled) { opener.focus({ preventScroll: true }); return; }
+  const card = [...document.getElementById('skills').children].find(item => item.dataset.id === openerId);
+  (card?.querySelector('.edit-button') || document.getElementById('new')).focus({ preventScroll: true });
+}
+function finishClose() {
+  loadVersion++; draft = undefined; currentId = undefined; pendingId = undefined; promptMode = undefined; loading = false;
+  dialog.close(); showDraft(); restoreFocus();
+}
+function requestClose() {
+  if (!dialog.open || busy) return;
+  remember();
+  if (changed() || draft?.uncertain) { promptMode = 'close'; pendingId = undefined; updateControls(); $('close-stay').focus(); return; }
+  finishClose();
+}
+async function finishChoice() {
+  if (busy || loading || draft?.uncertain) return;
+  if (promptMode === 'switch') { const id = pendingId; await loadTarget(id); }
+  else finishClose();
+}
+async function loadCategories() {
+  if (categoriesLoading || !dialog.open) return;
+  categoriesLoading = true;
+  try {
+    const names = new Set(); let offset = 0;
+    for (let page = 0; page < 10; page++) {
+      const result = await request('categories', { offset, limit: 50 });
+      if (!dialog.open || !Array.isArray(result?.categories)) return;
+      for (const category of result.categories) if (typeof category.name === 'string' && category.name.length <= 60) names.add(category.name);
+      if (!result.hasMore) break;
+      if (!Number.isInteger(result.nextOffset) || result.nextOffset <= offset) break;
+      offset = result.nextOffset;
+    }
+    const options = [...names].map(name => { const option = document.createElement('option'); option.value = name; return option; });
+    $('category-options').replaceChildren(...options);
+  } catch { /* Category suggestions are optional; typing a category remains available. */ }
+  finally { categoriesLoading = false; }
+}
+function saveArgs() {
+  const values = draft.values, tags = values.tags.split(',').map(value => value.trim()).filter(Boolean);
   if (!values.title.trim() || !values.instructions.trim()) throw new Error('Bitte Titel und Anweisungen ausfüllen.');
   if (values.title.length > 120 || values.description.length > 400) throw new Error('Titel oder Kurzbeschreibung ist zu lang.');
+  if (values.category.length > 60 || ['alle', 'favoriten'].includes(values.category.trim().normalize('NFKC').toLocaleLowerCase('de-DE'))) throw new Error('Bitte eine eigene Kategorie mit bis zu 60 Zeichen verwenden. „Alle“ und „Favoriten“ sind feste Ansichten.');
   if (tags.length > 12 || tags.some(tag => tag.length > 40)) throw new Error('Bitte höchstens 12 Tags mit jeweils bis zu 40 Zeichen verwenden.');
   if (values.instructions.length > 6000 || encoder.encode(values.instructions).length > 8192) throw new Error('Die Anweisungen dürfen höchstens 6000 Zeichen und 8192 Bytes enthalten.');
   const uniqueTags = [...new Map(tags.map(tag => [tag.toLocaleLowerCase('de-DE'), tag])).values()];
-  const args = { id: draft.skill?.id || draft.id, ...(draft.skill ? { expectedRevision: draft.skill.revision } : {}), title: values.title.trim(), description: values.description.trim(), tags: uniqueTags, instructions: values.instructions.trim() };
-  if (encoder.encode(JSON.stringify(args)).length > 16000) throw new Error('Der Skill ist zu groß zum Speichern. Bitte kürze die Anweisungen.');
+  const args = { id: draft.skill?.id || draft.id, ...(draft.skill ? { expectedRevision: draft.skill.revision } : {}), title: values.title.trim(), description: values.description.trim(), category: values.category.trim(), tags: uniqueTags, favorite: values.favorite === true, instructions: values.instructions.trim() };
+  if (encoder.encode(JSON.stringify(args)).length > 16000) throw new Error('Der Skill ist zu groß zum Speichern. Bitte die Anweisungen kürzen.');
   return args;
 }
 async function saveSkill() {
-  if (busy || loadingDetail) return;
-  remember(); const key = selected, draft = drafts.get(key);
-  if (!draft || draft.uncertain) return;
-  let args;
-  try { args = saveArgs(draft); } catch (error) { status('editor-status', error.message, 'error'); return; }
-  busy = true; updateControls(); status('editor-status', 'Skill wird gespeichert …');
+  if (busy || loading || !draft || draft.uncertain) return;
+  remember(); let args;
+  try { args = saveArgs(); } catch (error) { editorStatus(error.message, 'error'); return; }
+  busy = true; updateControls(); editorStatus('Skill wird gespeichert …');
   try {
-    const result = await invoke('save', args, true);
-    if (result.outcome !== 'completed' || !result.skill?.id) throw Object.assign(new Error('Der Ausgang des Speicherns ist unklar. Bitte den gespeicherten Stand prüfen.'), { uncertain: true });
-    const values = { title: result.skill.title, description: result.skill.description, tags: result.skill.tags.join(', '), instructions: args.instructions };
-    drafts.delete(key); drafts.set(result.skill.id, { id: result.skill.id, skill: result.skill, values: { ...values }, baseline: values });
-    selected = result.skill.id; showDraft(selected); await loadList(); status('editor-status', 'Skill gespeichert. Du kannst ihn jetzt im Chat verwenden.', 'success');
+    const result = await request('save', args, true);
+    if (result?.outcome !== 'completed' || !result.skill?.id) throw Object.assign(new Error('Der Ausgang des Speicherns ist unklar. Bitte den gespeicherten Stand prüfen.'), { uncertain: true });
+    const values = valuesFrom(result.skill, args.instructions);
+    draft = { id: result.skill.id, skill: result.skill, values: { ...values }, baseline: { ...values } };
+    currentId = result.skill.id; showDraft(); editorStatus('Skill gespeichert.', 'success');
+    const refreshed = await refreshGrid();
+    if (!refreshed) { reportGrid('Skill gespeichert. Bitte die Bibliotheksansicht erneut aktualisieren.', 'error'); editorStatus('Skill gespeichert. Die Bibliotheksansicht konnte noch nicht aktualisiert werden.', 'success'); }
+    void loadCategories();
   } catch (error) {
     if (error.uncertain) draft.uncertain = { action: 'save', args };
-    status('editor-status', error.message, error.code === 'CANCELLED' ? '' : 'error');
+    editorStatus(error.message, error.code === 'CANCELLED' ? '' : 'error');
   } finally { busy = false; updateControls(); }
 }
 async function deleteSkill() {
-  if (busy || loadingDetail) return;
-  remember(); const key = selected, draft = drafts.get(key);
-  if (!draft?.skill || draft.uncertain) return;
-  busy = true; updateControls(); status('editor-status', 'Löschen wird angefragt …');
+  if (busy || loading || !draft?.skill || draft.uncertain) return;
+  remember(); busy = true; updateControls(); editorStatus('Löschen wird angefragt …');
   try {
-    const result = await invoke('delete', { id: draft.skill.id, expectedRevision: draft.skill.revision }, true);
-    if (result.outcome !== 'completed' || result.deleted !== true) throw Object.assign(new Error('Der Ausgang des Löschens ist unklar. Bitte den gespeicherten Stand prüfen.'), { uncertain: true });
-    drafts.delete(key); metadata.delete(key); selected = undefined;
-    $('editor-wrap').hidden = true; $('placeholder').hidden = false;
-    document.body.classList.remove('editor-open');
-    await loadList(); status('list-status', 'Skill gelöscht.', 'success');
+    const result = await request('delete', { id: draft.skill.id, expectedRevision: draft.skill.revision }, true);
+    if (result?.outcome !== 'completed' || result.deleted !== true) throw Object.assign(new Error('Der Ausgang des Löschens ist unklar. Bitte den gespeicherten Stand prüfen.'), { uncertain: true });
+    draft = undefined; await refreshGrid(); reportGrid('Skill gelöscht.', 'success'); busy = false; finishClose();
   } catch (error) {
     if (error.uncertain) draft.uncertain = { action: 'delete' };
-    status('editor-status', error.message, error.code === 'CANCELLED' ? '' : 'error');
+    editorStatus(error.message, error.code === 'CANCELLED' ? '' : 'error');
   } finally { busy = false; updateControls(); }
 }
 async function checkCurrent() {
-  if (busy || loadingDetail) return;
-  remember(); const key = selected, draft = drafts.get(key);
-  if (!draft?.uncertain) return;
-  loadingDetail = true; updateControls(); status('editor-status', 'Gespeicherter Stand wird geprüft …');
+  if (busy || loading || !draft?.uncertain) return;
+  remember(); const original = draft, action = original.uncertain.action, localValues = { ...original.values };
+  loading = true; updateControls(); editorStatus('Gespeicherter Stand wird geprüft …');
   try {
-    const loaded = await readSkill(draft.skill?.id || draft.id);
-    const localValues = { ...draft.values };
-    drafts.delete(key);
-    drafts.set(loaded.skill.id, { id: loaded.skill.id, skill: loaded.skill, values: localValues, baseline: { ...loaded.values } });
-    loadingDetail = false; showDraft(loaded.skill.id); await loadList();
-    status('editor-status', changed(drafts.get(loaded.skill.id)) ? 'Gespeicherten Stand geprüft. Dein Entwurf bleibt erhalten; du kannst ihn jetzt prüfen und bewusst speichern oder verwerfen.' : 'Gespeicherten Stand geprüft. Der Skill ist gespeichert.', 'success');
+    const loaded = await readSkill(original.skill?.id || original.id);
+    draft = { id: loaded.skill.id, skill: loaded.skill, values: localValues, baseline: { ...loaded.values } };
+    const args = original.uncertain.args;
+    if (action === 'save' && args && loaded.values.title === args.title && loaded.values.description === args.description && loaded.values.category === args.category && loaded.values.favorite === args.favorite && loaded.values.instructions === args.instructions && JSON.stringify(loaded.skill.tags) === JSON.stringify(args.tags)) draft.values = { ...loaded.values };
+    loading = false; showDraft();
+    editorStatus(action === 'delete' ? 'Aktueller Stand: Der Skill ist vorhanden. Bitte vor einer weiteren Änderung prüfen.' : changed() ? 'Gespeicherten Stand geprüft. Dein Entwurf weicht ab; bitte vor erneutem Speichern prüfen.' : 'Geprüft: Der Skill ist gespeichert.', 'success');
   } catch (error) {
     if (error.code === 'NOT_FOUND') {
-      if (draft.uncertain.action === 'delete') {
-        drafts.delete(key); metadata.delete(key); selected = undefined;
-        $('editor-wrap').hidden = true; $('placeholder').hidden = false;
-        document.body.classList.remove('editor-open');
-        await loadList(); status('list-status', 'Geprüft: Der Skill ist gelöscht.', 'success');
-      } else {
-        draft.skill = undefined; draft.uncertain = undefined;
-        draft.baseline = { title: '', description: '', tags: '', instructions: '' };
-        loadingDetail = false; showDraft(key); await loadList();
-        status('editor-status', 'Geprüft: Dieser Skill ist nicht gespeichert. Dein Entwurf bleibt erhalten; du kannst ihn jetzt bewusst neu speichern.', 'success');
-      }
-    } else status('editor-status', 'Prüfung fehlgeschlagen: ' + error.message + ' Der Entwurf bleibt erhalten.', 'error');
-  } finally { loadingDetail = false; updateControls(); }
+      if (action === 'delete') { draft = undefined; $('editor-heading').textContent = 'Skill gelöscht'; $('revision').textContent = ''; $('empty-message').textContent = 'Geprüft: Der Skill ist nicht mehr vorhanden.'; $('empty-error').textContent = ''; loading = false; showDraft(); }
+      else { draft = { id: original.id, values: localValues, baseline: blankValues() }; loading = false; showDraft(); editorStatus('Geprüft: Der Skill ist nicht gespeichert. Dein Entwurf bleibt erhalten; du kannst ihn bewusst neu speichern.', 'success'); }
+    } else editorStatus('Prüfung fehlgeschlagen: ' + error.message + ' Dein Entwurf bleibt erhalten.', 'error');
+  } finally { loading = false; updateControls(); }
 }
 async function discard() {
-  if (busy || loadingDetail) return;
-  const draft = drafts.get(selected);
-  if (!draft || draft.uncertain) return;
-  if (!draft.skill) {
-    draft.values = { ...draft.baseline }; showDraft(selected); status('editor-status', 'Entwurf verworfen.'); return;
-  }
-  const key = selected;
-  loadingDetail = true; updateControls(); status('editor-status', 'Aktueller gespeicherter Stand wird geladen …');
-  try {
-    const loaded = await readSkill(draft.skill.id);
-    drafts.set(key, { id: loaded.skill.id, ...loaded, baseline: { ...loaded.values } });
-    loadingDetail = false; showDraft(key); status('editor-status', 'Entwurf verworfen. Aktueller gespeicherter Stand geladen.');
-  } catch (error) { status('editor-status', 'Der gespeicherte Stand konnte nicht geladen werden: ' + error.message + ' Dein Entwurf bleibt erhalten.', 'error'); }
-  finally { loadingDetail = false; updateControls(); }
+  if (busy || loading || !draft || draft.uncertain) return;
+  if (!draft.skill) { draft.values = { ...draft.baseline }; showDraft(); editorStatus('Entwurf verworfen.'); return; }
+  loading = true; updateControls(); editorStatus('Aktueller gespeicherter Stand wird geladen …');
+  try { const loaded = await readSkill(draft.skill.id); draft = { id: loaded.skill.id, ...loaded, baseline: { ...loaded.values } }; loading = false; showDraft(); editorStatus('Entwurf verworfen. Aktueller Stand geladen.'); }
+  catch (error) { editorStatus(error.message + ' Dein Entwurf bleibt erhalten.', 'error'); }
+  finally { loading = false; updateControls(); }
 }
-async function useSkill() {
-  const draft = drafts.get(selected);
-  if (busy || loadingDetail || !draft?.skill || changed(draft) || draft.uncertain) return;
-  busy = true; updateControls(); status('editor-status', 'Skill wird an den Chat angehängt …');
-  try {
-    await request({ type: 'ovd:reference', reference: { moduleId: 'skill-library', type: 'skill', id: draft.skill.id } });
-    status('editor-status', 'Skill im Chat ausgewählt. Ergänze dort deine Aufgabe und bei Bedarf eine Mail oder Datei.', 'success');
-  } catch (error) { status('editor-status', error.message, 'error'); }
-  finally { busy = false; updateControls(); }
-}
-Object.values(fields).forEach(field => field.addEventListener('input', () => { remember(); updateControls(); status('editor-status', 'Nicht gespeicherte Änderungen'); }));
-$('new').addEventListener('click', newSkill);
-$('back').addEventListener('click', () => {
-  if (busy || loadingDetail) return;
-  remember(); document.body.classList.remove('editor-open');
-  const selectedItem = [...$('skills').children].find(item => item.dataset.id === selected);
-  (selectedItem?.querySelector('button') || $('search')).focus();
-});
-$('search').addEventListener('input', () => { clearTimeout(searchTimer); listVersion++; searchTimer = setTimeout(() => { void loadList(); }, 180); });
-$('refresh').addEventListener('click', async () => {
-  const editorOpen = document.body.classList.contains('editor-open');
-  clearTimeout(searchTimer); remember(); await loadList();
-  if (selected && selected !== NEW && !draftIsChanged(selected) && !drafts.get(selected)?.uncertain) await selectSkill(selected);
-  if (!editorOpen) document.body.classList.remove('editor-open');
-});
-$('more').addEventListener('click', () => { void loadList(true); });
+$('editor').addEventListener('submit', event => { event.preventDefault(); void saveSkill(); });
 $('save').addEventListener('click', () => { void saveSkill(); });
-$('delete').addEventListener('click', () => { void deleteSkill(); });
 $('discard').addEventListener('click', () => { void discard(); });
+$('delete').addEventListener('click', () => { void deleteSkill(); });
 $('check-current').addEventListener('click', () => { void checkCurrent(); });
-$('use').addEventListener('click', () => { void useSkill(); });
-$('drag-detail').addEventListener('dragstart', event => drag(event, selected));
-addEventListener('keydown', event => { if ((event.metaKey || event.ctrlKey) && event.key === 's') { event.preventDefault(); if (!$('save').disabled) void saveSkill(); } });
-void loadList();
+$('reload').addEventListener('click', () => { if (!busy && !loading && currentId && !changed() && !draft?.uncertain) void loadTarget(currentId); });
+$('close').addEventListener('click', requestClose);
+$('close-stay').addEventListener('click', () => { if (busy || loading) return; promptMode = undefined; pendingId = undefined; updateControls(); if (draft) fields.title.focus(); });
+$('close-discard').addEventListener('click', () => { void finishChoice(); });
+$('close-save').addEventListener('click', async () => { if (busy || loading || draft?.uncertain) return; await saveSkill(); if (draft && !changed() && !draft.uncertain) await finishChoice(); });
+$('close-check').addEventListener('click', () => { void checkCurrent(); });
+Object.values(fields).forEach(field => field.addEventListener('input', () => { remember(); updateControls(); editorStatus(changed() ? 'Nicht gespeicherte Änderungen' : ''); }));
+dialog.addEventListener('cancel', event => { event.preventDefault(); requestClose(); });
+dialog.addEventListener('click', event => { const rect = dialog.getBoundingClientRect(); if (event.target === dialog && (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom)) requestClose(); });
+dialog.addEventListener('keydown', event => { if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 's') { event.preventDefault(); if (!$('save').disabled && !promptMode) void saveSkill(); } });
+updateControls();
+return { open, close: requestClose, get dialog() { return dialog; }, get root() { return shadow; } };
+})();
+
+$('new').addEventListener('click', () => { void editSkill(); });
+$('refresh').addEventListener('click', () => { clearTimeout(searchTimer); status(''); void refreshAll(); });
+$('more').addEventListener('click', () => { if (!loadingList) void loadList(true); });
+$('search').addEventListener('input', () => { clearTimeout(searchTimer); listVersion++; searchTimer = setTimeout(() => { void loadList(false, true); }, 180); });
+addEventListener('focus', scheduleRefresh); document.addEventListener('visibilitychange', scheduleRefresh); document.addEventListener('skill:changed', () => { void refreshAll(); });
+renderCategories(); void refreshAll();
 </script>
 </body>
 </html>
