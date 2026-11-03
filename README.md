@@ -28,10 +28,13 @@ New or changed module code requires explicit approval, including when **Ohne Abf
 | --- | --- | --- |
 | [Notes / Notizen](modules/sample-notes/README.md) | `sample-notes` / `0.1.0` | Add, list and search local notes through its window or the Assistant. |
 | [Skill Library / Skill-Bibliothek](modules/skill-library/README.md) | `skill-library` / `0.2.0` | Browse reusable instructions as tiles, organize categories and favorites, edit skills in a dialog, and attach them to chat requests. Requires a compatible host. |
+| [Memory / Gedächtnis](modules/memory/README.md) | `memory` / `0.1.0` | Save and correct sourced memories, automatically recall relevant confirmed facts, and review candidates from optional future chat events. Requires the host memory and event interfaces. |
 
 Notes is a small working example with no extra dependencies. It currently supports adding and reading/searching notes; editing and deletion are not implemented. For example, ask the Assistant: “Save a note: Prepare the presentation for Friday”, then “Find my notes about the presentation”.
 
 Skill Library lets the Assistant save procedures on user request, using the same functions as its library window. Drag a saved skill into chat or choose **Im Chat verwenden**, then add the task and any mail/file references. The skill applies only to that submitted request. Its `snapshotTool` and `usage` manifest fields require a host build containing the new process reference contract; older API-1 hosts do not accept those fields. See its [compatibility and usage guide](modules/skill-library/README.md).
+
+Memory keeps confirmed facts separate from observations awaiting review. The host retrieves relevant confirmed memories before new requests; optional event subscriptions collect future user statements for review without treating assistant answers as facts. The module has no network service or extraction-model dependency. See its [compatibility, learning policy and limits](modules/memory/README.md).
 
 ## Repository layout
 

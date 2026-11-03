@@ -1,0 +1,393 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Gedächtnis</title>
+<style>
+:root{font:13px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#192039;background:#f8f8fc;color-scheme:light}*{box-sizing:border-box}[hidden]{display:none!important}html,body{height:100%;margin:0}body{overflow:hidden}button,input,textarea,select{font:inherit}button{min-height:32px;border:1px solid #dce0eb;border-radius:7px;background:#fff;color:#29314c;padding:5px 10px;font-size:12px;font-weight:600;line-height:1.4;cursor:pointer}button:hover:not(:disabled){background:#f1effe;border-color:#c8bdf8}button:disabled{opacity:.5;cursor:default}button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,[draggable]:focus-visible{outline:2px solid #9079eb;outline-offset:2px}button svg{width:16px;height:16px;flex:none;pointer-events:none}input,textarea,select{width:100%;min-width:0;min-height:34px;padding:6px 9px;border:1px solid #dce0eb;border-radius:7px;background:#fff;color:#192039;line-height:1.5}textarea{resize:vertical;min-height:150px;max-height:420px}h1,h2,h3,p{margin:0}h1{font-size:14px;font-weight:650}h2{font-size:13px;font-weight:650}.sr-only{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}.primary{background:#6850f5;border-color:#6850f5;color:white;white-space:nowrap}.primary:hover:not(:disabled){background:#5941df;border-color:#5941df}.danger{color:#a52f45}.icon-button{display:inline-flex;align-items:center;justify-content:center;width:32px;min-width:32px;padding:5px;background:transparent}
+.app{height:100%;max-width:1600px;margin:auto;padding:12px;display:flex;flex-direction:column;gap:12px;min-width:0}.topbar{display:grid;grid-template-columns:auto minmax(100px,1fr) auto;align-items:center;gap:14px;flex:none;min-width:0}.search{max-width:440px;min-width:0}.top-actions{display:flex;align-items:center;gap:6px;flex:none}.layout{display:grid;grid-template-columns:155px minmax(0,1fr);gap:14px;flex:1;min-height:0;min-width:0}.sidebar{overflow:auto;min-height:0;padding:4px 2px 8px 0}.sidebar h2{font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#777d90;margin:3px 8px 10px}.nav{display:flex;flex-direction:column;gap:3px}.nav-button{display:flex;align-items:center;gap:8px;width:100%;padding:7px 8px;min-height:34px;border-color:transparent;background:transparent;text-align:left;font-weight:500;min-width:0}.nav-button svg{color:#74798d;width:15px;height:15px;flex:none}.nav-label{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.nav-count{font-size:10px;color:#777d90;font-variant-numeric:tabular-nums}.nav-button[aria-current=true]{background:#eae5fc;color:#4d35ab;font-weight:650}.nav-button[aria-current=true] svg,.nav-button[aria-current=true] .nav-count{color:#654cc4}.content{display:flex;flex-direction:column;gap:9px;min-width:0;min-height:0}.content-head{display:flex;align-items:center;gap:8px;min-width:0;flex:none}.result-count{font-size:11px;color:#7b8090;white-space:nowrap;font-variant-numeric:tabular-nums}.scope-filter{margin-left:auto;width:auto;max-width:220px;min-height:30px;font-size:11px;padding:4px 25px 4px 8px}.feedback,.inbox-note{font-size:11px;line-height:1.5;color:#697084;overflow-wrap:anywhere;flex:none}.feedback:empty{display:none}.feedback.error{color:#a52f45}.feedback.success{color:#28634b}.inbox-note{padding:8px 10px;background:#efecfc;border-radius:7px;color:#574d77}.viewport{min-height:0;overflow:auto;flex:1;padding:2px 2px 8px}.memory-grid{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,250px),1fr));gap:10px;align-content:start}.memory-card{background:#fff;border:1px solid #e0e2ec;border-radius:9px;padding:12px;min-width:0;display:flex;flex-direction:column;gap:9px;min-height:205px}.memory-card[draggable=true]{cursor:grab}.memory-card:hover{border-color:#c8c0e7}.card-top{display:flex;align-items:center;gap:6px;min-width:0}.scope-label{font-size:10px;color:#777d90;min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.badge{font-size:10px;line-height:1.4;padding:3px 6px;border-radius:4px;white-space:nowrap;color:#635191;background:#f0ecfc}.badge.candidate{color:#825d1f;background:#fff5df}.badge.expired{color:#985563;background:#fbecf0}.card-top .icon-button{border-color:transparent;color:#777d90;min-height:28px;width:28px;min-width:28px}.memory-title{font-size:13px;font-weight:650;line-height:1.45;overflow-wrap:anywhere;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}.memory-text{color:#586177;font-size:12px;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:4;overflow:hidden}.source-label{margin-top:auto;color:#858a99;font-size:10px;line-height:1.5;overflow-wrap:anywhere;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}.card-bottom{display:flex;align-items:center;justify-content:space-between;gap:7px}.date{font-size:10px;color:#858a99;min-width:0}.card-action{font-size:11px;min-height:28px;padding:4px 8px;color:#655394;background:#faf9ff;border-color:#e5e2f1}.empty{font-size:12px;color:#777d90;line-height:1.6;padding:18px 4px}.more-row{display:flex;justify-content:center;padding:12px 0 2px}
+dialog{width:min(720px,calc(100vw - 24px));height:min(740px,calc(100dvh - 24px));max-width:calc(100vw - 24px);max-height:calc(100dvh - 24px);margin:auto;padding:0;border:1px solid #dce0eb;border-radius:10px;background:white;color:#192039;overflow:hidden;box-shadow:0 16px 50px #19203930}dialog::backdrop{background:#19203955}.editor{display:flex;flex-direction:column;height:100%;min-height:0}.editor-head{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid #e8e9f1;flex:none}.editor-head h2{font-size:14px;flex:1}.editor-body{flex:1;min-height:0;overflow:auto;padding:14px 16px;display:flex;flex-direction:column;gap:13px}.field{display:flex;flex-direction:column;gap:5px;min-width:0}.field label{font-size:11px;font-weight:650;color:#60687d}.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field-note{font-size:10px;color:#858a99;line-height:1.5}.editor-origin{font-size:11px;color:#736341;background:#fff8e8;border-radius:6px;padding:8px 10px;line-height:1.55;overflow-wrap:anywhere}.editor-feedback{font-size:11px;line-height:1.5;color:#697084;white-space:pre-wrap;overflow-wrap:anywhere}.editor-feedback.error{color:#a52f45}.editor-feedback.success{color:#28634b}.editor-feedback:empty{display:none}.recovery{background:#fff6e7;border:1px solid #edddbd;border-radius:7px;padding:10px;font-size:11px;color:#775a2f;line-height:1.5}.recovery-actions{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.editor-footer{flex:none;border-top:1px solid #e8e9f1;padding:10px 16px;display:flex;gap:7px;align-items:center;background:#fff}.editor-footer .spacer{flex:1}.close-guard{padding:10px 16px;background:#f4f1ff;border-top:1px solid #dfd7f8;flex:none;font-size:11px;line-height:1.5;max-height:45%;overflow:auto}.guard-buttons{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.guard-buttons button{font-size:11px}.char-count{float:right;color:#9296a4;font-size:10px;font-weight:400}
+@media(max-width:650px){.app{padding:10px;gap:10px}.topbar{grid-template-columns:minmax(80px,1fr) auto;gap:8px}.topbar h1{display:none}.search{max-width:none}.top-actions{gap:4px}.top-actions .primary{font-size:11px;padding:5px 8px}.layout{display:flex;flex-direction:column;gap:9px}.sidebar{overflow-x:auto;overflow-y:hidden;flex:none;padding:0 0 3px}.sidebar h2{display:none}.nav{flex-direction:row;width:max-content;min-width:100%;gap:5px}.nav-button{width:auto;flex:none;border:1px solid #e3e5ef;background:#fff;padding:6px 9px;min-height:32px;gap:6px}.nav-button[aria-current=true]{border-color:#d1c5fa}.content{gap:8px}.scope-filter{max-width:160px}.memory-grid{grid-template-columns:repeat(auto-fill,minmax(min(100%,230px),1fr));gap:9px}.memory-card{min-height:185px;padding:11px}.editor-head{padding:10px 12px}.editor-body{padding:12px}.editor-footer{padding:10px 12px}.close-guard{padding:10px 12px}}
+@media(max-width:390px){.app{padding:8px}.content-head{flex-wrap:wrap;gap:5px}.scope-filter{margin-left:auto;max-width:140px}.memory-grid{grid-template-columns:minmax(0,1fr)}.field-row{grid-template-columns:minmax(0,1fr);gap:13px}.editor-footer{gap:5px;padding:8px}.editor-footer button{font-size:11px;padding:5px 7px}.editor-footer .spacer{min-width:0}.top-actions .icon-button{width:28px;min-width:28px}.editor-body{gap:11px}}
+@media(max-height:420px){.app{padding-top:8px;padding-bottom:8px;gap:8px}.inbox-note{padding:5px 8px}.editor-head{padding-top:6px;padding-bottom:6px}.editor-footer{padding-top:7px;padding-bottom:7px}.close-guard{max-height:60%}}
+</style>
+</head>
+<body>
+<main class="app">
+ <header class="topbar"><h1>Gedächtnis</h1><div class="search"><label class="sr-only" for="search">Erinnerungen durchsuchen</label><input id="search" type="search" maxlength="120" placeholder="Erinnerungen durchsuchen …" autocomplete="off"></div><div class="top-actions"><button id="refresh" class="icon-button" type="button" aria-label="Gedächtnis aktualisieren" title="Aktualisieren"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M6.1 8a7 7 0 0 1 11.6-2L20 9M4 15l2.3 3A7 7 0 0 0 17.9 16"/></svg></button><button id="new" class="primary" type="button">＋ Erinnerung</button></div></header>
+ <div class="layout"><aside class="sidebar"><nav aria-label="Gedächtnisansichten"><h2>Gedächtnis</h2><div id="views" class="nav"></div></nav></aside><section class="content" aria-labelledby="view-title"><header class="content-head"><h2 id="view-title">Erinnerungen</h2><span id="count" class="result-count">Wird geladen …</span><label class="sr-only" for="scope-filter">Bereich filtern</label><select id="scope-filter" class="scope-filter"><option value="">Alle Bereiche</option></select></header><p id="inbox-note" class="inbox-note" hidden>Neue Chat-Aussagen bleiben hier zur Prüfung. Erst übernommene Erinnerungen werden automatisch abgerufen.</p><p id="feedback" class="feedback" role="status" aria-live="polite"></p><div id="viewport" class="viewport" aria-busy="false"><ul id="memories" class="memory-grid" aria-label="Erinnerungen"></ul><p id="empty" class="empty" hidden></p><div id="more-row" class="more-row" hidden><button id="more" type="button">Weitere laden</button></div></div></section></div>
+</main>
+<dialog id="memory-editor" aria-labelledby="editor-title"><div class="editor">
+ <header class="editor-head"><h2 id="editor-title">Erinnerung bearbeiten</h2><button id="editor-close" class="icon-button" type="button" aria-label="Editor schließen" title="Schließen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button></header>
+ <div class="editor-body" id="editor-body"><p id="editor-origin" class="editor-origin" hidden></p><div class="field"><label for="title">Titel</label><input id="title" maxlength="120" autocomplete="off"></div><div class="field"><label for="text">Erinnerung <span id="char-count" class="char-count">0 / 2000</span></label><textarea id="text" maxlength="2000" placeholder="Welche Information soll das Gedächtnis behalten?"></textarea></div><div class="field-row"><div class="field"><label for="scope">Bereich</label><input id="scope" maxlength="120" placeholder="z. B. Werkstatt oder Projekt Atlas" autocomplete="off"></div><div class="field"><label for="expiresAt">Gültig bis <span class="field-note">optional</span></label><input id="expiresAt" type="datetime-local"></div></div><div class="field"><label for="sourceTitle">Quelle</label><input id="sourceTitle" maxlength="300" autocomplete="off"></div><div class="field"><label for="sourceUri">Quellenlink <span class="field-note">optional</span></label><input id="sourceUri" type="url" maxlength="1000" placeholder="https://…" autocomplete="off"></div><p id="editor-feedback" class="editor-feedback" role="status" aria-live="polite"></p><div id="recovery" class="recovery" hidden><p id="recovery-text"></p><div class="recovery-actions"><button id="check-current" type="button">Gespeicherten Stand prüfen</button><button id="reload-current" type="button" hidden>Gespeicherten Stand laden</button></div></div></div>
+ <div id="close-guard" class="close-guard" hidden><p id="guard-text"></p><div class="guard-buttons"><button id="guard-save" class="primary" type="button">Speichern und schließen</button><button id="guard-discard" type="button">Verwerfen und schließen</button><button id="guard-check" type="button" hidden>Stand prüfen</button><button id="guard-stay" type="button">Weiterbearbeiten</button></div></div>
+ <footer class="editor-footer"><button id="delete" class="danger" type="button">Löschen</button><span class="spacer"></span><button id="discard" type="button">Schließen</button><button id="save" class="primary" type="button">Speichern</button></footer>
+</div></dialog>
+<script>
+'use strict';
+const $ = id => document.getElementById(id), pending = new Map(), records = new Map();
+const icons = {
+    memories: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="M8 4h8a2 2 0 0 1 2 2v15l-6-4-6 4V6a2 2 0 0 1 2-2Z"/></svg>',
+    inbox: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><path d="m4 4-2 11v5h20v-5L20 4H4Z"/><path d="M2 15h6l2 3h4l2-3h6M8 9l3 3 5-5"/></svg>',
+    all: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>',
+    edit: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 5 4 4M4 20l4.5-1L20 7.5 16.5 4 5 15.5 4 20Z"/></svg>'
+};
+const viewNames = { confirmed: 'Erinnerungen', candidate: 'Zu prüfen', all: 'Alle' };
+let selectedView = 'confirmed', counts = {}, listVersion = 0, statusVersion = 0, nextOffset, loading = false, searchTimer, refreshTimer, lastRefresh = 0;
+let editorOpening = false;
+let editorRecord, editorId, editorBaseline = '', editorBusy = false, editorUncertain = false, editorConflict = false, uncertainAction, editorOpener, guardMode = 'close';
+function request(message, mutation = false) { return new Promise((resolve, reject) => { const requestId = crypto.randomUUID(), timer = setTimeout(() => { pending.delete(requestId); const error = new Error(mutation ? 'Die Antwort ist ausgeblieben. Bitte zuerst den gespeicherten Stand prüfen.' : 'Keine Antwort erhalten. Bitte erneut laden.'); error.uncertain = mutation; reject(error); }, 70000); pending.set(requestId, { resolve, reject, timer, mutation }); parent.postMessage({ ...message, requestId }, '*'); }); }
+function invoke(action, args = {}, mutation = false) { return request({ type: 'ovd:invoke', tool: 'memory.' + action, args }, mutation); }
+addEventListener('message', event => { if (event.source !== parent || event.data?.type !== 'ovd:result')
+    return; const call = pending.get(event.data.requestId); if (!call)
+    return; pending.delete(event.data.requestId); clearTimeout(call.timer); const result = event.data.result; if (event.data.ok && !['failed', 'uncertain', 'cancelled'].includes(result?.outcome) && result?.cancelled !== true) {
+    call.resolve(result);
+    return;
+} const cancelled = result?.outcome === 'cancelled' || result?.cancelled === true; const error = new Error(cancelled ? 'Änderung abgebrochen.' : event.data.ok ? result?.error?.message || 'Die Anfrage ist fehlgeschlagen.' : typeof event.data.error === 'string' ? event.data.error : 'Die Anfrage ist fehlgeschlagen.'); error.code = cancelled ? 'CANCELLED' : result?.error?.code; error.uncertain = call.mutation && !cancelled && (!event.data.ok || result?.outcome === 'uncertain'); call.reject(error); });
+function feedback(text = '', kind = '') { $('feedback').textContent = text; $('feedback').className = 'feedback' + (kind ? ' ' + kind : ''); }
+function editorFeedback(text = '', kind = '') { $('editor-feedback').textContent = text; $('editor-feedback').className = 'editor-feedback' + (kind ? ' ' + kind : ''); }
+function date(value) { const parsed = new Date(value); return Number.isFinite(parsed.getTime()) ? new Intl.DateTimeFormat('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' }).format(parsed) : ''; }
+function expired(record) { return !!record.expiresAt && Date.parse(record.expiresAt) <= Date.now(); }
+function renderViews() { const active = document.activeElement?.dataset.view; $('views').replaceChildren(); for (const [view, icon] of [['confirmed', 'memories'], ['candidate', 'inbox'], ['all', 'all']]) {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'nav-button';
+    button.dataset.view = view;
+    button.setAttribute('aria-current', String(selectedView === view));
+    button.innerHTML = icons[icon];
+    const label = document.createElement('span');
+    label.className = 'nav-label';
+    label.textContent = viewNames[view];
+    const count = document.createElement('span');
+    count.className = 'nav-count';
+    count.textContent = Number.isInteger(counts[view]) ? String(counts[view]) : '–';
+    button.append(label, count);
+    button.addEventListener('click', () => { if (selectedView === view)
+        return; selectedView = view; renderViews(); $('view-title').textContent = viewNames[view]; $('inbox-note').hidden = view !== 'candidate'; void loadList(false, true); });
+    $('views').append(button);
+} if (active)
+    [...$('views').children].find(button => button.dataset.view === active)?.focus({ preventScroll: true }); }
+async function loadStatus() { const version = ++statusVersion; try {
+    const result = await invoke('status');
+    if (version !== statusVersion)
+        return true;
+    if (!result.counts)
+        throw new Error('Der Speicherstatus konnte nicht gelesen werden.');
+    counts = result.counts;
+    renderViews();
+    const selected = $('scope-filter').value;
+    $('scope-filter').replaceChildren(new Option('Alle Bereiche', ''));
+    for (const item of result.scopeCounts || []) {
+        if (item.scope)
+            $('scope-filter').append(new Option(item.scope + ' · ' + item.count, item.scope));
+    }
+    if (result.scopeCountsHasMore) {
+        const more = new Option('Weitere Bereiche über die Suche finden', '');
+        more.disabled = true;
+        $('scope-filter').append(more);
+    }
+    if (selected && ![...$('scope-filter').options].some(option => option.value === selected))
+        $('scope-filter').append(new Option(selected, selected));
+    $('scope-filter').value = selected;
+    return true;
+}
+catch (error) {
+    if (version === statusVersion) {
+        counts = {};
+        renderViews();
+        feedback(error.message, 'error');
+    }
+    return false;
+} }
+function drag(event, record) { if (record.status !== 'confirmed' || event.target.closest?.('button')) {
+    event.preventDefault();
+    return;
+} const reference = JSON.stringify({ moduleId: 'memory', type: 'memory', id: record.id }); event.dataTransfer.setData('application/x-openvibedesk-reference', reference); event.dataTransfer.setData('text/plain', 'openvibedesk-reference:' + reference); event.dataTransfer.effectAllowed = 'copy'; }
+function card(record) { const item = document.createElement('li'); item.className = 'memory-card'; item.dataset.id = record.id; item.draggable = record.status === 'confirmed'; item.tabIndex = 0; item.title = record.status === 'candidate' ? 'Chat-Aussage prüfen' : 'Erinnerung öffnen · In den Chat ziehen'; const top = document.createElement('div'); top.className = 'card-top'; const scope = document.createElement('span'); scope.className = 'scope-label'; scope.textContent = record.scope || 'Allgemein'; scope.title = scope.textContent; const badge = document.createElement('span'); badge.className = 'badge' + (expired(record) ? ' expired' : record.status === 'candidate' ? ' candidate' : ''); badge.textContent = expired(record) ? 'Abgelaufen' : record.status === 'candidate' ? 'Zu prüfen' : 'Gespeichert'; const edit = document.createElement('button'); edit.type = 'button'; edit.className = 'icon-button edit'; edit.title = 'Bearbeiten: ' + record.title; edit.setAttribute('aria-label', edit.title); edit.innerHTML = icons.edit; edit.addEventListener('click', () => void openEditor(record.id)); edit.addEventListener('dragstart', event => event.preventDefault()); top.append(scope, badge, edit); const title = document.createElement('h3'); title.className = 'memory-title'; title.textContent = record.title; const text = document.createElement('p'); text.className = 'memory-text'; text.textContent = record.text; const source = document.createElement('p'); source.className = 'source-label'; source.textContent = record.source?.title || 'Ohne Quellenangabe'; source.title = source.textContent; const bottom = document.createElement('div'); bottom.className = 'card-bottom'; const time = document.createElement('span'); time.className = 'date'; time.textContent = date(record.updatedAt); time.title = 'Zuletzt geändert: ' + record.updatedAt; const action = document.createElement('button'); action.type = 'button'; action.className = 'card-action'; action.textContent = record.status === 'candidate' ? 'Prüfen' : 'Im Chat verwenden'; action.addEventListener('click', () => record.status === 'candidate' ? void openEditor(record.id) : void useMemory(record.id, action)); action.addEventListener('dragstart', event => event.preventDefault()); bottom.append(time, action); item.append(top, title, text, source, bottom); item.addEventListener('dragstart', event => drag(event, record)); item.addEventListener('dblclick', event => { if (!event.target.closest('button'))
+    void openEditor(record.id); }); item.addEventListener('keydown', event => { if (event.target === item && event.key === 'Enter') {
+    event.preventDefault();
+    void openEditor(record.id);
+} }); return item; }
+function renderCards() { const active = document.activeElement, id = active?.closest?.('.memory-card')?.dataset.id, control = active?.classList.contains('edit') ? '.edit' : active?.classList.contains('card-action') ? '.card-action' : undefined; $('memories').replaceChildren(...[...records.values()].map(card)); if (id) {
+    const item = [...$('memories').children].find(element => element.dataset.id === id);
+    (control ? item?.querySelector(control) : item)?.focus({ preventScroll: true });
+} $('empty').hidden = records.size > 0 || loading; $('empty').textContent = $('search').value.trim() || $('scope-filter').value ? 'Keine passenden Einträge.' : selectedView === 'candidate' ? 'Keine offenen Aussagen. Neue Chat-Aussagen erscheinen nach Aktivierung der Ereignisabonnements hier zur Prüfung.' : selectedView === 'confirmed' ? 'Noch keine Erinnerungen. Lege eine an oder bitte den Assistenten: „Merke dir …“.' : 'Noch keine Einträge.'; }
+async function loadList(append = false, clear = false) { const version = ++listVersion, offset = append ? nextOffset || 0 : 0; loading = true; $('viewport').setAttribute('aria-busy', 'true'); $('more').disabled = true; if (clear) {
+    records.clear();
+    nextOffset = undefined;
+    $('more-row').hidden = true;
+    $('viewport').scrollTop = 0;
+    renderCards();
+} if (!append)
+    $('count').textContent = 'Wird geladen …'; try {
+    const scope = $('scope-filter').value;
+    const result = await invoke('list', { query: $('search').value.trim(), status: selectedView, ...(scope ? { scope } : {}), offset, limit: 20 });
+    if (version !== listVersion)
+        return true;
+    if (!Array.isArray(result.memories))
+        throw new Error('Die Einträge konnten nicht gelesen werden.');
+    if (!append)
+        records.clear();
+    for (const record of result.memories)
+        records.set(record.id, record);
+    nextOffset = result.nextOffset;
+    if (result.hasMore && (!Number.isInteger(nextOffset) || nextOffset <= offset))
+        throw new Error('Die nächste Seite konnte nicht bestimmt werden.');
+    $('more-row').hidden = !result.hasMore;
+    $('count').textContent = result.total + (result.total === 1 ? ' Eintrag' : ' Einträge');
+    return true;
+}
+catch (error) {
+    if (version === listVersion) {
+        feedback(error.message, 'error');
+        $('count').textContent = records.size ? records.size + ' geladen' : '';
+    }
+    return false;
+}
+finally {
+    if (version === listVersion) {
+        loading = false;
+        $('viewport').setAttribute('aria-busy', 'false');
+        $('more').disabled = false;
+        renderCards();
+    }
+} }
+async function refresh(clear = false) { lastRefresh = Date.now(); $('refresh').disabled = true; const results = await Promise.all([loadStatus(), loadList(false, clear)]); $('refresh').disabled = false; return results.every(Boolean); }
+async function useMemory(id, button) { button.disabled = true; try {
+    await request({ type: 'ovd:reference', reference: { moduleId: 'memory', type: 'memory', id } });
+    feedback('Im Chat angehängt.', 'success');
+}
+catch (error) {
+    feedback(error.message, 'error');
+}
+finally {
+    button.disabled = false;
+} }
+function localDateTime(value) { if (!value)
+    return ''; const time = new Date(value); if (!Number.isFinite(time.getTime()))
+    return ''; const local = new Date(time.getTime() - time.getTimezoneOffset() * 60000); return local.toISOString().slice(0, 16); }
+function fields() { return { title: $('title').value.trim(), text: $('text').value.trim(), scope: $('scope').value.trim(), sourceTitle: $('sourceTitle').value.trim(), sourceUri: $('sourceUri').value.trim(), expiresAt: $('expiresAt').value }; }
+function recordFields(record) { return { title: record.title, text: record.text, scope: record.scope || '', sourceTitle: record.source?.title || '', sourceUri: record.source?.uri || '', expiresAt: localDateTime(record.expiresAt) }; }
+function isDirty() { return JSON.stringify(fields()) !== editorBaseline; }
+function setFields(record) { const values = record ? recordFields(record) : { title: '', text: '', scope: '', sourceTitle: 'Vom Nutzer ausdrücklich gespeichert', sourceUri: '', expiresAt: '' }; for (const [key, value] of Object.entries(values))
+    $(key).value = value; editorBaseline = JSON.stringify(values); $('char-count').textContent = $('text').value.length + ' / 2000'; }
+function editorState() { const locked = editorBusy || editorUncertain; for (const id of ['title', 'text', 'scope', 'sourceTitle', 'sourceUri', 'expiresAt'])
+    $(id).disabled = locked; $('save').disabled = locked || editorConflict; $('save').textContent = editorRecord?.status === 'candidate' ? 'Als Erinnerung speichern' : 'Speichern'; $('delete').hidden = !editorRecord; $('delete').disabled = locked || editorConflict; $('editor-close').disabled = editorBusy; $('discard').disabled = editorBusy; $('check-current').disabled = editorBusy; $('reload-current').disabled = editorBusy || editorUncertain; $('guard-save').disabled = locked || editorConflict; $('guard-discard').disabled = editorBusy || editorUncertain; $('guard-check').disabled = editorBusy; $('guard-stay').disabled = editorBusy; $('recovery').hidden = !editorUncertain && !editorConflict; $('check-current').hidden = !editorUncertain; $('reload-current').hidden = !editorConflict || editorUncertain; $('recovery-text').textContent = editorUncertain ? 'Der Ausgang der Änderung ist unklar. Prüfe den gespeicherten Stand, bevor du fortfährst.' : 'Der gespeicherte Eintrag wurde geändert oder entfernt. Dein Entwurf bleibt erhalten. Lade den aktuellen Stand, bevor du erneut speicherst.'; }
+function originLabel(record) { $('editor-origin').hidden = !record || record.status !== 'candidate'; if (!record)
+    return; if (record.status === 'candidate')
+    $('editor-origin').textContent = 'Aussage aus einem Chat · ' + date(record.createdAt) + (record.observation?.truncated ? ' · Textauszug gekürzt' : '') + '. Prüfe den Inhalt und ergänze bei Bedarf Bereich oder Quelle. Erst mit „Als Erinnerung speichern“ wird daraus eine abrufbare Erinnerung.'; }
+async function openEditor(id) { if (editorOpening || $('memory-editor').open)
+    return; editorOpening = true; $('new').disabled = true; const opener = document.activeElement; try {
+    const record = id ? (await invoke('read', { id })).memory : undefined;
+    if (id && !record)
+        throw new Error('Der Eintrag konnte nicht gelesen werden.');
+    editorOpener = opener;
+    editorRecord = record;
+    editorId = record?.id || crypto.randomUUID();
+    editorBusy = false;
+    editorUncertain = false;
+    editorConflict = false;
+    uncertainAction = undefined;
+    $('close-guard').hidden = true;
+    $('editor-title').textContent = record?.status === 'candidate' ? 'Aussage prüfen' : record ? 'Erinnerung bearbeiten' : 'Neue Erinnerung';
+    setFields(record);
+    originLabel(record);
+    editorFeedback();
+    editorState();
+    $('memory-editor').showModal();
+    $('title').focus();
+}
+catch (error) {
+    feedback(error.message, 'error');
+}
+finally {
+    editorOpening = false;
+    $('new').disabled = false;
+} }
+function closeEditor() { $('memory-editor').close(); $('close-guard').hidden = true; editorUncertain = false; editorConflict = false; editorBusy = false; const previous = editorOpener; editorRecord = undefined; if (previous?.isConnected)
+    previous.focus({ preventScroll: true });
+else
+    $('new').focus({ preventScroll: true }); }
+function guard(mode = 'close') { if (editorBusy)
+    return; guardMode = mode; if (!editorUncertain && !isDirty()) {
+    if (mode === 'reload')
+        void reloadCurrent();
+    else
+        closeEditor();
+    return;
+} $('guard-text').textContent = editorUncertain ? 'Bitte zuerst den Ausgang der Änderung prüfen. Dein Entwurf bleibt hier erhalten.' : mode === 'reload' ? 'Den Entwurf verwerfen und den gespeicherten Stand laden?' : 'Änderungen vor dem Schließen speichern?'; $('guard-save').hidden = editorUncertain || mode === 'reload'; $('guard-discard').hidden = editorUncertain; $('guard-check').hidden = !editorUncertain; $('guard-save').textContent = editorRecord?.status === 'candidate' ? 'Übernehmen und schließen' : 'Speichern und schließen'; $('guard-discard').textContent = mode === 'reload' ? 'Verwerfen und laden' : 'Verwerfen und schließen'; $('close-guard').hidden = false; editorState(); $('guard-stay').focus(); }
+function validateFields(values) { if (!values.title || !values.text)
+    throw new Error('Bitte Titel und Erinnerung ausfüllen.'); if (!values.sourceTitle)
+    throw new Error('Bitte eine nachvollziehbare Quelle angeben.'); if (values.sourceUri) {
+    let url;
+    try {
+        url = new URL(values.sourceUri);
+    }
+    catch {
+        throw new Error('Bitte einen gültigen Quellenlink angeben.');
+    }
+    if (!['https:', 'http:'].includes(url.protocol) || url.username || url.password)
+        throw new Error('Der Quellenlink muss HTTP oder HTTPS verwenden und darf keine Zugangsdaten enthalten.');
+} if (values.expiresAt && !Number.isFinite(new Date(values.expiresAt).getTime()))
+    throw new Error('Bitte ein gültiges Ablaufdatum angeben.'); }
+async function saveEditor(closeAfter = false) { if (editorBusy || editorUncertain || editorConflict)
+    return; let values; try {
+    values = fields();
+    validateFields(values);
+}
+catch (error) {
+    editorFeedback(error.message, 'error');
+    return;
+} editorBusy = true; editorState(); editorFeedback('Wird gespeichert …'); try {
+    const uneditedCandidate = editorRecord?.status === 'candidate' && !isDirty();
+    const result = uneditedCandidate ? await invoke('confirm', { id: editorId, expectedRevision: editorRecord.revision }, true) : await invoke('save', { id: editorId, ...(editorRecord ? { expectedRevision: editorRecord.revision } : {}), ...values, expiresAt: values.expiresAt ? (editorRecord?.expiresAt && values.expiresAt === localDateTime(editorRecord.expiresAt) ? editorRecord.expiresAt : new Date(values.expiresAt).toISOString()) : '' }, true);
+    if (result?.outcome !== 'completed' || !result.memory)
+        throw Object.assign(new Error('Der Ausgang ist unklar. Bitte den gespeicherten Stand prüfen.'), { uncertain: true });
+    editorRecord = result.memory;
+    setFields(editorRecord);
+    originLabel(editorRecord);
+    $('editor-title').textContent = 'Erinnerung bearbeiten';
+    $('close-guard').hidden = true;
+    editorFeedback('Erinnerung gespeichert.', 'success');
+    await refresh();
+    if (closeAfter) {
+        closeEditor();
+        feedback('Erinnerung gespeichert.', 'success');
+    }
+}
+catch (error) {
+    if (error.uncertain) {
+        editorUncertain = true;
+        uncertainAction = 'save';
+    }
+    if (['REVISION_CONFLICT', 'NOT_FOUND'].includes(error.code))
+        editorConflict = true;
+    editorFeedback(error.message, error.code === 'CANCELLED' ? '' : 'error');
+}
+finally {
+    editorBusy = false;
+    editorState();
+} }
+async function deleteEditor() { if (!editorRecord || editorBusy || editorUncertain || editorConflict)
+    return; editorBusy = true; editorState(); editorFeedback('Wird gelöscht …'); try {
+    const result = await invoke('delete', { id: editorId, expectedRevision: editorRecord.revision }, true);
+    if (result?.outcome !== 'completed' || !result.deleted)
+        throw Object.assign(new Error('Der Ausgang ist unklar. Bitte den gespeicherten Stand prüfen.'), { uncertain: true });
+    closeEditor();
+    await refresh();
+    feedback('Eintrag gelöscht.', 'success');
+}
+catch (error) {
+    if (error.uncertain) {
+        editorUncertain = true;
+        uncertainAction = 'delete';
+    }
+    if (['REVISION_CONFLICT', 'NOT_FOUND'].includes(error.code))
+        editorConflict = true;
+    editorFeedback(error.message, error.code === 'CANCELLED' ? '' : 'error');
+}
+finally {
+    editorBusy = false;
+    editorState();
+} }
+async function reloadCurrent() { if (editorBusy || editorUncertain)
+    return; editorBusy = true; editorState(); try {
+    const result = await invoke('read', { id: editorId });
+    if (!result.memory)
+        throw new Error('Der gespeicherte Stand konnte nicht gelesen werden.');
+    editorRecord = result.memory;
+    setFields(editorRecord);
+    originLabel(editorRecord);
+    editorConflict = false;
+    $('close-guard').hidden = true;
+    editorFeedback('Gespeicherten Stand geladen.');
+}
+catch (error) {
+    editorFeedback(error.code === 'NOT_FOUND' ? 'Der Eintrag ist nicht mehr vorhanden. Schließe den Editor und lege bei Bedarf eine neue Erinnerung an.' : error.message, 'error');
+}
+finally {
+    editorBusy = false;
+    editorState();
+} }
+async function checkCurrent() { if (editorBusy)
+    return; editorBusy = true; editorState(); try {
+    const result = await invoke('read', { id: editorId });
+    if (!result.memory)
+        throw new Error('Der gespeicherte Stand konnte nicht gelesen werden.');
+    editorUncertain = false;
+    if (uncertainAction === 'save' && JSON.stringify(recordFields(result.memory)) === JSON.stringify(fields()) && result.memory.status === 'confirmed') {
+        editorRecord = result.memory;
+        setFields(editorRecord);
+        originLabel(editorRecord);
+        editorConflict = false;
+        editorFeedback('Gespeicherten Stand geprüft. Die Erinnerung ist gespeichert.', 'success');
+    }
+    else {
+        editorConflict = true;
+        editorFeedback('Gespeicherten Stand geprüft. Bitte den aktuellen Stand laden; dein Entwurf wurde nicht verändert.');
+    }
+    $('close-guard').hidden = true;
+    await refresh();
+}
+catch (error) {
+    if (error.code === 'NOT_FOUND') {
+        editorUncertain = false;
+        $('close-guard').hidden = true;
+        if (uncertainAction === 'delete') {
+            closeEditor();
+            await refresh();
+            feedback('Gespeicherten Stand geprüft: Der Eintrag ist nicht vorhanden.');
+        }
+        else if (!editorRecord) {
+            editorConflict = false;
+            editorFeedback('Gespeicherten Stand geprüft: Unter dieser ID ist keine Erinnerung vorhanden. Du kannst deinen Entwurf bewusst erneut speichern.');
+        }
+        else {
+            editorConflict = true;
+            editorFeedback('Gespeicherten Stand geprüft: Der Eintrag ist nicht vorhanden. Dein Entwurf bleibt erhalten.', 'error');
+        }
+    }
+    else
+        editorFeedback('Prüfung fehlgeschlagen: ' + error.message, 'error');
+}
+finally {
+    editorBusy = false;
+    editorState();
+} }
+$('new').addEventListener('click', () => void openEditor());
+$('refresh').addEventListener('click', () => { feedback(); void refresh(); });
+$('more').addEventListener('click', () => void loadList(true));
+$('search').addEventListener('input', () => { clearTimeout(searchTimer); searchTimer = setTimeout(() => void loadList(false, true), 180); });
+$('scope-filter').addEventListener('change', () => void loadList(false, true));
+$('text').addEventListener('input', () => { $('char-count').textContent = $('text').value.length + ' / 2000'; });
+$('editor-close').addEventListener('click', () => guard());
+$('discard').addEventListener('click', () => guard());
+$('save').addEventListener('click', () => void saveEditor());
+$('delete').addEventListener('click', () => void deleteEditor());
+$('memory-editor').addEventListener('cancel', event => { event.preventDefault(); guard(); });
+$('memory-editor').addEventListener('click', event => { if (event.target !== $('memory-editor'))
+    return; const bounds = $('memory-editor').getBoundingClientRect(); if (event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom)
+    guard(); });
+$('guard-stay').addEventListener('click', () => { $('close-guard').hidden = true; $('text').focus(); });
+$('guard-save').addEventListener('click', () => void saveEditor(true));
+$('guard-discard').addEventListener('click', () => guardMode === 'reload' ? void reloadCurrent() : closeEditor());
+$('guard-check').addEventListener('click', () => void checkCurrent());
+$('check-current').addEventListener('click', () => void checkCurrent());
+$('reload-current').addEventListener('click', () => guard('reload'));
+addEventListener('keydown', event => { if ($('memory-editor').open && (event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 's') {
+    event.preventDefault();
+    void saveEditor();
+} });
+function refreshOnFocus() { if (document.visibilityState === 'visible' && Date.now() - lastRefresh > 4000) {
+    clearTimeout(refreshTimer);
+    refreshTimer = setTimeout(() => void refresh(), 100);
+} }
+addEventListener('focus', refreshOnFocus);
+document.addEventListener('visibilitychange', refreshOnFocus);
+const refreshInterval = setInterval(() => { if (document.visibilityState === 'visible' && !loading && Date.now() - lastRefresh > 14000)
+    void refresh(); }, 15000);
+addEventListener('pagehide', () => { clearInterval(refreshInterval); clearTimeout(refreshTimer); });
+renderViews();
+void refresh(true);
+</script>
+</body>
+</html>

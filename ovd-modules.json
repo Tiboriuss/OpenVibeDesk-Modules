@@ -3,6 +3,42 @@
   "title": "OpenVibeDesk modules",
   "modules": [
     {
+      "id": "memory",
+      "title": "Gedächtnis",
+      "description": "Erinnerungen lokal speichern, prüfen und korrigieren. Der Host ruft passende bestätigte Fakten automatisch ab. Optional abonnierte Chat-Ereignisse liefern unbestätigte Vorschläge zur Prüfung, keine automatisch übernommenen Assistentenbehauptungen.",
+      "version": "0.1.0",
+      "apiVersion": 1,
+      "package": {
+        "path": "packages/memory/0.1.0",
+        "files": [
+          {
+            "path": "LICENSE",
+            "sha256": "cd913951bd8915c2777448283e2992b93fa90877adad7378ab6804295ecd6f08"
+          },
+          {
+            "path": "README.md",
+            "sha256": "dfa85bfbde4fcd6e0a5ca98b1391699f37d6b86c40c7023007e6a3d842d46f00"
+          },
+          {
+            "path": "backend.cjs",
+            "sha256": "4795b4a4407355f75e7d95f2679d0c6789acdb2b1435549cbc1bf9d7e63bb420"
+          },
+          {
+            "path": "memory.html",
+            "sha256": "b594e6967b69b995d111f30ad48a78d04d0161359add054e6a0db7efd7b90662"
+          },
+          {
+            "path": "module.json",
+            "sha256": "3c4a40056e80f3bb49e698742db8f19743deb9ec378eb04f6e82808f4b292de9"
+          },
+          {
+            "path": "settings.html",
+            "sha256": "1013e11ac45491603c99d639baaa1cbf4192caea53389915be3ef1c4474d994d"
+          }
+        ]
+      }
+    },
+    {
       "id": "sample-notes",
       "title": "Notizen",
       "description": "Lokale Notizen anzeigen und hinzufügen. Die Notizoberfläche und der OVD-Assistent verwenden dieselben Funktionen.",
