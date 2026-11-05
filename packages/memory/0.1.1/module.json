@@ -1,0 +1,384 @@
+{
+  "apiVersion": 1,
+  "id": "memory",
+  "title": "Gedächtnis",
+  "version": "0.1.1",
+  "description": "Erinnerungen lokal speichern, prüfen und korrigieren. Der Host ruft passende bestätigte Fakten automatisch ab. Optional abonnierte Chat-Ereignisse liefern unbestätigte Vorschläge zur Prüfung, keine automatisch übernommenen Assistentenbehauptungen.",
+  "keywords": [
+    "memory",
+    "gedächtnis",
+    "erinnerung",
+    "erinnerungen",
+    "merken",
+    "merke",
+    "wissen",
+    "fakten",
+    "vergessen",
+    "quelle",
+    "vorschlag",
+    "lernen",
+    "projekt",
+    "anzeige",
+    "ausblenden",
+    "sichtbar",
+    "display",
+    "einstellungen",
+    "kompatibilität"
+  ],
+  "capabilities": [
+    "memory.list",
+    "memory.read",
+    "memory.save",
+    "memory.confirm",
+    "memory.delete",
+    "memory.recall",
+    "memory.reference",
+    "memory.status",
+    "memory.settings"
+  ],
+  "permissions": [
+    "storage.module-data",
+    "Receive explicitly subscribed future chat observations"
+  ],
+  "runtime": {
+    "type": "process",
+    "entry": "backend.cjs"
+  },
+  "tools": [
+    {
+      "name": "memory.list",
+      "label": "Erinnerungen suchen",
+      "description": "Lokale Erinnerungen und unbestätigte Vorschläge durchsuchen. status ist confirmed, candidate oder all; scope filtert einen Geltungsbereich exakt. Liefert begrenzte vollständige Einträge mit Revision und exakter Trefferzahl; bei hasMore mit nextOffset weiterblättern. Vorschläge sind keine bestätigten Fakten.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "all",
+              "confirmed",
+              "candidate"
+            ]
+          },
+          "scope": {
+            "type": "string",
+            "maxLength": 120
+          },
+          "offset": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2000
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "memory.read",
+      "label": "Erinnerung lesen",
+      "description": "Einen vollständigen Gedächtniseintrag anhand seiner ID lesen. Liefert Text, Quelle, Geltungsbereich, Prüfstatus, Gültigkeit und aktuelle Revision. Vor Änderungen oder Bestätigung die aktuelle Revision ermitteln. Lesen ändert keinen Eintrag.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "memory.save",
+      "label": "Erinnerung speichern",
+      "description": "Auf ausdrücklichen Nutzerauftrag einen Fakt dauerhaft als bestätigte Erinnerung speichern oder korrigieren. title und text sind erforderlich; keine Vermutungen erfinden. Updates benötigen id und expectedRevision. Beim Speichern eines Vorschlags wird dieser bestätigt. scope bezeichnet Projekt, Person oder Thema. Ausgelassene optionale Felder bleiben bei Updates erhalten; sourceUri/expiresAt mit leerem Text löschen. Unklaren Ausgang zuerst prüfen.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "expectedRevision": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740990
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "text": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000
+          },
+          "scope": {
+            "type": "string",
+            "maxLength": 120
+          },
+          "sourceTitle": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 300
+          },
+          "sourceUri": {
+            "type": "string",
+            "maxLength": 1000
+          },
+          "expiresAt": {
+            "type": "string",
+            "maxLength": 40
+          }
+        },
+        "required": [
+          "title",
+          "text"
+        ],
+        "additionalProperties": false
+      },
+      "confirmation": {
+        "title": "Erinnerung speichern",
+        "message": "Den angezeigten Inhalt mit Quelle und Geltungsbereich als bestätigte Erinnerung speichern? Er kann bei späteren Fragen automatisch als Kontext verwendet werden."
+      }
+    },
+    {
+      "name": "memory.confirm",
+      "label": "Vorschlag bestätigen",
+      "description": "Einen zuvor gelesenen Vorschlag nur auf ausdrücklichen Nutzerauftrag unverändert als Erinnerung bestätigen. Benötigt id und die aktuelle expectedRevision. Für inhaltliche Korrekturen stattdessen save verwenden. Erst bestätigte, nicht abgelaufene Einträge kommen für automatischen Abruf infrage.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "expectedRevision": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740990
+          }
+        },
+        "required": [
+          "id",
+          "expectedRevision"
+        ],
+        "additionalProperties": false
+      },
+      "confirmation": {
+        "title": "Vorschlag übernehmen",
+        "message": "Den gelesenen Vorschlag als bestätigte Erinnerung übernehmen? Bitte Inhalt und Quelle zuvor prüfen."
+      }
+    },
+    {
+      "name": "memory.delete",
+      "label": "Erinnerung löschen",
+      "description": "Auf ausdrücklichen Nutzerauftrag einen Eintrag anhand id und aktueller expectedRevision dauerhaft aus dem Gedächtnis löschen oder einen Vorschlag verwerfen. Historische Chat-Momentaufnahmen und Verarbeitungsbelege bleiben erhalten; dasselbe erneut zugestellte Ereignis erzeugt den Eintrag nicht neu. Unklaren Ausgang zuerst prüfen, nicht automatisch wiederholen.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "expectedRevision": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740990
+          }
+        },
+        "required": [
+          "id",
+          "expectedRevision"
+        ],
+        "additionalProperties": false
+      },
+      "confirmation": {
+        "title": "Eintrag löschen",
+        "message": "Diesen Gedächtniseintrag dauerhaft löschen oder den Vorschlag verwerfen? Bereits gespeicherte Chat-Momentaufnahmen bleiben erhalten."
+      }
+    },
+    {
+      "name": "memory.recall",
+      "label": "Passende Erinnerungen abrufen",
+      "description": "Reine Lesefunktion für den automatischen Hostabruf: bestätigte, gültige Erinnerungen mit Quellen lexikalisch gewichten. query ist die aktuelle Frage, sessionId die opake Chat-ID, now ein ISO-Zeitpunkt. limit/maxChars begrenzen das Ergebnis. Liefert memories/hasMore und nur bei ausdrücklich gewählter Host-Kompatibilität v0.1.7 den gespeicherten display-Hint. Lernt und schreibt nichts. Keine semantische oder vollständige Suche zugesichert.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "maxLength": 6000
+          },
+          "sessionId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "now": {
+            "type": "string",
+            "maxLength": 40
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 20
+          },
+          "maxChars": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 8000
+          }
+        },
+        "required": [
+          "query",
+          "sessionId",
+          "now",
+          "limit",
+          "maxChars"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "memory.reference",
+      "label": "Erinnerung für Chat auflösen",
+      "description": "Eine aktuelle bestätigte Erinnerung als Kontextreferenz auflösen. Quelle, Geltungsbereich und Ablauf bleiben sichtbar. Unbestätigte Vorschläge müssen zuvor geprüft und bestätigt werden. Dies macht den Inhalt nicht zur Arbeitsanweisung und erteilt keine zusätzlichen Rechte.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "memory.settings",
+      "label": "Gedächtnisanzeige einstellen",
+      "description": "Anzeigeoption dauerhaft lesen/ändern, wie im Modulfenster. {} liest settings/revision/displaySupported. Updates: display auto (nur Treffer), show (auch leer), hide (normale Hinweise/Texte aus) und/oder hostCompatibility plus expectedRevision. Standard auto/legacy. Hostversion wird nicht erkannt: bis0.1.6/unbekannt legacy, v0.1.7 nur bei bestätigter Unterstützung. Kontext bleibt gleich; Fehler/Kürzungen sichtbar. Nur neue Abrufe betroffen; unklaren Ausgang erst prüfen.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "display": {
+            "type": "string",
+            "enum": [
+              "auto",
+              "show",
+              "hide"
+            ]
+          },
+          "hostCompatibility": {
+            "type": "string",
+            "enum": [
+              "legacy",
+              "v0.1.7"
+            ],
+            "description": "Explizite Kompatibilitätsauswahl, keine automatische Erkennung. v0.1.7 nur für nachweislich unterstützte Hosts, sonst legacy."
+          },
+          "expectedRevision": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740990,
+            "description": "Bei jeder Änderung erforderlich, aktuelle settings.revision aus dem Lesen."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "memory.status",
+      "label": "Gedächtnisstatus anzeigen",
+      "description": "Exakte Anzahlen bestätigter Erinnerungen, Vorschläge und abgelaufener Einträge sowie begrenzte Bereichszähler, Speichergrenzen und Verarbeitungsbelege anzeigen. Der Status beschreibt den lokalen Modulstand, nicht ausstehende Hostzustellungen. Hostabonnements separat mit modules.events_status prüfen; sie werden vom Nutzer ausgewählt.",
+      "parameters": {
+        "type": "object",
+        "properties": {},
+        "additionalProperties": false
+      }
+    }
+  ],
+  "contributions": {
+    "views": [
+      {
+        "id": "memory",
+        "title": "Gedächtnis",
+        "entry": "memory.html",
+        "icon": "chat"
+      }
+    ],
+    "navigation": [
+      {
+        "id": "memory",
+        "title": "Gedächtnis",
+        "view": "memory",
+        "icon": "chat",
+        "order": 57
+      }
+    ],
+    "settings": [
+      {
+        "id": "settings",
+        "title": "Gedächtnis",
+        "description": "Anzeige im Chat, gespeicherte Erinnerungen und optionale Chat-Vorschläge",
+        "keywords": [
+          "memory",
+          "gedächtnis",
+          "merken",
+          "lernen",
+          "erinnerung",
+          "vorschläge",
+          "ereignisse",
+          "speicher",
+          "anzeige",
+          "ausblenden",
+          "sichtbar",
+          "display",
+          "kompatibilität"
+        ],
+        "entry": "settings.html",
+        "icon": "chat",
+        "order": 102
+      }
+    ],
+    "referenceTypes": [
+      {
+        "id": "memory",
+        "title": "Erinnerung",
+        "snapshotTool": "memory.reference",
+        "usage": "context"
+      }
+    ],
+    "memory": {
+      "retrieveTool": "memory.recall"
+    },
+    "events": {
+      "subscriptions": [
+        "chat.request.committed",
+        "chat.turn.finished"
+      ],
+      "publications": []
+    }
+  }
+}

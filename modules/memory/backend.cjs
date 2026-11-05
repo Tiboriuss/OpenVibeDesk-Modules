@@ -6,7 +6,10 @@ const { randomUUID, createHash } = require('node:crypto');
 const MODULE_ID = 'memory';
 const MAX_MEMORIES = 2000, MAX_EVENT_RECEIPTS = 10000, MAX_OPERATION_RECEIPTS = 2000;
 const MAX_FILE_BYTES = 24 * 1024 * 1024, MAX_RESULT_BYTES = 30 * 1024;
+const MAX_SETTINGS_BYTES = 2 * 1024 * 1024;
 const WRITE_TOOLS = ['memory.save', 'memory.confirm', 'memory.delete'];
+const SETTINGS_TOOL = 'memory.settings';
+const DISPLAY_MODES = ['auto', 'show', 'hide'], HOST_COMPATIBILITY = ['legacy', 'v0.1.7'];
 const SAVE_FIELDS = ['id', 'expectedRevision', 'title', 'text', 'scope', 'sourceTitle', 'sourceUri', 'expiresAt'];
 const RECORD_FIELDS = ['id', 'title', 'text', 'scope', 'status', 'source', 'origin', 'revision', 'createdAt', 'updatedAt', 'expiresAt', 'observation'];
 const fold = value => value.normalize('NFKC').toLocaleLowerCase('de-DE');
@@ -74,6 +77,18 @@ function revisionArguments(args) {
   argsObject(args, ['id', 'expectedRevision']);
   return { id: resourceId(args.id), expectedRevision: integer(args.expectedRevision, undefined, 1, Number.MAX_SAFE_INTEGER - 1) };
 }
+function settingsArguments(args) {
+  argsObject(args, ['display', 'hostCompatibility', 'expectedRevision']);
+  const writing = own(args, 'display') || own(args, 'hostCompatibility');
+  if (!writing) {
+    if (own(args, 'expectedRevision')) fail('INVALID_ARGUMENTS', 'Eine Versionsprüfung benötigt eine gewünschte Anzeige- oder Kompatibilitätsänderung.');
+    return { writing: false };
+  }
+  if (own(args, 'display') && !DISPLAY_MODES.includes(args.display)) fail('INVALID_ARGUMENTS', 'Die Anzeigeoption muss auto, show oder hide sein.');
+  if (own(args, 'hostCompatibility') && !HOST_COMPATIBILITY.includes(args.hostCompatibility)) fail('INVALID_ARGUMENTS', 'Die Host-Kompatibilität muss legacy oder v0.1.7 sein.');
+  return { writing: true, expectedRevision: integer(args.expectedRevision, undefined, 0, Number.MAX_SAFE_INTEGER - 1),
+    ...(own(args, 'display') ? { display: args.display } : {}), ...(own(args, 'hostCompatibility') ? { hostCompatibility: args.hostCompatibility } : {}) };
+}
 function safeResult(result) {
   if (Buffer.byteLength(JSON.stringify(result), 'utf8') > MAX_RESULT_BYTES) fail('RESULT_TOO_LARGE', 'Das Ergebnis ist zu groß. Bitte eine kleinere Seite abrufen.');
   return result;
@@ -105,9 +120,36 @@ function candidateText(value) {
 exports.activate = async ({ moduleId, dataDirectory }) => {
   if (moduleId !== MODULE_ID || typeof dataDirectory !== 'string' || !path.isAbsolute(dataDirectory)) throw new Error('Das Gedächtnis benötigt seinen eigenen lokalen Datenspeicher.');
   const file = path.join(dataDirectory, 'memories.json');
+  const settingsFile = path.join(dataDirectory, 'settings.json');
   let queue = Promise.resolve();
   const serialize = task => { const result = queue.then(task); queue = result.catch(() => {}); return result; };
   const emptyStore = () => ({ schemaVersion: 1, memories: [], operationReceipts: [], eventReceipts: [] });
+  const emptySettingsStore = () => ({ schemaVersion: 1, settings: { display: 'auto', hostCompatibility: 'legacy', revision: 0 }, operationReceipts: [] });
+  const settingsResult = store => ({ settings: clone(store.settings), displaySupported: store.settings.hostCompatibility === 'v0.1.7' });
+  function validateSettings(settings) {
+    object(settings, ['display', 'hostCompatibility', 'revision', 'updatedAt']);
+    if (!DISPLAY_MODES.includes(settings.display) || !HOST_COMPATIBILITY.includes(settings.hostCompatibility)) fail('INVALID_SETTINGS', 'Die gespeicherte Anzeigeoption oder Host-Kompatibilität ist ungültig.');
+    integer(settings.revision, undefined, 0, Number.MAX_SAFE_INTEGER - 1);
+    if (settings.updatedAt !== undefined) timestamp(settings.updatedAt);
+    else if (settings.revision !== 0) fail('INVALID_SETTINGS', 'Die gespeicherten Anzeigeeinstellungen enthalten keinen Änderungszeitpunkt.');
+    return settings;
+  }
+  function validateSettingsStore(raw) {
+    object(raw, ['schemaVersion', 'settings', 'operationReceipts']);
+    if (raw.schemaVersion !== 1 || !Array.isArray(raw.operationReceipts) || raw.operationReceipts.length > MAX_OPERATION_RECEIPTS) fail('INVALID_SETTINGS', 'Das Format der Anzeigeeinstellungen ist unbekannt oder überschreitet seine Grenzen.');
+    validateSettings(raw.settings);
+    const actions = new Set();
+    for (const receipt of raw.operationReceipts) {
+      object(receipt, ['runId', 'actionId', 'argsHash', 'toolName', 'result']);
+      if (receipt.toolName !== SETTINGS_TOOL || !/^[a-f0-9]{64}$/.test(receipt.argsHash) || !['runId', 'actionId'].every(key => typeof receipt[key] === 'string' && /^[a-zA-Z0-9_-]{1,128}$/.test(receipt[key]))) fail('INVALID_SETTINGS', 'Ein Einstellungsbeleg ist ungültig.');
+      const key = JSON.stringify([receipt.runId, receipt.actionId]);
+      if (actions.has(key)) fail('INVALID_SETTINGS', 'Ein Einstellungsbeleg ist doppelt vorhanden.'); actions.add(key);
+      object(receipt.result, ['outcome', 'settings', 'displaySupported']);
+      if (receipt.result.outcome !== 'completed' || receipt.result.displaySupported !== (receipt.result.settings?.hostCompatibility === 'v0.1.7')) fail('INVALID_SETTINGS', 'Ein Einstellungsbeleg enthält ein ungültiges Ergebnis.');
+      validateSettings(receipt.result.settings); safeResult(receipt.result);
+    }
+    return raw;
+  }
   function validateRecord(memory) {
     object(memory, RECORD_FIELDS);
     resourceId(memory.id);
@@ -165,19 +207,35 @@ exports.activate = async ({ moduleId, dataDirectory }) => {
     } catch (error) { if (error.code === 'ENOENT') return emptyStore(); throw error; }
     finally { await handle?.close(); }
   }
-  async function writeStore(store, signal) {
+  async function readSettingsStore(signal) {
+    checkSignal(signal);
+    let handle;
+    try {
+      handle = await fs.open(settingsFile, 'r');
+      const stat = await handle.stat();
+      if (!stat.isFile() || stat.size > MAX_SETTINGS_BYTES) fail('INVALID_SETTINGS', 'Der lokale Einstellungsspeicher ist ungültig oder zu groß.');
+      let raw;
+      try { raw = JSON.parse(await handle.readFile({ encoding: 'utf8' })); }
+      catch { fail('INVALID_SETTINGS', 'Die Anzeigeeinstellungen können nicht gelesen werden. Bestehende Daten wurden nicht verändert.'); }
+      checkSignal(signal);
+      try { return validateSettingsStore(raw); }
+      catch (error) { if (error instanceof MemoryError) fail('INVALID_SETTINGS', 'Die gespeicherten Anzeigeeinstellungen enthalten ungültige Daten. Bestehende Daten wurden nicht verändert.'); throw error; }
+    } catch (error) { if (error.code === 'ENOENT') return emptySettingsStore(); throw error; }
+    finally { await handle?.close(); }
+  }
+  async function replaceStore(target, store, validate, maxBytes, signal) {
     checkSignal(signal);
     // Never acknowledge a mutation that writes a store our own reader rejects.
     // This also checks event-derived records and durable receipts before any I/O.
-    validateStore(store);
+    validate(store);
     const encoded = JSON.stringify(store) + '\n';
-    if (Buffer.byteLength(encoded, 'utf8') > MAX_FILE_BYTES) fail('STORAGE_FULL', 'Der lokale Gedächtnisspeicher ist voll. Es wurden keine Daten entfernt.');
+    if (Buffer.byteLength(encoded, 'utf8') > maxBytes) fail('STORAGE_FULL', 'Der lokale Gedächtnis- oder Einstellungsspeicher ist voll. Es wurden keine Daten entfernt.');
     await fs.mkdir(dataDirectory, { recursive: true, mode: 0o700 });
     const temporary = path.join(dataDirectory, `.memory-${randomUUID()}.tmp`);
     let handle, renamed = false, writeError;
     try {
       handle = await fs.open(temporary, 'wx', 0o600); await handle.writeFile(encoded, 'utf8'); await handle.sync(); await handle.close(); handle = undefined;
-      checkSignal(signal); await fs.rename(temporary, file); renamed = true;
+      checkSignal(signal); await fs.rename(temporary, target); renamed = true;
       let directory;
       try { directory = await fs.open(dataDirectory, 'r'); await directory.sync(); }
       catch (error) { if (!['EINVAL', 'ENOTSUP', 'EISDIR', 'EPERM', 'EACCES'].includes(error.code)) throw error; }
@@ -189,6 +247,8 @@ exports.activate = async ({ moduleId, dataDirectory }) => {
     }
     if (writeError) { if (renamed) fail('OUTCOME_UNCERTAIN', 'Die Änderung wurde ersetzt, ihre dauerhafte Speicherung konnte aber nicht abschließend bestätigt werden. Bitte den aktuellen Stand prüfen und nicht automatisch wiederholen.'); throw writeError; }
   }
+  const writeStore = (store, signal) => replaceStore(file, store, validateStore, MAX_FILE_BYTES, signal);
+  const writeSettingsStore = (store, signal) => replaceStore(settingsFile, store, validateSettingsStore, MAX_SETTINGS_BYTES, signal);
   function existing(store, id) { const memory = store.memories.find(item => item.id === id); if (!memory) fail('NOT_FOUND', 'Diese Erinnerung ist nicht mehr vorhanden. Bitte die Liste aktualisieren.'); return memory; }
   function receiptResult(store, toolName, operation) {
     if (!operation) return;
@@ -199,7 +259,7 @@ exports.activate = async ({ moduleId, dataDirectory }) => {
   }
   function recordResult(store, toolName, operation, result) {
     if (!operation) return;
-    if (store.operationReceipts.length >= MAX_OPERATION_RECEIPTS) fail('RECEIPT_STORAGE_FULL', 'Der Aktionsbelegspeicher ist voll. Es wurden keine Erinnerungen verändert.');
+    if (store.operationReceipts.length >= MAX_OPERATION_RECEIPTS) fail('RECEIPT_STORAGE_FULL', 'Der Aktionsbelegspeicher ist voll. Es wurden keine Erinnerungen oder Einstellungen verändert.');
     store.operationReceipts.push({ runId: operation.runId, actionId: operation.actionId, argsHash: operation.argsHash, toolName, result: clone(result) });
   }
   const tool = handler => async (args = {}, context = {}) => {
@@ -210,6 +270,24 @@ exports.activate = async ({ moduleId, dataDirectory }) => {
     }
   };
   const tools = {
+    'memory.settings': tool(async (args, { signal, operation }) => {
+      const values = settingsArguments(args);
+      return serialize(async () => {
+        const store = await readSettingsStore(signal);
+        if (!values.writing) return settingsResult(store);
+        const recorded = receiptResult(store, SETTINGS_TOOL, operation); if (recorded) return recorded;
+        if (store.settings.revision !== values.expectedRevision) fail('REVISION_CONFLICT', 'Die Anzeigeeinstellungen wurden zwischenzeitlich geändert. Bitte erneut lesen und die aktuelle Version prüfen.');
+        const display = values.display ?? store.settings.display, hostCompatibility = values.hostCompatibility ?? store.settings.hostCompatibility;
+        // The first explicit save pins even the default choice durably. Later
+        // identical saves are no-ops unless an operation receipt must be added.
+        const changed = store.settings.revision === 0 || display !== store.settings.display || hostCompatibility !== store.settings.hostCompatibility;
+        if (changed) store.settings = { display, hostCompatibility, revision: store.settings.revision + 1, updatedAt: new Date().toISOString() };
+        const result = { outcome: 'completed', ...settingsResult(store) };
+        recordResult(store, SETTINGS_TOOL, operation, result);
+        if (changed || operation) await writeSettingsStore(store, signal);
+        return result;
+      });
+    }),
     'memory.list': tool(async (args, { signal }) => {
       argsObject(args, ['query', 'status', 'scope', 'offset', 'limit']);
       const query = args.query === undefined ? '' : text(args.query, 'Der Suchtext', 200, false, true), status = args.status ?? 'all';
@@ -275,8 +353,11 @@ exports.activate = async ({ moduleId, dataDirectory }) => {
       const query = text(args.query, 'Die Frage', 6000, true, true), sessionId = text(args.sessionId, 'Die Chat-ID', 128), now = timestamp(args.now);
       const limit = integer(args.limit, undefined, 1, 20), maxChars = integer(args.maxChars, undefined, 1, 8000);
       return serialize(async () => {
-        const store = await readStore(signal), terms = words(query);
-        if (!terms.length) return { memories: [], hasMore: false };
+        const store = await readStore(signal), settingsStore = await readSettingsStore(signal), terms = words(query);
+        // Display hints are supported only after the user explicitly selects the
+        // v0.1.7 contract. The public module API supplies no host version signal.
+        const presentation = settingsStore.settings.hostCompatibility === 'v0.1.7' ? { display: settingsStore.settings.display } : {};
+        if (!terms.length) return { memories: [], hasMore: false, ...presentation };
         const ranked = [];
         for (const item of store.memories) {
           checkSignal(signal); if (item.status !== 'confirmed' || expired(item, now)) continue;
@@ -301,7 +382,7 @@ exports.activate = async ({ moduleId, dataDirectory }) => {
           if (JSON.stringify([...memories, memory]).length > maxChars) continue;
           memories.push(memory);
         }
-        return { memories, hasMore: memories.length < ranked.length };
+        return { memories, hasMore: memories.length < ranked.length, ...presentation };
       });
     }),
     'memory.reference': tool(async (args, { signal }) => {
@@ -363,14 +444,24 @@ exports.activate = async ({ moduleId, dataDirectory }) => {
       });
     },
     prepareOperation: async ({ toolName, args }, { signal } = {}) => {
-      checkSignal(signal); if (!WRITE_TOOLS.includes(toolName)) return { args };
+      checkSignal(signal);
+      if (toolName === SETTINGS_TOOL) {
+        const values = settingsArguments(args);
+        if (!values.writing) return { args: {} };
+        return serialize(async () => {
+          const store = await readSettingsStore(signal);
+          const { writing, ...normalized } = values;
+          return { args: normalized, resource: { id: 'settings', version: String(store.settings.revision) } };
+        });
+      }
+      if (!WRITE_TOOLS.includes(toolName)) return { args };
       const values = toolName === 'memory.save' ? saveArguments(args) : revisionArguments(args);
       return serialize(async () => { const store = await readStore(signal), id = values.id || randomUUID(), memory = store.memories.find(item => item.id === id); return { args: { ...values, id }, resource: { id, version: memory ? String(memory.revision) : 'absent' } }; });
     },
     reconcile: async ({ toolName, operation }, { signal } = {}) => {
       validateOperation(operation);
-      if (!operation || !WRITE_TOOLS.includes(toolName)) return { state: 'unknown', detail: 'Für diese Aktion ist kein dauerhafter Aktionsbeleg verfügbar.' };
-      return serialize(async () => { try { const store = await readStore(signal), result = receiptResult(store, toolName, operation); return result ? { state: 'completed', result, detail: 'Die lokale Änderung und ihr Aktionsbeleg wurden gemeinsam gespeichert.' } : { state: 'unknown', detail: 'Kein passender dauerhafter Aktionsbeleg liegt vor. Nicht automatisch wiederholen.' }; } catch (error) { if (signal?.aborted) throw error; return { state: 'unknown', detail: 'Der Aktionsstatus konnte nicht zuverlässig gelesen werden. Nicht automatisch wiederholen.' }; } });
+      if (!operation || ![...WRITE_TOOLS, SETTINGS_TOOL].includes(toolName)) return { state: 'unknown', detail: 'Für diese Aktion ist kein dauerhafter Aktionsbeleg verfügbar.' };
+      return serialize(async () => { try { const store = toolName === SETTINGS_TOOL ? await readSettingsStore(signal) : await readStore(signal), result = receiptResult(store, toolName, operation); return result ? { state: 'completed', result, detail: 'Die lokale Änderung und ihr Aktionsbeleg wurden gemeinsam gespeichert.' } : { state: 'unknown', detail: 'Kein passender dauerhafter Aktionsbeleg liegt vor. Nicht automatisch wiederholen.' }; } catch (error) { if (signal?.aborted) throw error; return { state: 'unknown', detail: 'Der Aktionsstatus konnte nicht zuverlässig gelesen werden. Nicht automatisch wiederholen.' }; } });
     },
     dispose: async () => { await queue; }
   };

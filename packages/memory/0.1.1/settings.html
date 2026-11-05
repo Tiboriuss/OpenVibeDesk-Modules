@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Gedächtnis</title>
+<style>
+:root{font:13px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#192039;background:#fff;color-scheme:light}
+*{box-sizing:border-box}[hidden]{display:none!important}body{margin:0;padding:16px;max-width:800px}h2{font-size:15px;margin:0 0 14px}p{color:#60687d;line-height:1.65;margin:0 0 12px;overflow-wrap:anywhere}strong{color:#222844}details{border:1px solid #e1e3ec;border-radius:9px;margin-bottom:10px}summary{cursor:pointer;font-weight:650;padding:12px}summary small{display:block;margin-top:3px;color:#73798c;font-size:11px;font-weight:400;overflow-wrap:anywhere}details>div{padding:0 12px 2px}button,select{font:inherit;font-size:12px;border:1px solid #d5cef8;border-radius:7px;min-height:34px}button{font-weight:650;padding:7px 10px;background:#eeeafd;color:#3f3274;cursor:pointer}button:disabled,select:disabled{opacity:.5;cursor:default}button:focus-visible,summary:focus-visible,select:focus-visible{outline:2px solid #9079eb;outline-offset:2px}.primary{background:#6850f5;border-color:#6850f5;color:#fff}.example{border-left:3px solid #e8e5fd;padding-left:10px;font-size:12px}.small{font-size:11px}.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-bottom:13px}.stat{background:#f8f7fd;border:1px solid #ece8f8;border-radius:7px;padding:10px}.stat b{display:block;font-size:18px;font-weight:650;margin-bottom:3px}.stat span{font-size:10px;color:#73798c}.preference{display:grid;grid-template-columns:minmax(0,1fr) minmax(185px,1fr);align-items:start;gap:12px;margin:0 0 13px}.preference label{display:block;font-weight:650;font-size:12px;margin-bottom:4px}.preference p{font-size:11px;margin:0}.preference select{width:100%;min-width:0;background:#fff;color:#192039;padding:6px 8px}.actions{display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin:0 0 10px}.feedback{font-size:11px;white-space:pre-wrap}.feedback:empty{display:none}.feedback.error{color:#a52f45}.feedback.success{color:#28634b}.draft-note{font-size:11px;color:#7a6036}.compatibility-note{padding:8px 10px;border-radius:7px;background:#f8f7fd;font-size:11px}.recovery{border:1px solid #eadbbc;background:#fff8eb;border-radius:7px;padding:9px 10px;margin-bottom:10px}.recovery p{font-size:11px;color:#775c31;margin-bottom:8px}
+@media(max-width:480px){.preference{grid-template-columns:minmax(0,1fr);gap:6px}.actions button{flex:1 1 auto}}
+@media(max-width:380px){body{padding:10px}.stat{padding:8px}.stat b{font-size:16px}.stat span{font-size:9px}}
+</style>
+</head>
+<body>
+<h2>Gedächtnis</h2>
+<div class="stats" aria-label="Gespeicherte Einträge"><div class="stat"><b id="confirmed">–</b><span>Erinnerungen</span></div><div class="stat"><b id="candidate">–</b><span>Zu prüfen</span></div><div class="stat"><b id="expired">–</b><span>Abgelaufen</span></div></div>
+<details open>
+  <summary>Anzeige im Chat<small id="saved-display">Einstellung wird geladen …</small></summary>
+  <div>
+    <div class="preference">
+      <div><label for="display">Gedächtnishinweise</label><p>Wähle, wann Hinweise und Erinnerungstexte im Chat erscheinen.</p></div>
+      <select id="display" disabled><option value="auto">Nur bei Treffern</option><option value="show">Auch ohne Treffer</option><option value="hide">Normale Hinweise ausblenden</option></select>
+    </div>
+    <div class="preference">
+      <div><label for="host-compatibility">OVD-Kompatibilität</label><p>Die Hostversion wird nicht automatisch erkannt. Wähle deine OVD-Version.</p></div>
+      <select id="host-compatibility" disabled><option value="legacy">OVD bis 0.1.6 / unbekannt</option><option value="v0.1.7">OVD ab 0.1.7</option></select>
+    </div>
+    <p id="compatibility-note" class="compatibility-note">Für ältere oder unbekannte Hosts wird die Anzeigeoption nicht übertragen.</p>
+    <p class="small">Die Auswahl ändert die Anzeige. Die KI erhält weiterhin die abgerufenen Erinnerungen. Fehler und Kürzungshinweise bleiben sichtbar. Neue Einstellungen gelten für neue Abrufe; gespeicherte Antworten behalten ihre damalige Anzeige.</p>
+    <p id="draft-note" class="draft-note" hidden>Noch nicht gespeichert.</p>
+    <div class="actions"><button id="save-display" class="primary" type="button" disabled>Anzeige speichern</button><button id="check-display" type="button">Gespeicherten Stand prüfen</button></div>
+    <div id="display-recovery" class="recovery" hidden><p id="display-recovery-text"></p><button id="load-display" type="button" hidden>Gespeicherte Auswahl laden</button></div>
+    <p id="display-status" class="feedback" role="status" aria-live="polite"></p>
+  </div>
+</details>
+<details><summary>Automatisch erinnern</summary><div><p>Vor einer neuen Anfrage ruft OVD passende gespeicherte Erinnerungen ab, wenn das Modul freigegeben und <strong>Workspace-Werkzeuge</strong> aktiviert sind. Dafür ist kein Anhängen im Chat nötig.</p><p>Nur übernommene, noch gültige Erinnerungen werden automatisch abgerufen. Wenn Hinweise angezeigt werden, kannst du unter <strong>Gedächtnis</strong> nachsehen, welche Informationen und Quellen für eine Antwort verwendet wurden.</p><p class="small">Der Abruf berücksichtigt die aktuelle Frage. Eine unvollständige Rückfrage wie „Und am Samstag?“ enthält möglicherweise zu wenig Kontext für eine passende Erinnerung.</p></div></details>
+<details><summary>Neue Chat-Aussagen zur Prüfung aufnehmen</summary><div><p>Aktiviere unter <strong>Einstellungen → Module → Gedächtnis → Ereignisse empfangen</strong> die gewünschten Chat-Ereignisse. Diese Auswahl ist anfangs ausgeschaltet.</p><p>Neue Nutzertexte werden nach den Aufnahmeregeln des Moduls als <strong>Zu prüfen</strong> abgelegt. Öffne einen Eintrag, prüfe und korrigiere ihn und wähle <strong>Als Erinnerung speichern</strong>. Assistentenantworten werden nicht ungeprüft als Tatsachen übernommen.</p><p>Die Aufnahme läuft im Hintergrund. Frühere Chats werden durch das Einschalten nicht nachträglich eingelesen. Bei ausgeschalteten Workspace-Werkzeugen entstehen keine später nachzuliefernden Beobachtungen.</p></div></details>
+<details><summary>Erinnerungen pflegen</summary><div><p>Oberfläche und Assistent verwenden dieselben Funktionen. Du kannst Erinnerungen anlegen, suchen, lesen, korrigieren, übernehmen und löschen. Bereich, Quelle und Gültigkeit helfen bei der Zuordnung.</p><p class="example">„Merke dir: Unsere Werkstatt öffnet samstags um 9 Uhr.“</p><p class="example">„Korrigiere die Öffnungszeit für Samstag auf 10 Uhr.“</p><p>Mit <strong>Im Chat verwenden</strong> oder per Drag-and-drop lässt sich eine gespeicherte Erinnerung gezielt anhängen. Sie liefert Kontext und erteilt keine neuen Arbeitsaufträge.</p></div></details>
+<details><summary>Speicher und Verarbeitung</summary><div><p>Einträge und Verarbeitungsbelege liegen dauerhaft im eigenen lokalen Datenverzeichnis des Moduls. Updates erhalten diese Daten. Wiederholte Ereignisse erzeugen durch Verarbeitungsbelege keine doppelten Einträge.</p><p>Jede Erinnerung umfasst bis zu 2000 Zeichen. Abgelaufene Einträge bleiben zum Prüfen sichtbar. Bereits in Chats gespeicherte Momentaufnahmen bleiben nach einer Korrektur oder Löschung historische Aufzeichnungen.</p><button id="check" type="button">Speicherstatus prüfen</button><p id="status" class="feedback" role="status" aria-live="polite"></p></div></details>
+<script>
+'use strict';
+const $ = id => document.getElementById(id);
+const pending = new Map();
+const displayNames = { auto: 'Nur bei Treffern', show: 'Auch ohne Treffer', hide: 'Normale Hinweise ausblenden' };
+let savedSettings;
+let settingsBusy = false;
+let settingsUncertain = false;
+let settingsConflict = false;
+let lastAttempt;
+
+function invoke(tool, args = {}, mutation = false) {
+  return new Promise((resolve, reject) => {
+    const requestId = crypto.randomUUID();
+    const timer = setTimeout(() => {
+      pending.delete(requestId);
+      const error = new Error(mutation ? 'Keine Antwort erhalten. Bitte zuerst den gespeicherten Stand prüfen.' : 'Keine Antwort erhalten. Bitte erneut prüfen.');
+      error.uncertain = mutation;
+      reject(error);
+    }, 70000);
+    pending.set(requestId, { resolve, reject, timer, mutation });
+    parent.postMessage({ type: 'ovd:invoke', requestId, tool, args }, '*');
+  });
+}
+
+addEventListener('message', event => {
+  if (event.source !== parent || event.data?.type !== 'ovd:result') return;
+  const call = pending.get(event.data.requestId);
+  if (!call) return;
+  pending.delete(event.data.requestId);
+  clearTimeout(call.timer);
+  const result = event.data.result;
+  if (event.data.ok && !['failed', 'uncertain', 'cancelled'].includes(result?.outcome) && result?.cancelled !== true) {
+    call.resolve(result);
+    return;
+  }
+  const cancelled = result?.outcome === 'cancelled' || result?.cancelled === true;
+  const error = new Error(cancelled ? 'Änderung abgebrochen.' : result?.error?.message || (typeof event.data.error === 'string' ? event.data.error : 'Die Anfrage ist fehlgeschlagen.'));
+  error.code = cancelled ? 'CANCELLED' : result?.error?.code;
+  error.uncertain = call.mutation && !cancelled && (!event.data.ok || result?.outcome === 'uncertain');
+  call.reject(error);
+});
+
+function showStatus(id, message = '', kind = '') {
+  $(id).textContent = message;
+  $(id).className = 'feedback' + (kind ? ' ' + kind : '');
+}
+
+function draftSettings() {
+  return { display: $('display').value, hostCompatibility: $('host-compatibility').value };
+}
+
+function equalPreferences(a, b) {
+  return a?.display === b?.display && a?.hostCompatibility === b?.hostCompatibility;
+}
+
+function dirty() {
+  return !!savedSettings && !equalPreferences(draftSettings(), savedSettings);
+}
+
+function validateSettings(result) {
+  const settings = result?.settings;
+  if (!settings || !Object.hasOwn(displayNames, settings.display) || !['legacy', 'v0.1.7'].includes(settings.hostCompatibility) || !Number.isSafeInteger(settings.revision) || settings.revision < 0) {
+    throw new Error('Die Anzeigeeinstellung konnte nicht gelesen werden.');
+  }
+  return settings;
+}
+
+function applySavedSelection() {
+  if (!savedSettings) return;
+  $('display').value = savedSettings.display;
+  $('host-compatibility').value = savedSettings.hostCompatibility;
+}
+
+function renderSettings() {
+  const locked = settingsBusy || settingsUncertain || !savedSettings;
+  $('display').disabled = locked;
+  $('host-compatibility').disabled = locked;
+  $('save-display').disabled = locked || settingsConflict || !dirty();
+  $('check-display').disabled = settingsBusy;
+  $('load-display').disabled = settingsBusy;
+  $('draft-note').hidden = !dirty();
+  $('display-recovery').hidden = !settingsUncertain && !settingsConflict;
+  $('load-display').hidden = !settingsConflict || settingsUncertain;
+  $('display-recovery-text').textContent = settingsUncertain
+    ? 'Der Ausgang der Änderung ist unklar. Deine Auswahl bleibt erhalten. Prüfe den gespeicherten Stand, bevor du erneut speicherst.'
+    : 'Der gespeicherte Stand wurde geändert. Deine Auswahl bleibt erhalten. Mit „Gespeicherte Auswahl laden“ verwirfst du diese Auswahl und übernimmst den geprüften Stand.';
+  $('compatibility-note').textContent = $('host-compatibility').value === 'v0.1.7'
+    ? 'Für OVD ab 0.1.7 wird die gespeicherte Anzeigeoption bei neuen Abrufen übertragen.'
+    : 'Für ältere oder unbekannte Hosts wird die Anzeigeoption nicht übertragen. Die Chat-Anzeige richtet sich dann nach dem Host.';
+  if (savedSettings) {
+    $('saved-display').textContent = 'Gespeichert: ' + displayNames[savedSettings.display] + ' · ' + (savedSettings.hostCompatibility === 'v0.1.7' ? 'OVD ab 0.1.7' : 'Älterer / unbekannter Host');
+  }
+}
+
+async function checkSettings(initial = false) {
+  if (settingsBusy) return;
+  settingsBusy = true;
+  renderSettings();
+  showStatus('display-status', 'Gespeicherter Stand wird geprüft …');
+  try {
+    const result = await invoke('memory.settings');
+    const current = validateSettings(result);
+    const previous = savedSettings;
+    const hasDraft = dirty();
+    savedSettings = current;
+    if (!previous || initial || !hasDraft) {
+      applySavedSelection();
+      settingsConflict = false;
+      settingsUncertain = false;
+      showStatus('display-status', initial ? '' : 'Gespeicherte Anzeigeeinstellung geladen.');
+    } else if (settingsUncertain && lastAttempt && equalPreferences(current, lastAttempt)) {
+      applySavedSelection();
+      settingsConflict = false;
+      settingsUncertain = false;
+      showStatus('display-status', 'Geprüft: Die gespeicherte Einstellung entspricht deiner Auswahl.', 'success');
+    } else {
+      settingsUncertain = false;
+      const changedSinceRead = current.revision !== previous.revision || !equalPreferences(current, previous);
+      settingsConflict = !equalPreferences(current, draftSettings()) && (settingsConflict || changedSinceRead);
+      showStatus('display-status', equalPreferences(current, draftSettings()) ? 'Deine Auswahl entspricht dem gespeicherten Stand.' : 'Gespeicherten Stand geprüft. Deine ungespeicherte Auswahl bleibt erhalten.');
+    }
+  } catch (error) {
+    showStatus('display-status', error.message, 'error');
+    if (!savedSettings) $('saved-display').textContent = 'Einstellung nicht verfügbar';
+  } finally {
+    settingsBusy = false;
+    renderSettings();
+  }
+}
+
+async function saveSettings() {
+  if (settingsBusy || settingsUncertain || settingsConflict || !savedSettings || !dirty()) return;
+  const selection = draftSettings();
+  lastAttempt = { ...selection };
+  settingsBusy = true;
+  renderSettings();
+  showStatus('display-status', 'Anzeigeeinstellung wird gespeichert …');
+  try {
+    const result = await invoke('memory.settings', { ...selection, expectedRevision: savedSettings.revision }, true);
+    if (result?.outcome !== 'completed') throw Object.assign(new Error('Der Ausgang der Änderung ist unklar. Bitte den gespeicherten Stand prüfen.'), { uncertain: true });
+    try { savedSettings = validateSettings(result); }
+    catch (error) { error.uncertain = true; throw error; }
+    applySavedSelection();
+    settingsConflict = false;
+    settingsUncertain = false;
+    showStatus('display-status', 'Anzeigeeinstellung gespeichert. Sie gilt für neue Abrufe.', 'success');
+  } catch (error) {
+    if (error.uncertain) settingsUncertain = true;
+    if (error.code === 'REVISION_CONFLICT') settingsConflict = true;
+    showStatus('display-status', error.message, error.code === 'CANCELLED' ? '' : 'error');
+  } finally {
+    settingsBusy = false;
+    renderSettings();
+  }
+}
+
+async function checkStorage() {
+  $('check').disabled = true;
+  showStatus('status', 'Speicher wird geprüft …');
+  try {
+    const result = await invoke('memory.status');
+    if (!result?.counts) throw new Error('Der Speicher konnte nicht gelesen werden.');
+    for (const name of ['confirmed', 'candidate', 'expired']) $(name).textContent = String(result.counts[name]);
+    const limits = result.limits || {};
+    showStatus('status', result.counts.all + ' Einträge' + (limits.memories ? ' von ' + limits.memories : '') + ' gespeichert.\n'
+      + result.eventReceipts + (limits.eventReceipts ? ' von ' + limits.eventReceipts : '') + ' Ereignisbelege.\n'
+      + result.operationReceipts + (limits.operationReceipts ? ' von ' + limits.operationReceipts : '') + ' Aktionsbelege.'
+      + (result.lastEventAt ? '\nLetztes verarbeitetes Ereignis: ' + new Date(result.lastEventAt).toLocaleString('de-DE') : '\nNoch kein Ereignis verarbeitet.'));
+  } catch (error) {
+    showStatus('status', error.message, 'error');
+  } finally {
+    $('check').disabled = false;
+  }
+}
+
+$('check').addEventListener('click', () => void checkStorage());
+$('check-display').addEventListener('click', () => void checkSettings());
+$('save-display').addEventListener('click', () => void saveSettings());
+$('display').addEventListener('change', renderSettings);
+$('host-compatibility').addEventListener('change', renderSettings);
+$('load-display').addEventListener('click', async () => {
+  if (!savedSettings || settingsBusy || settingsUncertain) return;
+  settingsBusy = true;
+  renderSettings();
+  showStatus('display-status', 'Gespeicherte Auswahl wird geladen …');
+  try {
+    savedSettings = validateSettings(await invoke('memory.settings'));
+    applySavedSelection();
+    settingsConflict = false;
+    showStatus('display-status', 'Gespeicherte Auswahl geladen.');
+  } catch (error) {
+    showStatus('display-status', error.message, 'error');
+  } finally {
+    settingsBusy = false;
+    renderSettings();
+  }
+});
+void checkStorage();
+void checkSettings(true);
+</script>
+</body>
+</html>

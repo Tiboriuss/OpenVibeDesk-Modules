@@ -6,10 +6,10 @@
       "id": "memory",
       "title": "Gedächtnis",
       "description": "Erinnerungen lokal speichern, prüfen und korrigieren. Der Host ruft passende bestätigte Fakten automatisch ab. Optional abonnierte Chat-Ereignisse liefern unbestätigte Vorschläge zur Prüfung, keine automatisch übernommenen Assistentenbehauptungen.",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "apiVersion": 1,
       "package": {
-        "path": "packages/memory/0.1.0",
+        "path": "packages/memory/0.1.1",
         "files": [
           {
             "path": "LICENSE",
@@ -17,11 +17,11 @@
           },
           {
             "path": "README.md",
-            "sha256": "dfa85bfbde4fcd6e0a5ca98b1391699f37d6b86c40c7023007e6a3d842d46f00"
+            "sha256": "f9047d05e16777fda9441fb250f321e129f8e3ca21a635658e48cf2566d4d8af"
           },
           {
             "path": "backend.cjs",
-            "sha256": "4795b4a4407355f75e7d95f2679d0c6789acdb2b1435549cbc1bf9d7e63bb420"
+            "sha256": "a96ba9d2a71d26646b9e495a281cf6e58c02689d51464259ca6f04acf6917f6d"
           },
           {
             "path": "memory.html",
@@ -29,11 +29,11 @@
           },
           {
             "path": "module.json",
-            "sha256": "3c4a40056e80f3bb49e698742db8f19743deb9ec378eb04f6e82808f4b292de9"
+            "sha256": "e027ad780b095e6e6e1421f44372001d63ea5ab056da4b2f0c2ebf8e654e915f"
           },
           {
             "path": "settings.html",
-            "sha256": "1013e11ac45491603c99d639baaa1cbf4192caea53389915be3ef1c4474d994d"
+            "sha256": "59aa427f25f84858f1f0dcbd5b977a708196013db036cbef6331d62d0eabc986"
           }
         ]
       }
