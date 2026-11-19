@@ -12,6 +12,8 @@ A module needs `module.json` with `apiVersion: 1`, a semantic version, a short d
 
 Implement each domain action once and expose it to both the module interface and Assistant through the same tool. Validate inputs in the backend, return bounded results with truthful errors and completeness, support pagination where needed, and respect cancellation. Descriptions should explain prerequisites and confirmations without including entire data sets or unrelated tool catalogs. Follow the upstream [module authoring contract](https://github.com/Tiboriuss/OpenVibeDesk/blob/main/CONTRIBUTING.md#building-modules) for lifecycle, confirmation, attention indicators and isolated HTML messaging.
 
+The catalog modules use German manifest literals and English translations for contributions and discovery. In each self-contained HTML view or settings form, handle the parent’s `ovd:locale` message and request the current language with `ovd:get-locale`. Exercise a language switch with a draft open. See the [host localization guide](https://github.com/Tiboriuss/OpenVibeDesk/blob/main/docs/localization.md).
+
 Persist module data in the host-provided `dataDirectory`, separately from its installed package. Handle upgrades without deleting existing data. An uncertain external action must not be repeated automatically. Keep credentials out of arguments, results, module packages and chat context.
 
 OVD's separate module process is not an OS sandbox. Declared permissions document intended access; they do not restrict filesystem or network access at the operating system level. Bundle dependencies beforehand. Installing a package does not run package-manager commands, setup scripts or build hooks.

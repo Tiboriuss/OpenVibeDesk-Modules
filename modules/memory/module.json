@@ -2,7 +2,7 @@
   "apiVersion": 1,
   "id": "memory",
   "title": "Gedächtnis",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Erinnerungen lokal speichern, prüfen und korrigieren. Der Host ruft passende bestätigte Fakten automatisch ab. Optional abonnierte Chat-Ereignisse liefern unbestätigte Vorschläge zur Prüfung, keine automatisch übernommenen Assistentenbehauptungen.",
   "keywords": [
     "memory",
@@ -25,6 +25,146 @@
     "einstellungen",
     "kompatibilität"
   ],
+  "locales": {
+    "en": {
+      "title": "Memory",
+      "description": "Save, review and correct memories locally. OVD recalls relevant confirmed facts automatically. Optional chat event subscriptions collect user statements for review.",
+      "keywords": [
+        "memory",
+        "memories",
+        "remember",
+        "recall",
+        "facts",
+        "knowledge",
+        "forget",
+        "source",
+        "candidate",
+        "learning",
+        "project",
+        "display",
+        "hide",
+        "settings",
+        "compatibility"
+      ],
+      "views": {
+        "memory": {
+          "title": "Memory"
+        }
+      },
+      "navigation": {
+        "memory": {
+          "title": "Memory"
+        }
+      },
+      "settings": {
+        "settings": {
+          "title": "Memory",
+          "description": "Chat display, saved memories and optional candidates from chat",
+          "keywords": [
+            "memories",
+            "remember",
+            "learning",
+            "candidates",
+            "events",
+            "storage",
+            "display",
+            "hide",
+            "visible",
+            "compatibility"
+          ]
+        }
+      },
+      "referenceTypes": {
+        "memory": {
+          "title": "Memory"
+        }
+      },
+      "tools": {
+        "memory.list": {
+          "label": "Search memories",
+          "description": "Search local memories and review candidates. Filter by status (confirmed, candidate or all) or exact scope. Returns a bounded page of full records with revision and exact count. When hasMore is true, continue with nextOffset. Candidates await verification.",
+          "keywords": [
+            "lookup",
+            "find",
+            "search",
+            "review"
+          ]
+        },
+        "memory.read": {
+          "label": "Read memory",
+          "description": "Read a complete entry by ID, including text, source, scope, review status, expiry and revision. Read the current revision before correcting or confirming an entry. This action only reads data.",
+          "keywords": [
+            "inspect",
+            "source"
+          ]
+        },
+        "memory.save": {
+          "label": "Save memory",
+          "description": "At the user’s explicit request, save or correct a confirmed fact using title and text. Use only facts supplied by the user. Updates need id and expectedRevision. Saving a candidate confirms it. Use scope for a project, person or topic. Omitted optional fields keep their values on update. Pass an empty sourceUri or expiresAt to clear it. Check uncertain outcomes before retrying.",
+          "keywords": [
+            "remember",
+            "store",
+            "correct"
+          ]
+        },
+        "memory.confirm": {
+          "label": "Confirm candidate",
+          "description": "At the user’s explicit request, confirm a previously reviewed candidate without editing it. Supply id and the current expectedRevision. Use save for corrections. Only confirmed, unexpired entries qualify for automatic recall.",
+          "keywords": [
+            "accept",
+            "approve",
+            "review"
+          ]
+        },
+        "memory.delete": {
+          "label": "Delete memory",
+          "description": "At the user’s explicit request, permanently delete an entry or discard a candidate using id and the current expectedRevision. Existing chat snapshots and processing receipts are retained. Redelivery of the same event cannot recreate the entry. Check uncertain outcomes before retrying.",
+          "keywords": [
+            "forget",
+            "remove",
+            "discard"
+          ]
+        },
+        "memory.recall": {
+          "label": "Recall relevant memories",
+          "description": "Read-only automatic recall. Ranks confirmed, unexpired memories lexically and returns their sources. query is the current question, sessionId the opaque chat ID and now an ISO timestamp. limit and maxChars bound the result. Returns memories and hasMore, plus the saved display hint only when v0.1.7 host compatibility is selected. May miss semantic matches.",
+          "keywords": [
+            "retrieve",
+            "recall",
+            "context"
+          ]
+        },
+        "memory.reference": {
+          "label": "Attach memory to chat",
+          "description": "Resolve a confirmed memory as a chat context reference with source, scope and expiry. Review and confirm candidates before attaching them. The result is context only and grants no extra permissions.",
+          "keywords": [
+            "attach",
+            "reference",
+            "context"
+          ]
+        },
+        "memory.status": {
+          "label": "Check memory status",
+          "description": "Read exact counts for confirmed, candidate and expired entries, bounded scope counts, storage limits and processing receipts. This describes local module state. For host delivery and subscriptions, use modules.events_status. The user chooses subscriptions.",
+          "keywords": [
+            "counts",
+            "storage",
+            "capacity"
+          ]
+        },
+        "memory.settings": {
+          "label": "Change memory display",
+          "description": "Read or update persistent chat display preferences. {} returns settings, revision and displaySupported. Updates require expectedRevision and display (auto: matches only, show: include empty, hide: hide routine notices and texts) or hostCompatibility, or both. Default auto/legacy. Use legacy for unknown hosts or through 0.1.6. Select v0.1.7 only for a known compatible host. Affects new recalls only. Context, errors and truncation are preserved. Check uncertain outcomes before retrying.",
+          "keywords": [
+            "display",
+            "preferences",
+            "hide",
+            "show"
+          ]
+        }
+      }
+    }
+  },
   "capabilities": [
     "memory.list",
     "memory.read",
@@ -153,8 +293,8 @@
         "additionalProperties": false
       },
       "confirmation": {
-        "title": "Erinnerung speichern",
-        "message": "Den angezeigten Inhalt mit Quelle und Geltungsbereich als bestätigte Erinnerung speichern? Er kann bei späteren Fragen automatisch als Kontext verwendet werden."
+        "title": "Erinnerung speichern / Save memory",
+        "message": "Den angezeigten Inhalt mit Quelle und Geltungsbereich als bestätigte Erinnerung speichern? Er kann bei späteren Fragen automatisch als Kontext verwendet werden. / Save this content, source and scope as a confirmed memory? OVD can recall it automatically for future questions."
       }
     },
     {
@@ -182,8 +322,8 @@
         "additionalProperties": false
       },
       "confirmation": {
-        "title": "Vorschlag übernehmen",
-        "message": "Den gelesenen Vorschlag als bestätigte Erinnerung übernehmen? Bitte Inhalt und Quelle zuvor prüfen."
+        "title": "Vorschlag übernehmen / Confirm candidate",
+        "message": "Den gelesenen Vorschlag als bestätigte Erinnerung übernehmen? Bitte Inhalt und Quelle zuvor prüfen. / Have you reviewed the content and its source? Confirming makes this candidate available for recall."
       }
     },
     {
@@ -211,8 +351,8 @@
         "additionalProperties": false
       },
       "confirmation": {
-        "title": "Eintrag löschen",
-        "message": "Diesen Gedächtniseintrag dauerhaft löschen oder den Vorschlag verwerfen? Bereits gespeicherte Chat-Momentaufnahmen bleiben erhalten."
+        "title": "Eintrag löschen / Delete entry",
+        "message": "Diesen Gedächtniseintrag dauerhaft löschen oder den Vorschlag verwerfen? Bereits gespeicherte Chat-Momentaufnahmen bleiben erhalten. / Permanently delete this memory or discard this candidate? Existing chat snapshots are retained."
       }
     },
     {
@@ -296,13 +436,13 @@
               "legacy",
               "v0.1.7"
             ],
-            "description": "Explizite Kompatibilitätsauswahl, keine automatische Erkennung. v0.1.7 nur für nachweislich unterstützte Hosts, sonst legacy."
+            "description": "legacy = OVD ≤ 0.1.6 / ?, v0.1.7 = OVD ≥ 0.1.7"
           },
           "expectedRevision": {
             "type": "integer",
             "minimum": 0,
             "maximum": 9007199254740990,
-            "description": "Bei jeder Änderung erforderlich, aktuelle settings.revision aus dem Lesen."
+            "description": "settings.revision"
           }
         },
         "additionalProperties": false

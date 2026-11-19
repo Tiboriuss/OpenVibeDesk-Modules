@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title data-en="Memory">Gedächtnis</title>
+<style>
+:root{font:13px -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#192039;background:#fff;color-scheme:light}
+*{box-sizing:border-box}[hidden]{display:none!important}body{margin:0;padding:16px;max-width:800px}h2{font-size:15px;margin:0 0 14px}p{color:#60687d;line-height:1.65;margin:0 0 12px;overflow-wrap:anywhere}strong{color:#222844}details{border:1px solid #e1e3ec;border-radius:9px;margin-bottom:10px}summary{cursor:pointer;font-weight:650;padding:12px}summary small{display:block;margin-top:3px;color:#73798c;font-size:11px;font-weight:400;overflow-wrap:anywhere}details>div{padding:0 12px 2px}button,select{font:inherit;font-size:12px;border:1px solid #d5cef8;border-radius:7px;min-height:34px}button{font-weight:650;padding:7px 10px;background:#eeeafd;color:#3f3274;cursor:pointer}button:disabled,select:disabled{opacity:.5;cursor:default}button:focus-visible,summary:focus-visible,select:focus-visible{outline:2px solid #9079eb;outline-offset:2px}.primary{background:#6850f5;border-color:#6850f5;color:#fff}.example{border-left:3px solid #e8e5fd;padding-left:10px;font-size:12px}.small{font-size:11px}.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-bottom:13px}.stat{background:#f8f7fd;border:1px solid #ece8f8;border-radius:7px;padding:10px}.stat b{display:block;font-size:18px;font-weight:650;margin-bottom:3px}.stat span{font-size:10px;color:#73798c}.preference{display:grid;grid-template-columns:minmax(0,1fr) minmax(185px,1fr);align-items:start;gap:12px;margin:0 0 13px}.preference label{display:block;font-weight:650;font-size:12px;margin-bottom:4px}.preference p{font-size:11px;margin:0}.preference select{width:100%;min-width:0;background:#fff;color:#192039;padding:6px 8px}.actions{display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin:0 0 10px}.feedback{font-size:11px;white-space:pre-wrap}.feedback:empty{display:none}.feedback.error{color:#a52f45}.feedback.success{color:#28634b}.draft-note{font-size:11px;color:#7a6036}.compatibility-note{padding:8px 10px;border-radius:7px;background:#f8f7fd;font-size:11px}.recovery{border:1px solid #eadbbc;background:#fff8eb;border-radius:7px;padding:9px 10px;margin-bottom:10px}.recovery p{font-size:11px;color:#775c31;margin-bottom:8px}
+@media(max-width:480px){.preference{grid-template-columns:minmax(0,1fr);gap:6px}.actions button{flex:1 1 auto}}
+@media(max-width:380px){body{padding:10px}.stat{padding:8px}.stat b{font-size:16px}.stat span{font-size:9px}}
+</style>
+</head>
+<body>
+<h2 data-en="Memory">Gedächtnis</h2>
+<div class="stats" aria-label="Gespeicherte Einträge" data-en-aria-label="Saved entries"><div class="stat"><b id="confirmed">–</b><span data-en="Memories">Erinnerungen</span></div><div class="stat"><b id="candidate">–</b><span data-en="To review">Zu prüfen</span></div><div class="stat"><b id="expired">–</b><span data-en="Expired">Abgelaufen</span></div></div>
+<details open>
+  <summary><span data-en="Display in chat">Anzeige im Chat</span><small id="saved-display" data-en="Loading preference…">Einstellung wird geladen …</small></summary>
+  <div>
+    <div class="preference">
+      <div><label for="display" data-en="Memory notices">Gedächtnishinweise</label><p data-en="Choose when notices and memory text appear in chat.">Wähle, wann Hinweise und Erinnerungstexte im Chat erscheinen.</p></div>
+      <select id="display" disabled><option value="auto" data-en="Only when memories match">Nur bei Treffern</option><option value="show" data-en="Include empty results">Auch ohne Treffer</option><option value="hide" data-en="Hide routine notices">Normale Hinweise ausblenden</option></select>
+    </div>
+    <div class="preference">
+      <div><label for="host-compatibility" data-en="OVD compatibility">OVD-Kompatibilität</label><p data-en="Select the OVD version you use. The module cannot detect it automatically.">Die Hostversion wird nicht automatisch erkannt. Wähle deine OVD-Version.</p></div>
+      <select id="host-compatibility" disabled><option value="legacy" data-en="OVD 0.1.6 or earlier / unknown">OVD bis 0.1.6 / unbekannt</option><option value="v0.1.7" data-en="OVD 0.1.7 or later">OVD ab 0.1.7</option></select>
+    </div>
+    <p id="compatibility-note" class="compatibility-note" data-en="Older or unknown hosts use their own display settings.">Für ältere oder unbekannte Hosts wird die Anzeigeoption nicht übertragen.</p>
+    <p class="small" data-en="The AI still receives retrieved memories. Errors and truncation warnings remain visible. Changes apply to new lookups. Saved answers keep the display setting used at the time.">Die Auswahl ändert die Anzeige. Die KI erhält weiterhin die abgerufenen Erinnerungen. Fehler und Kürzungshinweise bleiben sichtbar. Neue Einstellungen gelten für neue Abrufe; gespeicherte Antworten behalten ihre damalige Anzeige.</p>
+    <p id="draft-note" class="draft-note" hidden data-en="Unsaved changes.">Noch nicht gespeichert.</p>
+    <div class="actions"><button id="save-display" class="primary" type="button" disabled data-en="Save preference">Anzeige speichern</button><button id="check-display" type="button" data-en="Check saved preference">Gespeicherten Stand prüfen</button></div>
+    <div id="display-recovery" class="recovery" hidden><p id="display-recovery-text"></p><button id="load-display" type="button" hidden data-en="Load saved preference">Gespeicherte Auswahl laden</button></div>
+    <p id="display-status" class="feedback" role="status" aria-live="polite"></p>
+  </div>
+</details>
+<details><summary data-en="Automatic recall">Automatisch erinnern</summary><div><p><span data-en="OVD retrieves matching memories before a new request when the module is approved and ">Vor einer neuen Anfrage ruft OVD passende gespeicherte Erinnerungen ab, wenn das Modul freigegeben und </span><strong data-en="Workspace tools">Workspace-Werkzeuge</strong><span data-en=" are enabled. You can ask your question without attaching a memory."> aktiviert sind. Dafür ist kein Anhängen im Chat nötig.</span></p><p><span data-en="OVD recalls confirmed, unexpired memories. When notices are visible, open ">Nur übernommene, noch gültige Erinnerungen werden automatisch abgerufen. Wenn Hinweise angezeigt werden, kannst du unter </span><strong data-en="Memory">Gedächtnis</strong><span data-en=" to see which facts and sources were used for an answer."> nachsehen, welche Informationen und Quellen für eine Antwort verwendet wurden.</span></p><p class="small" data-en="Recall uses the current question. A follow-up such as “And on Saturday?” may contain too little context to find a matching memory.">Der Abruf berücksichtigt die aktuelle Frage. Eine unvollständige Rückfrage wie „Und am Samstag?“ enthält möglicherweise zu wenig Kontext für eine passende Erinnerung.</p></div></details>
+<details><summary data-en="Collect chat statements for review">Neue Chat-Aussagen zur Prüfung aufnehmen</summary><div><p><span data-en="Open ">Aktiviere unter </span><strong data-en="Settings → Modules → Memory → Receive events">Einstellungen → Module → Gedächtnis → Ereignisse empfangen</strong><span data-en=" and select the chat events to collect. Subscriptions are initially off."> die gewünschten Chat-Ereignisse. Diese Auswahl ist anfangs ausgeschaltet.</span></p><p><span data-en="Eligible new user statements appear under ">Neue Nutzertexte werden nach den Aufnahmeregeln des Moduls als </span><strong data-en="To review">Zu prüfen</strong><span data-en=". Open an entry, review or correct it, and choose "> abgelegt. Öffne einen Eintrag, prüfe und korrigiere ihn und wähle </span><strong data-en="Save as memory">Als Erinnerung speichern</strong><span data-en=". Assistant replies are never automatically accepted as facts.">. Assistentenantworten werden nicht ungeprüft als Tatsachen übernommen.</span></p><p data-en="Collection runs in the background. Subscriptions cover future chats. Messages sent while Workspace tools are off are skipped.">Die Aufnahme läuft im Hintergrund. Frühere Chats werden durch das Einschalten nicht nachträglich eingelesen. Bei ausgeschalteten Workspace-Werkzeugen entstehen keine später nachzuliefernden Beobachtungen.</p></div></details>
+<details><summary data-en="Manage memories">Erinnerungen pflegen</summary><div><p data-en="Use this window or the Assistant to create, find, read, correct, confirm and delete memories. Scope, source and expiry help identify where each fact applies.">Oberfläche und Assistent verwenden dieselben Funktionen. Du kannst Erinnerungen anlegen, suchen, lesen, korrigieren, übernehmen und löschen. Bereich, Quelle und Gültigkeit helfen bei der Zuordnung.</p><p class="example" data-en="“Remember that our workshop opens at 9 am on Saturdays.”">„Merke dir: Unsere Werkstatt öffnet samstags um 9 Uhr.“</p><p class="example" data-en="“Change the Saturday opening time to 10 am.”">„Korrigiere die Öffnungszeit für Samstag auf 10 Uhr.“</p><p><span data-en="Choose ">Mit </span><strong data-en="Use in chat">Im Chat verwenden</strong><span data-en=" or drag a saved memory into chat to attach it as context. Attaching it grants no new permissions."> oder per Drag-and-drop lässt sich eine gespeicherte Erinnerung gezielt anhängen. Sie liefert Kontext und erteilt keine neuen Arbeitsaufträge.</span></p></div></details>
+<details><summary data-en="Storage and processing">Speicher und Verarbeitung</summary><div><p data-en="The module keeps memories and processing receipts in its local data directory across updates. The receipts prevent redelivered events from creating duplicate memories.">Einträge und Verarbeitungsbelege liegen dauerhaft im eigenen lokalen Datenverzeichnis des Moduls. Updates erhalten diese Daten. Wiederholte Ereignisse erzeugen durch Verarbeitungsbelege keine doppelten Einträge.</p><p data-en="A memory can contain up to 2,000 characters. Expired memories remain available for review. Existing chat snapshots retain the information used at the time, even if a memory is edited or deleted.">Jede Erinnerung umfasst bis zu 2000 Zeichen. Abgelaufene Einträge bleiben zum Prüfen sichtbar. Bereits in Chats gespeicherte Momentaufnahmen bleiben nach einer Korrektur oder Löschung historische Aufzeichnungen.</p><button id="check" type="button" data-en="Check storage">Speicherstatus prüfen</button><p id="status" class="feedback" role="status" aria-live="polite"></p></div></details>
+<script>
+'use strict';
+let locale = 'de';
+const labelBindings = new WeakMap();
+const t = (de, en) => locale === 'en' ? en : de;
+const message = (de, en) => () => t(de, en);
+const number = value => new Intl.NumberFormat(locale).format(value);
+function resolveLabel(label) { return typeof label === 'function' ? label() : label; }
+function renderLabel(element, attribute, label) {
+  const value = resolveLabel(label);
+  if (attribute) element.setAttribute(attribute, value);
+  else element.textContent = value;
+}
+function bind(element, label, attribute = '') {
+  if (typeof element === 'string') element = document.getElementById(element);
+  if (!labelBindings.has(element)) {
+    labelBindings.set(element, new Map());
+    element.setAttribute('data-localized', '');
+  }
+  labelBindings.get(element).set(attribute, label);
+  renderLabel(element, attribute, label);
+}
+// Elements with input values or user-authored text are never translation targets.
+for (const attribute of ['', 'title', 'aria-label', 'placeholder']) {
+  const key = attribute ? 'data-en-' + attribute : 'data-en';
+  for (const element of document.querySelectorAll('[' + key + ']')) {
+    const de = attribute ? element.getAttribute(attribute) : element.textContent;
+    bind(element, message(de, element.getAttribute(key)), attribute);
+  }
+}
+addEventListener('message', event => {
+  if (event.source !== parent || event.data?.type !== 'ovd:locale') return;
+  const next = event.data.locale;
+  if (!['de', 'en'].includes(next) || next === locale) return;
+  locale = document.documentElement.lang = next;
+  for (const element of document.querySelectorAll('[data-localized]')) {
+    for (const [attribute, label] of labelBindings.get(element)) renderLabel(element, attribute, label);
+  }
+});
+parent.postMessage({ type: 'ovd:get-locale' }, '*');
+
+function localizedError(label) { return Object.assign(new Error(resolveLabel(label)), { label }); }
+function toolErrorLabel(code, detail) {
+  const english = {
+    INVALID_ARGUMENTS: 'Check the supplied values and field limits.',
+    ARGUMENTS_TOO_LARGE: 'The request exceeds the size limit.',
+    INVALID_ID: 'The memory ID is invalid.',
+    RESULT_TOO_LARGE: 'The result exceeds the size limit. Request a smaller page.',
+    INVALID_OPERATION: 'The operation ID is invalid.',
+    REVISION_CONFLICT: 'The saved version has changed. Check the current version before saving again.',
+    NOT_FOUND: 'The entry no longer exists. Refresh the list.',
+    INVALID_SETTINGS: 'The stored display settings could not be read. Existing data was preserved.',
+    INVALID_STORE: 'The memory store could not be read. Existing data was preserved.',
+    STORAGE_FULL: 'The local store is full. No data was removed.',
+    STORAGE_ERROR: 'Could not access local storage. Check the saved state before retrying.',
+    OUTCOME_UNCERTAIN: 'Persistence could not be confirmed. Check the saved state before retrying.',
+    OPERATION_CONFLICT: 'This operation ID was previously used with different arguments.',
+    RECEIPT_STORAGE_FULL: 'The operation receipt store is full. No changes were made.',
+    MEMORY_FULL: 'The memory store has reached its limit of 2,000 entries.',
+    UNCONFIRMED_MEMORY: 'Review and confirm this candidate before attaching it.'
+  }[code];
+  return english && typeof detail === 'string' ? message(detail, english + ' (' + code + ')') : detail;
+}
+
+const $ = id => document.getElementById(id);
+const pending = new Map();
+const displayNames = { auto: message("Nur bei Treffern", "Only when memories match"), show: message("Auch ohne Treffer", "Include empty results"), hide: message("Normale Hinweise ausblenden", "Hide routine notices") };
+let savedSettings;
+let settingsBusy = false;
+let settingsUncertain = false;
+let settingsConflict = false;
+let lastAttempt;
+
+function invoke(tool, args = {}, mutation = false) {
+  return new Promise((resolve, reject) => {
+    const requestId = crypto.randomUUID();
+    const timer = setTimeout(() => {
+      pending.delete(requestId);
+      const error = localizedError(mutation ? message("Keine Antwort erhalten. Bitte zuerst den gespeicherten Stand prüfen.", "No response. Check the saved preference before trying again.") : message("Keine Antwort erhalten. Bitte erneut prüfen.", "No response. Please check again."));
+      error.uncertain = mutation;
+      reject(error);
+    }, 70000);
+    pending.set(requestId, { resolve, reject, timer, mutation });
+    parent.postMessage({ type: 'ovd:invoke', requestId, tool, args }, '*');
+  });
+}
+
+addEventListener('message', event => {
+  if (event.source !== parent || event.data?.type !== 'ovd:result') return;
+  const call = pending.get(event.data.requestId);
+  if (!call) return;
+  pending.delete(event.data.requestId);
+  clearTimeout(call.timer);
+  const result = event.data.result;
+  if (event.data.ok && !['failed', 'uncertain', 'cancelled'].includes(result?.outcome) && result?.cancelled !== true) {
+    call.resolve(result);
+    return;
+  }
+  const cancelled = result?.outcome === 'cancelled' || result?.cancelled === true;
+  const detail = result?.error?.message || event.data.error;
+  const error = localizedError(cancelled ? message("Änderung abgebrochen.", "Change cancelled.") : toolErrorLabel(result?.error?.code, typeof detail === 'string' ? detail : message("Die Anfrage ist fehlgeschlagen.", "The request failed.")));
+  error.code = cancelled ? 'CANCELLED' : result?.error?.code;
+  error.uncertain = call.mutation && !cancelled && (!event.data.ok || result?.outcome === 'uncertain');
+  call.reject(error);
+});
+
+function showStatus(id, label = '', kind = '') {
+  bind(id, label);
+  $(id).className = 'feedback' + (kind ? ' ' + kind : '');
+}
+
+function draftSettings() {
+  return { display: $('display').value, hostCompatibility: $('host-compatibility').value };
+}
+
+function equalPreferences(a, b) {
+  return a?.display === b?.display && a?.hostCompatibility === b?.hostCompatibility;
+}
+
+function dirty() {
+  return !!savedSettings && !equalPreferences(draftSettings(), savedSettings);
+}
+
+function validateSettings(result) {
+  const settings = result?.settings;
+  if (!settings || !Object.hasOwn(displayNames, settings.display) || !['legacy', 'v0.1.7'].includes(settings.hostCompatibility) || !Number.isSafeInteger(settings.revision) || settings.revision < 0) {
+    throw localizedError(message("Die Anzeigeeinstellung konnte nicht gelesen werden.", "Could not read the display preference."));
+  }
+  return settings;
+}
+
+function applySavedSelection() {
+  if (!savedSettings) return;
+  $('display').value = savedSettings.display;
+  $('host-compatibility').value = savedSettings.hostCompatibility;
+}
+
+function renderSettings() {
+  const locked = settingsBusy || settingsUncertain || !savedSettings;
+  $('display').disabled = locked;
+  $('host-compatibility').disabled = locked;
+  $('save-display').disabled = locked || settingsConflict || !dirty();
+  $('check-display').disabled = settingsBusy;
+  $('load-display').disabled = settingsBusy;
+  $('draft-note').hidden = !dirty();
+  $('display-recovery').hidden = !settingsUncertain && !settingsConflict;
+  $('load-display').hidden = !settingsConflict || settingsUncertain;
+  bind('display-recovery-text', settingsUncertain
+    ? message("Der Ausgang der Änderung ist unklar. Deine Auswahl bleibt erhalten. Prüfe den gespeicherten Stand, bevor du erneut speicherst.", "The outcome is uncertain. Your selection is still here. Check the saved preference before saving again.")
+    : message("Der gespeicherte Stand wurde geändert. Deine Auswahl bleibt erhalten. Mit „Gespeicherte Auswahl laden“ verwirfst du diese Auswahl und übernimmst den geprüften Stand.", "The saved preference changed. Your selection is still here. Choose “Load saved preference” to replace it with the current saved preference."));
+  bind('compatibility-note', $('host-compatibility').value === 'v0.1.7'
+    ? message("Für OVD ab 0.1.7 wird die gespeicherte Anzeigeoption bei neuen Abrufen übertragen.", "For OVD 0.1.7 or later, new lookups include the saved display preference.")
+    : message("Für ältere oder unbekannte Hosts wird die Anzeigeoption nicht übertragen. Die Chat-Anzeige richtet sich dann nach dem Host.", "Older or unknown hosts use their own chat display settings. The module omits its display preference."));
+  if (savedSettings) {
+    bind('saved-display', () => t('Gespeichert: ', 'Saved: ') + displayNames[savedSettings.display]() + ' · ' + (savedSettings.hostCompatibility === 'v0.1.7' ? t('OVD ab 0.1.7', 'OVD 0.1.7 or later') : t('Älterer / unbekannter Host', 'Older or unknown host')));
+  }
+}
+
+async function checkSettings(initial = false) {
+  if (settingsBusy) return;
+  settingsBusy = true;
+  renderSettings();
+  showStatus('display-status', message("Gespeicherter Stand wird geprüft …", "Checking saved preference…"));
+  try {
+    const result = await invoke('memory.settings');
+    const current = validateSettings(result);
+    const previous = savedSettings;
+    const hasDraft = dirty();
+    savedSettings = current;
+    if (!previous || initial || !hasDraft) {
+      applySavedSelection();
+      settingsConflict = false;
+      settingsUncertain = false;
+      showStatus('display-status', initial ? '' : message("Gespeicherte Anzeigeeinstellung geladen.", "Saved display preference loaded."));
+    } else if (settingsUncertain && lastAttempt && equalPreferences(current, lastAttempt)) {
+      applySavedSelection();
+      settingsConflict = false;
+      settingsUncertain = false;
+      showStatus('display-status', message("Geprüft: Die gespeicherte Einstellung entspricht deiner Auswahl.", "Checked the saved preference. It matches your selection."), 'success');
+    } else {
+      settingsUncertain = false;
+      const changedSinceRead = current.revision !== previous.revision || !equalPreferences(current, previous);
+      settingsConflict = !equalPreferences(current, draftSettings()) && (settingsConflict || changedSinceRead);
+      showStatus('display-status', equalPreferences(current, draftSettings()) ? message("Deine Auswahl entspricht dem gespeicherten Stand.", "Your selection matches the saved preference.") : message("Gespeicherten Stand geprüft. Deine ungespeicherte Auswahl bleibt erhalten.", "Checked the saved preference. Your unsaved selection is still here."));
+    }
+  } catch (error) {
+    showStatus('display-status', error.label ?? error.message, 'error');
+    if (!savedSettings) bind('saved-display', message("Einstellung nicht verfügbar", "Preference unavailable"));
+  } finally {
+    settingsBusy = false;
+    renderSettings();
+  }
+}
+
+async function saveSettings() {
+  if (settingsBusy || settingsUncertain || settingsConflict || !savedSettings || !dirty()) return;
+  const selection = draftSettings();
+  lastAttempt = { ...selection };
+  settingsBusy = true;
+  renderSettings();
+  showStatus('display-status', message("Anzeigeeinstellung wird gespeichert …", "Saving display preference…"));
+  try {
+    const result = await invoke('memory.settings', { ...selection, expectedRevision: savedSettings.revision }, true);
+    if (result?.outcome !== 'completed') throw Object.assign(localizedError(message("Der Ausgang der Änderung ist unklar. Bitte den gespeicherten Stand prüfen.", "The outcome is uncertain. Check the saved preference.")), { uncertain: true });
+    try { savedSettings = validateSettings(result); }
+    catch (error) { error.uncertain = true; throw error; }
+    applySavedSelection();
+    settingsConflict = false;
+    settingsUncertain = false;
+    showStatus('display-status', message("Anzeigeeinstellung gespeichert. Sie gilt für neue Abrufe.", "Display preference saved for new lookups."), 'success');
+  } catch (error) {
+    if (error.uncertain) settingsUncertain = true;
+    if (error.code === 'REVISION_CONFLICT') settingsConflict = true;
+    showStatus('display-status', error.label ?? error.message, error.code === 'CANCELLED' ? '' : 'error');
+  } finally {
+    settingsBusy = false;
+    renderSettings();
+  }
+}
+
+async function checkStorage() {
+  $('check').disabled = true;
+  showStatus('status', message("Speicher wird geprüft …", "Checking storage…"));
+  try {
+    const result = await invoke('memory.status');
+    if (!result?.counts) throw localizedError(message("Der Speicher konnte nicht gelesen werden.", "Could not read storage."));
+    for (const name of ['confirmed', 'candidate', 'expired']) bind(name, () => number(result.counts[name]));
+    const limits = result.limits || {};
+    showStatus('status', () => {
+      const usage = (count, limit) => limit ? number(count) + t(' von ', ' of ') + number(limit) : number(count);
+      const memories = usage(result.counts.all, limits.memories);
+      const events = usage(result.eventReceipts, limits.eventReceipts);
+      const operations = usage(result.operationReceipts, limits.operationReceipts);
+      const last = result.lastEventAt ? new Date(result.lastEventAt).toLocaleString(locale) : '';
+      return t(
+        `Gespeicherte Einträge: ${memories}\nEreignisbelege: ${events}\nAktionsbelege: ${operations}\n${last ? 'Letztes verarbeitetes Ereignis: ' + last : 'Noch kein Ereignis verarbeitet.'}`,
+        `Saved entries: ${memories}\nEvent receipts: ${events}\nAction receipts: ${operations}\n${last ? 'Last processed event: ' + last : 'No events processed yet.'}`
+      );
+    });
+  } catch (error) {
+    showStatus('status', error.label ?? error.message, 'error');
+  } finally {
+    $('check').disabled = false;
+  }
+}
+
+$('check').addEventListener('click', () => void checkStorage());
+$('check-display').addEventListener('click', () => void checkSettings());
+$('save-display').addEventListener('click', () => void saveSettings());
+$('display').addEventListener('change', renderSettings);
+$('host-compatibility').addEventListener('change', renderSettings);
+$('load-display').addEventListener('click', async () => {
+  if (!savedSettings || settingsBusy || settingsUncertain) return;
+  settingsBusy = true;
+  renderSettings();
+  showStatus('display-status', message("Gespeicherte Auswahl wird geladen …", "Loading saved preference…"));
+  try {
+    savedSettings = validateSettings(await invoke('memory.settings'));
+    applySavedSelection();
+    settingsConflict = false;
+    showStatus('display-status', message("Gespeicherte Auswahl geladen.", "Saved preference loaded."));
+  } catch (error) {
+    showStatus('display-status', error.label ?? error.message, 'error');
+  } finally {
+    settingsBusy = false;
+    renderSettings();
+  }
+});
+void checkStorage();
+void checkSettings(true);
+</script>
+</body>
+</html>

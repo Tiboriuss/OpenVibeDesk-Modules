@@ -1,0 +1,426 @@
+{
+  "apiVersion": 1,
+  "id": "skill-library",
+  "title": "Skill-Bibliothek",
+  "version": "0.3.0",
+  "description": "Skills als wiederverwendbare Arbeitsanweisungen lokal speichern, nach Kategorien ordnen und favorisieren. Ausgewählte Skills werden als Chat-Referenz auf die aktuelle Anfrage mit Mail- oder Dateireferenzen angewendet.",
+  "keywords": [
+    "skill",
+    "skills",
+    "bibliothek",
+    "arbeitsanweisung",
+    "anleitung",
+    "vorlage",
+    "ablauf",
+    "wiederverwenden",
+    "kategorie",
+    "kategorien",
+    "favorit",
+    "favoriten"
+  ],
+  "capabilities": [
+    "skill-library.list",
+    "skill-library.categories",
+    "skill-library.read",
+    "skill-library.save",
+    "skill-library.set_favorite",
+    "skill-library.delete",
+    "skill-library.reference"
+  ],
+  "permissions": [
+    "storage.module-data"
+  ],
+  "runtime": {
+    "type": "process",
+    "entry": "backend.cjs"
+  },
+  "tools": [
+    {
+      "name": "skill-library.list",
+      "label": "Skills suchen",
+      "description": "Skills nach Titel, Beschreibung, Kategorie und Schlagwörtern suchen. category filtert eine eigene Kategorie exakt; leer bedeutet ohne Kategorie, weglassen bedeutet alle. favoritesOnly=true zeigt nur Favoriten. Liefert begrenzte Metadaten mit exakter Trefferzahl und nextOffset; bei hasMore weiterblättern. Lesen aktiviert keinen Skill.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "maxLength": 120
+          },
+          "offset": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 500
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50
+          },
+          "category": {
+            "type": "string",
+            "maxLength": 60,
+            "description": "Eigener Kategoriename; leer für Skills ohne Kategorie. Für Alle weglassen."
+          },
+          "favoritesOnly": {
+            "type": "boolean",
+            "description": "Nur Skills mit gesetztem Favoritenstatus anzeigen."
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "skill-library.categories",
+      "label": "Skill-Kategorien anzeigen",
+      "description": "Eigene Kategorien mit exakten Skillzahlen auflisten oder nach Kategorienamen suchen. Liefert zusätzlich allCount, favoriteCount und uncategorizedCount für den gesamten lokalen Bestand. Die festen Ansichten Alle und Favoriten sind keine eigenen Kategorien. Kategorien entstehen aus gespeicherten Skills; bei hasMore mit nextOffset weiterblättern.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string",
+            "maxLength": 120
+          },
+          "offset": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 500
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 50
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "skill-library.read",
+      "label": "Skill lesen",
+      "description": "Einen Skill anhand seiner ID lesen. Liefert Metadaten mit revision und einen Abschnitt der Arbeitsanweisung; bei hasMore über nextOffset weiterlesen. Lesen allein aktiviert den Skill nicht. Vor Änderungen die aktuelle revision ermitteln.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "offset": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 6000
+          },
+          "limit": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 4000
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "skill-library.save",
+      "label": "Skill speichern",
+      "description": "Nur auf Userauftrag einen Skill speichern oder ersetzen. Ohne id neu anlegen; beim Ersetzen id und aktuelle expectedRevision aus read übergeben. category ist ein freier Kategoriename (max.60), leer für ohne; Alle/Favoriten sind reservierte Filter. Ausgelassene category/favorite bleiben bei Updates erhalten. Max.6000 Zeichen/8192 UTF-8-Bytes Anweisung. Vor Bestätigung Inhalt prüfen. Unklaren Ausgang zuerst prüfen, nicht automatisch erneut speichern.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "expectedRevision": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740990
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "description": {
+            "type": "string",
+            "maxLength": 400
+          },
+          "tags": {
+            "type": "array",
+            "maxItems": 12,
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 40
+            }
+          },
+          "instructions": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 6000
+          },
+          "category": {
+            "type": "string",
+            "maxLength": 60,
+            "description": "Freie Kategorie; leer bedeutet ohne Kategorie. Alle und Favoriten sind reserviert. Bei Updates weglassen, um den Wert zu erhalten."
+          },
+          "favorite": {
+            "type": "boolean",
+            "description": "Favoritenstatus. Bei Updates weglassen, um den Wert zu erhalten."
+          }
+        },
+        "required": [
+          "title",
+          "description",
+          "instructions"
+        ],
+        "additionalProperties": false
+      },
+      "confirmation": {
+        "title": "Skill speichern / Save skill",
+        "message": "Diesen Skill mit den angezeigten Arbeitsanweisungen lokal speichern oder die angegebene Version ersetzen? Das Speichern allein führt den Skill nicht aus. / Save the displayed instructions locally or replace the specified version? Saving a skill does not run it."
+      }
+    },
+    {
+      "name": "skill-library.set_favorite",
+      "label": "Skill-Favorit ändern",
+      "description": "Auf Userauftrag einen Skill als Favorit markieren oder die Markierung entfernen. id, gewünschten favorite-Wert und aktuelle expectedRevision aus read/list übergeben. Dieselbe Revision wie im Fenster schützt vor fremden Änderungen. Liefert aktuelle Metadaten; unklaren Ausgang zuerst lesen oder im Aktionsstatus prüfen und nicht automatisch wiederholen.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "favorite": {
+            "type": "boolean"
+          },
+          "expectedRevision": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740990
+          }
+        },
+        "required": [
+          "id",
+          "favorite",
+          "expectedRevision"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "skill-library.delete",
+      "label": "Skill löschen",
+      "description": "Auf Userauftrag einen Skill aus der lokalen Bibliothek löschen. Benötigt seine id und die aktuelle expectedRevision aus read. Bereits gespeicherte Chat-Momentaufnahmen bleiben erhalten. Nach unklarem Ausgang nicht automatisch erneut löschen.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          },
+          "expectedRevision": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740990
+          }
+        },
+        "required": [
+          "id",
+          "expectedRevision"
+        ],
+        "additionalProperties": false
+      },
+      "confirmation": {
+        "title": "Skill löschen / Delete skill",
+        "message": "Den angegebenen Skill dauerhaft aus der lokalen Bibliothek löschen? Bereits gespeicherte Chat-Momentaufnahmen bleiben erhalten. / Permanently delete the specified skill from the local library? Existing chat snapshots are retained."
+      }
+    },
+    {
+      "name": "skill-library.reference",
+      "label": "Skill für Chat auflösen",
+      "description": "Die vollständige aktuelle Arbeitsanweisung eines ausdrücklich ausgewählten Skills als begrenzte Referenz-Momentaufnahme auflösen. Der Host verwendet dies beim Anhängen an eine Chat-Anfrage. Erteilt keine zusätzlichen Rechte und führt den Skill nicht selbst aus.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "additionalProperties": false
+      }
+    }
+  ],
+  "contributions": {
+    "views": [
+      {
+        "id": "library",
+        "title": "Skill-Bibliothek",
+        "entry": "library.html",
+        "icon": "grid"
+      }
+    ],
+    "navigation": [
+      {
+        "id": "library",
+        "title": "Skills",
+        "view": "library",
+        "icon": "grid",
+        "order": 56
+      }
+    ],
+    "settings": [
+      {
+        "id": "settings",
+        "title": "Skill-Bibliothek",
+        "description": "Lokaler Skill-Speicher und Anwendung als Chat-Referenz",
+        "keywords": [
+          "skill",
+          "skills",
+          "bibliothek",
+          "anweisung",
+          "vorlage",
+          "referenz",
+          "speicher"
+        ],
+        "entry": "settings.html",
+        "icon": "grid",
+        "order": 101
+      }
+    ],
+    "referenceTypes": [
+      {
+        "id": "skill",
+        "title": "Skill",
+        "snapshotTool": "skill-library.reference",
+        "usage": "instructions"
+      }
+    ]
+  },
+  "locales": {
+    "en": {
+      "title": "Skill Library",
+      "description": "Save reusable working instructions locally, organize them into categories and mark favorites. Attach a skill to the current chat request alongside email or file references.",
+      "keywords": [
+        "skill",
+        "skills",
+        "library",
+        "working instructions",
+        "guide",
+        "template",
+        "workflow",
+        "reuse",
+        "category",
+        "categories",
+        "favorite",
+        "favorites"
+      ],
+      "views": {
+        "library": {
+          "title": "Skill Library"
+        }
+      },
+      "navigation": {
+        "library": {
+          "title": "Skills"
+        }
+      },
+      "settings": {
+        "settings": {
+          "title": "Skill Library",
+          "description": "Local skill storage and use in chat",
+          "keywords": [
+            "skills",
+            "library",
+            "instructions",
+            "template",
+            "reference",
+            "storage"
+          ]
+        }
+      },
+      "referenceTypes": {
+        "skill": {
+          "title": "Skill"
+        }
+      },
+      "tools": {
+        "skill-library.list": {
+          "label": "Find skills",
+          "description": "Search titles, descriptions, categories and tags. Use category for an exact custom category, an empty string for uncategorized skills, or omit it for all. Set favoritesOnly to true for favorites. Returns bounded metadata with an exact count. Continue with nextOffset when hasMore is true. Reading a skill does not activate it.",
+          "keywords": [
+            "search",
+            "lookup",
+            "favorites"
+          ]
+        },
+        "skill-library.categories": {
+          "label": "List skill categories",
+          "description": "List custom categories with exact skill counts or search their names. allCount, favoriteCount and uncategorizedCount cover the whole library. All and Favorites are built-in views. Categories come from saved skills. Continue with nextOffset when hasMore is true.",
+          "keywords": [
+            "groups",
+            "categories",
+            "counts"
+          ]
+        },
+        "skill-library.read": {
+          "label": "Read a skill",
+          "description": "Read a skill by ID. Returns metadata including revision and a section of its instructions. Continue with nextOffset when hasMore is true. Reading does not activate the skill. Get the current revision before making changes.",
+          "keywords": [
+            "inspect",
+            "instructions",
+            "revision"
+          ]
+        },
+        "skill-library.save": {
+          "label": "Save a skill",
+          "description": "Create or replace a skill on user request. Omit id to create. To replace, pass id and the current expectedRevision from read. A custom category can be up to 60 characters. Use an empty string for no category. The names Alle and Favoriten are reserved. Updates preserve omitted category and favorite fields. Instructions allow 6,000 characters and 8,192 UTF-8 bytes. Review the content before confirmation. Check an uncertain outcome before retrying.",
+          "keywords": [
+            "create",
+            "update",
+            "edit",
+            "template"
+          ]
+        },
+        "skill-library.set_favorite": {
+          "label": "Change a skill’s favorite status",
+          "description": "Mark or unmark a skill as a favorite on user request. Pass its id, the desired favorite value and the current expectedRevision from read or list. The revision protects against concurrent changes. Returns current metadata. If the outcome is uncertain, read the skill or check the action status before another change.",
+          "keywords": [
+            "favorite",
+            "unfavorite",
+            "star"
+          ]
+        },
+        "skill-library.delete": {
+          "label": "Delete a skill",
+          "description": "Delete a skill from the local library on user request. Requires its id and current expectedRevision from read. Snapshots in existing chats are retained. If the outcome is uncertain, check it before retrying.",
+          "keywords": [
+            "remove",
+            "delete"
+          ]
+        },
+        "skill-library.reference": {
+          "label": "Attach skill instructions",
+          "description": "Resolve the complete current instructions of an explicitly selected skill into a bounded snapshot. The host uses this when attaching a skill to a chat request. Attaching a skill grants no additional permissions and does not execute it.",
+          "keywords": [
+            "attach",
+            "chat",
+            "reference"
+          ]
+        }
+      }
+    }
+  }
+}

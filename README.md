@@ -26,9 +26,11 @@ New or changed module code requires explicit approval, including when **Ohne Abf
 
 | Module | ID / version | Functions |
 | --- | --- | --- |
-| [Notes / Notizen](modules/sample-notes/README.md) | `sample-notes` / `0.1.0` | Add, list and search local notes through its window or the Assistant. |
-| [Skill Library / Skill-Bibliothek](modules/skill-library/README.md) | `skill-library` / `0.2.0` | Browse reusable instructions as tiles, organize categories and favorites, edit skills in a dialog, and attach them to chat requests. Requires a compatible host. |
-| [Memory / Gedächtnis](modules/memory/README.md) | `memory` / `0.1.1` | Save and recall sourced facts, review optional chat observations, and configure recall visibility through the interface or Assistant. Requires compatible host interfaces. |
+| [Notes / Notizen](modules/sample-notes/README.md) | `sample-notes` / `0.2.0` | Add, list and search local notes through its window or the Assistant. |
+| [Skill Library / Skill-Bibliothek](modules/skill-library/README.md) | `skill-library` / `0.3.0` | Browse reusable instructions as tiles, organize categories and favorites, edit skills in a dialog, and attach them to chat requests. |
+| [Memory / Gedächtnis](modules/memory/README.md) | `memory` / `0.2.0` | Save and recall sourced facts, review optional chat observations, and configure recall visibility through the interface or Assistant. |
+
+All three modules follow **Settings → Appearance → Interface language**. Switching between English and German updates open module windows, settings and Assistant discovery. The repository listing uses the German package names. These releases require the [module localization contract introduced in host commit 5108227](https://github.com/Tiboriuss/OpenVibeDesk/blob/5108227/docs/localization.md). OVD v0.1.10 and earlier reject manifests containing `locales`. Earlier releases and their individual host requirements are archived under [packages](packages/).
 
 Notes is a small working example with no extra dependencies. It currently supports adding and reading/searching notes; editing and deletion are not implemented. For example, ask the Assistant: “Save a note: Prepare the presentation for Friday”, then “Find my notes about the presentation”.
 

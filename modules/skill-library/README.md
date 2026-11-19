@@ -2,27 +2,27 @@
 
 [Module catalog](https://github.com/Tiboriuss/OpenVibeDesk-Modules) · [Contributing](https://github.com/Tiboriuss/OpenVibeDesk-Modules/blob/main/CONTRIBUTING.md) · [OVD module contract](https://github.com/Tiboriuss/OpenVibeDesk/blob/main/CONTRIBUTING.md#building-modules)
 
-Skill Library stores reusable working instructions locally. Version **0.2.0** presents skills as tiles, organizes them into categories and favorites, and edits them in a modal dialog. The German interface is called **Skill-Bibliothek**. It is a dependency-free process module using OVD module API 1.
+Skill Library stores reusable working instructions locally. Version **0.3.0** follows the OVD interface language (English or German) for the window, settings, navigation and Assistant discovery. Switching language preserves open drafts, search terms and user-authored skill content. It presents skills as tiles, organizes them into categories and favorites, and edits them in a modal dialog. The German interface is called **Skill-Bibliothek**. It is a dependency-free process module using OVD module API 1.
 
 ## Host compatibility and installation
 
-The module requires process reference support (`referenceTypes.snapshotTool`, `referenceTypes.usage` and the `ovd:reference` bridge). The editor is an HTML dialog inside the module and requires no additional host window interface. Module API 1 alone does not establish compatibility. Host changes require explicit prior agreement with the user.
+The localized manifest requires a host with the [module localization extension](https://github.com/Tiboriuss/OpenVibeDesk/blob/main/docs/localization.md). Older hosts reject the new manifest. Save and delete confirmations show both languages because the host accepts one shared confirmation text. The module also requires process reference support (`referenceTypes.snapshotTool`, `referenceTypes.usage` and the `ovd:reference` bridge). The editor is an HTML dialog inside the module and requires no additional host window interface. Module API 1 alone does not establish compatibility. Host changes require explicit prior agreement with the user.
 
-Add this repository under **Einstellungen → Module → Modulquellen**, load the catalog and install **Skill-Bibliothek**. Review and explicitly approve the module's code before activation. Open **Skills** from the dock. Changed code requires renewed approval. Published packages remain immutable.
+Add this repository under **Settings → Modules → Module sources**, load the catalog and install **Skill Library**. Review and explicitly approve the module's code before activation. Open **Skills** from the dock. Changed code requires renewed approval. Published packages remain immutable.
 
 ## Tiles, favorites and categories
 
-Each tile shows a skill's title, description and tags. Drag the tile to chat, or choose **Im Chat verwenden**. The star button adds or removes the favorite mark. The pencil opens the editor dialog; the tile grid contains no inline editing form.
+Each tile shows a skill's title, description and tags. Drag the tile to chat, or choose **Use in chat**. The star button adds or removes the favorite mark. The pencil opens the editor dialog; the tile grid contains no inline editing form.
 
-The category navigation always contains **Alle** and **Favoriten**. **Alle** includes every skill; **Favoriten** includes every starred skill regardless of its category. Custom categories appear as skills are assigned to them. **Ohne Kategorie** appears when applicable. The narrow layout keeps category navigation compact above the responsive tile grid.
+The category navigation always contains **All** and **Favorites**. **All** includes every skill. **Favorites** includes every starred skill regardless of its category. Custom categories appear as skills are assigned to them. **Uncategorized** appears when applicable. The narrow layout keeps category navigation compact above the responsive tile grid.
 
-Search matches title, description, category and tags within the selected view. **Weitere Skills laden** retrieves another bounded page. Counts in the category navigation refer to the whole local library, while the grid count reflects the active search and category filter.
+Search matches title, description, category and tags within the selected view. **Load more skills** retrieves another bounded page. Counts in the category navigation refer to the whole local library, while the grid count reflects the active search and category filter.
 
-In the editor, enter a category to assign the skill or create a category name. Leave it empty for no category. Names are limited to 60 characters; **Alle** and **Favoriten** are reserved views. Category matching is case-insensitive. There is no separate category deletion operation: a category disappears when no skill belongs to it.
+In the editor, enter a category to assign the skill or create a category name. Leave it empty for no category. Names are limited to 60 characters; the original German names **Alle** and **Favoriten** are reserved. Existing custom category names keep their spelling in either language. Category matching is case-insensitive. There is no separate category deletion operation: a category disappears when no skill belongs to it.
 
 ## Edit in a dialog
 
-Choose **Neuer Skill** or a tile's pencil. The editor contains title, optional description, tags, category, favorite mark and working instructions. Save and delete use the existing host confirmation flow; the saved **Ohne Abfragen** setting governs individual Assistant action prompts while code approval remains separate.
+Choose **New skill** or a tile's pencil. The editor contains title, optional description, tags, category, favorite mark and working instructions. Save and delete use the existing host confirmation flow; the saved **Ohne Abfragen** setting governs individual Assistant action prompts while code approval remains separate.
 
 The editor opens above the grid and keeps the category navigation in place behind it. Closing with the close button or Escape requires an explicit choice to save, discard or keep editing a dirty draft. Drafts live in the open module window; save before closing the entire library window. An uncertain mutation must first be checked. Successful saves refresh the grid and category counts and keep the dialog open. Deleting closes it. The dialog returns focus to the control that opened it.
 

@@ -2,11 +2,13 @@
 
 [Module catalog](https://github.com/Tiboriuss/OpenVibeDesk-Modules) · [Contributing](https://github.com/Tiboriuss/OpenVibeDesk-Modules/blob/main/CONTRIBUTING.md) · [OVD module contract](https://github.com/Tiboriuss/OpenVibeDesk/blob/main/CONTRIBUTING.md#building-modules)
 
-A self-contained local notes module for OpenVibeDesk. Its interface is currently German (**Notizen**); documentation is in English. Version **0.1.0** supports adding, listing and searching notes. It requires OVD module API version 1 and has no external dependencies.
+A self-contained local notes module for OpenVibeDesk. Version **0.2.0** follows the host’s English or German interface language for the Notes window, settings and Assistant discovery. Switching languages preserves the current draft, search and saved notes.
 
 ## Install
 
-Add `https://github.com/Tiboriuss/OpenVibeDesk-Modules` under **Einstellungen → Module → Modulquellen**. If the repository is private, enter a repository-scoped token with **Contents: Read-only**. Save, load the catalog and install **Notizen**. Approve the module's local code before activating it, then open **Notizen** from the OVD dock.
+Use a host with the [module localization contract](https://github.com/Tiboriuss/OpenVibeDesk/blob/5108227/docs/localization.md). Earlier hosts with strict API-1 manifests reject the `locales` field. Version **0.1.0** is the previous German-only package.
+
+Add `https://github.com/Tiboriuss/OpenVibeDesk-Modules` under **Settings → Modules → Module sources**. If the repository is private, enter a repository-scoped token with **Contents: Read-only**. Save, load the catalog and install Notes (**Notizen** in the repository listing). Approve the module's local code before activating it, then open Notes from the OVD dock.
 
 The same functions are available to the OVD Assistant after approval. Try “Save a note: Prepare the presentation for Friday” or “Find notes about the presentation”. Discovery remains lazy; the complete tool catalog is not added to every chat request.
 
@@ -25,4 +27,4 @@ The declared `storage.module-data` permission describes intended use. The backen
 
 ## Provenance and license
 
-Adapted from the [OVD Notes example at commit 01940be](https://github.com/Tiboriuss/OpenVibeDesk/tree/01940be35b89b84fba6f0ad40d3690196f525179/examples/notes-module). Runtime and UI code are unchanged; this README and the included license make the published package self-contained. Distributed under the [MIT License](LICENSE).
+Adapted from the [OVD Notes example](https://github.com/Tiboriuss/OpenVibeDesk/tree/5108227/examples/notes-module), including its bilingual interface. Distributed under the [MIT License](LICENSE).

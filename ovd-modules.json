@@ -6,10 +6,10 @@
       "id": "memory",
       "title": "Gedächtnis",
       "description": "Erinnerungen lokal speichern, prüfen und korrigieren. Der Host ruft passende bestätigte Fakten automatisch ab. Optional abonnierte Chat-Ereignisse liefern unbestätigte Vorschläge zur Prüfung, keine automatisch übernommenen Assistentenbehauptungen.",
-      "version": "0.1.1",
+      "version": "0.2.0",
       "apiVersion": 1,
       "package": {
-        "path": "packages/memory/0.1.1",
+        "path": "packages/memory/0.2.0",
         "files": [
           {
             "path": "LICENSE",
@@ -17,7 +17,7 @@
           },
           {
             "path": "README.md",
-            "sha256": "f9047d05e16777fda9441fb250f321e129f8e3ca21a635658e48cf2566d4d8af"
+            "sha256": "2a8b0d8c42265cb20c993f95671c2de3e0c39e8402d76259f76daa51f2e5049e"
           },
           {
             "path": "backend.cjs",
@@ -25,15 +25,15 @@
           },
           {
             "path": "memory.html",
-            "sha256": "b594e6967b69b995d111f30ad48a78d04d0161359add054e6a0db7efd7b90662"
+            "sha256": "6946b935c58a3c89356b5fcba941862d28f59e92b7f9863aeac35df12a5bfa93"
           },
           {
             "path": "module.json",
-            "sha256": "e027ad780b095e6e6e1421f44372001d63ea5ab056da4b2f0c2ebf8e654e915f"
+            "sha256": "39b4c8cba2aae0c68b44cc062cf7b5c022b89b75031ae38fe6f8799c3a105ca2"
           },
           {
             "path": "settings.html",
-            "sha256": "59aa427f25f84858f1f0dcbd5b977a708196013db036cbef6331d62d0eabc986"
+            "sha256": "dba010353f2b5021de22f26f0a73ca18861587c7985e621902844c03f8ba0fe5"
           }
         ]
       }
@@ -42,10 +42,10 @@
       "id": "sample-notes",
       "title": "Notizen",
       "description": "Lokale Notizen anzeigen und hinzufügen. Die Notizoberfläche und der OVD-Assistent verwenden dieselben Funktionen.",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "apiVersion": 1,
       "package": {
-        "path": "packages/sample-notes/0.1.0",
+        "path": "packages/sample-notes/0.2.0",
         "files": [
           {
             "path": "LICENSE",
@@ -53,7 +53,7 @@
           },
           {
             "path": "README.md",
-            "sha256": "8146b944e657c064270c369c432553b42ddf96c82bef819fbc69c959e50347d9"
+            "sha256": "60a228b8b895bdbb6c80c6321db72d5824f5ee6111677d6b884628ed58ae4992"
           },
           {
             "path": "backend.cjs",
@@ -61,15 +61,15 @@
           },
           {
             "path": "module.json",
-            "sha256": "d13316fa82f7002e4af09c230483d073d957992da097d8e3dbb9e4b3fd9d92f6"
+            "sha256": "7cf15b0a7284c89ce4338f66dc7094ff5c1d4c8fea8616c090c608a0af8b49a3"
           },
           {
             "path": "notes.html",
-            "sha256": "007eb78a78101041afa03d18dd0fbc36c6a4c284d941a6fd6a84663a0b0b9c6b"
+            "sha256": "5f01cebd19441cac19a835d40c2e3c69287f8f9d6c3c7bf6befe028d46ed0377"
           },
           {
             "path": "settings.html",
-            "sha256": "87d4732104197c87b845c965fe0f6c12a58ed9e6e67b87615a7bb3f6af0ca35d"
+            "sha256": "eeba1002fa769edc8a6625450c23aea3453f193489283e55113065bb86f608be"
           }
         ]
       }
@@ -78,10 +78,10 @@
       "id": "skill-library",
       "title": "Skill-Bibliothek",
       "description": "Skills als wiederverwendbare Arbeitsanweisungen lokal speichern, nach Kategorien ordnen und favorisieren. Ausgewählte Skills werden als Chat-Referenz auf die aktuelle Anfrage mit Mail- oder Dateireferenzen angewendet.",
-      "version": "0.2.0",
+      "version": "0.3.0",
       "apiVersion": 1,
       "package": {
-        "path": "packages/skill-library/0.2.0",
+        "path": "packages/skill-library/0.3.0",
         "files": [
           {
             "path": "LICENSE",
@@ -89,7 +89,7 @@
           },
           {
             "path": "README.md",
-            "sha256": "016ea99061db6233fc2b27bf2a5e434d1cf8ff2bcc17bdc64b5e980d770cbaf4"
+            "sha256": "8b2ea899006fbc88d4609a146f9f3d4538c7564de7b27bee498e2cfcaded93d3"
           },
           {
             "path": "backend.cjs",
@@ -97,15 +97,15 @@
           },
           {
             "path": "library.html",
-            "sha256": "bf5c03ee7fe5d913328671d0cabfb592df9d5cd7577e830a9c9aee3636067823"
+            "sha256": "a562203a51f7c9cec066b49b6e28054e02273dcfb1a16611c9eb038c156da4b8"
           },
           {
             "path": "module.json",
-            "sha256": "520c10495844c9888400348223394290b9bc1ef2886d5b98f639786455a6f411"
+            "sha256": "08baed81b41af506c583ce45e401ee4626539431f15a70c09324d4556dbb65aa"
           },
           {
             "path": "settings.html",
-            "sha256": "f400dc05df5c772e83e450d75e48d78680d319716e22ca0303cb6360f6cf28aa"
+            "sha256": "538de2f3bc2696c9c63ee67970a60b76f32bb4a37f447e10a9258482482bdf10"
           }
         ]
       }

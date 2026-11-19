@@ -2,13 +2,13 @@
 
 [Module catalog](https://github.com/Tiboriuss/OpenVibeDesk-Modules) · [Contributing](https://github.com/Tiboriuss/OpenVibeDesk-Modules/blob/main/CONTRIBUTING.md) · [Host memory contract](https://github.com/Tiboriuss/OpenVibeDesk/blob/main/docs/module-memory.md) · [Host event contract](https://github.com/Tiboriuss/OpenVibeDesk/blob/main/docs/module-events.md)
 
-Memory stores sourced facts locally and supplies relevant confirmed entries before a new Assistant request. The German interface is **Gedächtnis**. Version **0.1.1** adds a persistent module-owned display preference, shared by its settings form and the Assistant, to the dependency-free API-1 process module.
+Memory stores sourced facts locally and supplies relevant confirmed entries before a new Assistant request. Version **0.2.0** follows the OVD interface language in the Memory window, settings and Assistant discovery. German uses the manifest literals and English uses the `en` catalog. Switching language updates the open view and its labels, dates and counts while preserving drafts, selected entries and saved text. The host takes action confirmations from the shared manifest literal, so those prompts include both languages.
 
 ## Host compatibility and installation
 
-Use an OVD development build with `contributions.memory.retrieveTool`, `contributions.events.subscriptions`, `onEvent`, process reference snapshots and the `ovd:reference` bridge. Released OVD **v0.1.3** predates these extensions. API version 1 alone does not establish compatibility, and the module catalog does not negotiate a minimum host version. This module requires no additional host modifications.
+Use a host implementing the [module localization contract](https://github.com/Tiboriuss/OpenVibeDesk/blob/main/docs/localization.md) as well as `contributions.memory.retrieveTool`, `contributions.events.subscriptions`, `onEvent`, process reference snapshots and the `ovd:reference` bridge. Hosts predating the localization extension reject manifests with `locales`. Memory **0.1.1** remains available for earlier hosts with the memory and event interfaces. API version 1 alone does not establish compatibility, and the module catalog does not negotiate a minimum host version.
 
-Load this repository under **Settings → Modules → Module sources**, install **Gedächtnis**, and explicitly approve its code. Open **Gedächtnis** from the dock. Changed code requires renewed approval; changed packages also require fresh event-source selection. Module data lives separately from its installed package and survives updates or disabling.
+Load this repository under **Settings → Modules → Module sources**, install **Memory** (**Gedächtnis** in German), and explicitly approve its code. Open **Memory** from the OVD bar. Changed code requires renewed approval; changed packages also require fresh event-source selection. Module data lives separately from its installed package and survives updates or disabling.
 
 ## Save, inspect and correct memories
 
@@ -20,7 +20,7 @@ Each entry has a title, text, scope, source, revision, creation/update times and
 
 Updates, confirmations and deletion require the current revision, so a concurrent change cannot silently overwrite an older draft. Keep a draft when a revision conflict occurs and inspect the current saved record. After an uncertain write, inspect current state or the host action status before another deliberate mutation. Acknowledged writes and action receipts are stored together.
 
-Confirmed memories can be dragged into chat or selected with **Im Chat verwenden**. Drag payloads contain only `{moduleId, type, id}`. The owning backend resolves the current entry as ordinary context, not working instructions. Saving, confirming or attaching an entry does not execute its contents or grant permissions. Use Skill Library for deliberately selected working instructions.
+Confirmed memories can be dragged into chat or selected with **Use in chat**. Drag payloads contain only `{moduleId, type, id}`. The owning backend resolves the current entry as ordinary context, not working instructions. Saving, confirming or attaching an entry does not execute its contents or grant permissions. Use Skill Library for deliberately selected working instructions.
 
 Deletion removes the module's current entry. Existing chat snapshots and already recorded processing evidence remain historical records. This is not a complete erasure function for past chats.
 
@@ -30,11 +30,11 @@ The manifest declares `memory.recall` through `contributions.memory.retrieveTool
 
 Retrieval uses local Unicode-aware lexical matching over title, text and scope, with relevance ranking and source/session context where available. It does not use an embedding service or language model and cannot promise semantic matches for unrelated wording. An empty match returns an empty memory array. The module ranks a bounded selection and truthfully reports additional relevant entries through `hasMore`.
 
-The callback receives the current question, an opaque chat ID, host time and result budgets. It receives no earlier chat history, attachment contents or credentials. Short follow-ups without identifying words can therefore miss relevant facts. The host accepts at most 20 memories and 8,000 serialized characters across providers, under a shared five-second deadline. It validates sources, expiry and bounds, records failures and saves the exact supplied snapshot with the answer. The chat's **Gedächtnis** disclosure follows the presentation rules below. Explicit continuation and answer reformulation reuse the saved snapshot rather than performing a new automatic lookup.
+The callback receives the current question, an opaque chat ID, host time and result budgets. It receives no earlier chat history, attachment contents or credentials. Short follow-ups without identifying words can therefore miss relevant facts. The host accepts at most 20 memories and 8,000 serialized characters across providers, under a shared five-second deadline. It validates sources, expiry and bounds, records failures and saves the exact supplied snapshot with the answer. The chat's memory disclosure follows the presentation rules below. Explicit continuation and answer reformulation reuse the saved snapshot rather than performing a new automatic lookup.
 
 ## Display in chat
 
-Open **Settings → Gedächtnis → Anzeige im Chat**. The settings form and Assistant both read and update the same `memory.settings` function. The choice is stored in the module's own `settings.json`; it is not a host setting. Choose a display mode and save:
+Open **Settings → Memory → Display in chat**. The settings form and Assistant both read and update the same `memory.settings` function. The choice is stored in the module's own `settings.json`; it is not a host setting. Choose a display mode and save:
 
 | Stored value | Behavior on a compatible host |
 | --- | --- |
@@ -46,9 +46,9 @@ The choice affects presentation only. All retrieved facts still reach the model 
 
 ### Compatibility selection
 
-The optional `display` result field is supported from OVD **0.1.7**. Hosts through **0.1.6** reject it. The public module interface currently supplies neither a host version nor a capability flag, so automatic version detection is unavailable. The module therefore defaults to **OVD bis 0.1.6 / unbekannt** (`hostCompatibility: "legacy"`) and completely omits `display`, even when a display preference is saved.
+The optional `display` result field is supported from OVD **0.1.7**. Hosts through **0.1.6** reject it. The public module interface currently supplies neither a host version nor a capability flag, so automatic version detection is unavailable. The module therefore defaults to **OVD 0.1.6 or earlier / unknown** (`hostCompatibility: "legacy"`) and completely omits `display`, even when a display preference is saved.
 
-Select **OVD ab 0.1.7** (`hostCompatibility: "v0.1.7"`) only when the host supports the extension. The callback then includes the saved `display` value on every successful result, including an empty result. On a host downgrade or when moving the profile to an older host, switch back to legacy compatibility before retrieving. Compatibility is an explicit user selection, not a detected host version. In legacy mode the host's existing presentation behavior applies; saving `show` or `hide` cannot change that behavior.
+Select **OVD 0.1.7 or later** (`hostCompatibility: "v0.1.7"`) only when the host supports the extension. The callback then includes the saved `display` value on every successful result, including an empty result. On a host downgrade or when moving the profile to an older host, switch back to legacy compatibility before retrieving. Compatibility is an explicit user selection, not a detected host version. In legacy mode the host's existing presentation behavior applies; saving `show` or `hide` cannot change that behavior.
 
 For example, the Assistant can handle:
 
@@ -58,11 +58,11 @@ It reads `memory.settings({})`, then passes the desired fields and the returned 
 
 ## Optional chat observations
 
-All host event subscriptions start off. Under **Settings → Modules → Gedächtnis → Ereignisse empfangen**, select the desired sources. The same host controls are available to the Assistant through `modules.events_status` and `modules.events_subscribe`; the module's own settings explain them but cannot change host subscriptions through its isolated iframe.
+All host event subscriptions start off. Under **Settings → Modules → Memory → Receive events**, select the desired sources. The same host controls are available to the Assistant through `modules.events_status` and `modules.events_subscribe`; the module's own settings explain them but cannot change host subscriptions through its isolated iframe.
 
 The module declares:
 
-- `chat.request.committed`: eligible future user text becomes a **Zu prüfen** candidate, with its source event and chat/message identity. This is the user's recorded statement, not a model-extracted or verified fact. Simple filtering skips empty, short or clearly interrogative/transient requests; it is a heuristic and does not understand every quotation or command.
+- `chat.request.committed`: eligible future user text becomes a **To review** candidate, with its source event and chat/message identity. This is the user's recorded statement, not a model-extracted or verified fact. Simple filtering skips empty, short or clearly interrogative/transient requests; it is a heuristic and does not understand every quotation or command.
 - `chat.turn.finished`: links available completion status to the corresponding observation. Assistant prose is never promoted to a fact, and action counts do not prove a sentence correct.
 
 Candidates never enter automatic recall. Review the statement, remove transient or quoted material, choose a useful title and scope, and confirm only what should remain available. Explicit storage requests beginning with “Merke dir”, “Merk dir” or “Remember” are left to the ordinary Assistant save tool rather than creating a second inbox entry. The module does not call an AI provider, infer structured facts from free text or automatically merge contradictory statements. Correct or replace confirmed entries deliberately; inspect overlapping entries when facts change. Revisions and timestamps identify changes; the module does not provide a complete history of previous entry texts.
